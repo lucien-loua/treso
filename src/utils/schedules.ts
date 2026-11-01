@@ -1,4 +1,5 @@
-import { signedCents } from "@/data/entries";
+import { signedAmount } from "@/data/entries";
+import type { AmountOf } from "@/data/entries";
 import type { Schedule, Transaction } from "@/data/types";
 import type { I18n } from "@/i18n/i18n";
 import {
@@ -81,8 +82,12 @@ export const dueStatus = (
   };
 };
 
-/** Net of the schedules still due on or before `until` (overdue ones included). */
-export const pendingNetCents = (schedules: Schedule[], until: string) =>
+/** Net of the schedules still due on or before `until` (overdue ones included), in the currency on screen. */
+export const pendingNetCents = (
+  schedules: Schedule[],
+  until: string,
+  amountOf: AmountOf
+) =>
   schedules
     .filter((s) => s.nextDue <= until)
-    .reduce((sum, s) => sum + signedCents(s), 0);
+    .reduce((sum, s) => sum + signedAmount(s, amountOf), 0);

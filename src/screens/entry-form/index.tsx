@@ -125,10 +125,12 @@ export const EntryForm = ({
   deleteLabel?: string;
   deleteMessage?: string;
 }) => {
-  const { t } = useI18n();
+  const { t, currencies } = useI18n();
   const money = useMoney();
+  // Amounts are typed in the entry's own currency, so editing never rounds them through a rate
+  const entryMoney = currencies.find(initial?.currency) ?? money;
   const [values, setValues] = useState(() =>
-    initialValues(initial ?? {}, money)
+    initialValues(initial ?? {}, entryMoney)
   );
   const [busy, setBusy] = useState(false);
   const amountInput = useRef<ComponentRef<typeof TextInput>>(null);
@@ -136,7 +138,19 @@ export const EntryForm = ({
 
   const update = (patch: Partial<FormValues>) =>
     setValues((previous) => ({ ...previous, ...patch }));
-  const amountCents = money.parse(values.amountText);
+  const amountCents = entryMoney.parse(values.amountText);
+  const converted =
+    amountCents === null || entryMoney.code === money.code
+      ? null
+      : money.format(
+          money.amountOf({ amountCents, currency: entryMoney.code })
+        );
+  const hint = [
+    converted ? t.form.converted(converted) : null,
+    kind === "schedule" ? t.form.usualAmount : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
   const category = getCategory(values.categoryId, values.type);
   const isIncome = values.type === "income";
 
@@ -156,7 +170,13 @@ export const EntryForm = ({
     }
     setBusy(true);
     try {
-      await onSubmit(toDraft(values, amountCents, t.iconKeywords));
+      await onSubmit(
+        toDraft(
+          values,
+          { amountCents, currency: entryMoney.code },
+          t.iconKeywords
+        )
+      );
       haptics.success();
       router.back();
     } catch (error) {
@@ -210,13 +230,13 @@ export const EntryForm = ({
           inputRef={amountInput}
           amountText={values.amountText}
           onAmountChange={(text) =>
-            update({ amountText: sanitizeAmount(text, money) })
+            update({ amountText: sanitizeAmount(text, entryMoney) })
           }
-          money={money}
+          money={entryMoney}
           kind={values.type}
           onKindChange={changeType}
           intro={intro}
-          hint={kind === "schedule" ? t.form.usualAmount : undefined}
+          hint={hint || undefined}
           showKindPicker={!essentialsOnly}
         />
 

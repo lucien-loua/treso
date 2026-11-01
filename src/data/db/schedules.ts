@@ -21,9 +21,10 @@ export const insertSchedule = async (
   input: ScheduleInput
 ) => {
   await db.runAsync(
-    "INSERT INTO schedules (type, amount_cents, category_id, note, icon, color, day_of_month, next_due, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO schedules (type, amount_cents, currency, category_id, note, icon, color, day_of_month, next_due, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     input.type,
     input.amountCents,
+    input.currency,
     input.categoryId,
     input.note,
     input.icon,
@@ -40,9 +41,10 @@ export const updateSchedule = async (
   input: ScheduleInput
 ) => {
   await db.runAsync(
-    "UPDATE schedules SET type = ?, amount_cents = ?, category_id = ?, note = ?, icon = ?, color = ?, day_of_month = ?, next_due = ? WHERE id = ?",
+    "UPDATE schedules SET type = ?, amount_cents = ?, currency = ?, category_id = ?, note = ?, icon = ?, color = ?, day_of_month = ?, next_due = ? WHERE id = ?",
     input.type,
     input.amountCents,
+    input.currency,
     input.categoryId,
     input.note,
     input.icon,

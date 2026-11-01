@@ -8,6 +8,7 @@ import {
 import { LoadError } from "@/components/load-error";
 import { useGetStartedHidden, useMonthlyBudget } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
+import { useMoney } from "@/hooks/use-money";
 import { useToday } from "@/hooks/use-today";
 import { useI18n } from "@/i18n/context";
 import { monthKeyOf } from "@/lib/datetime";
@@ -31,6 +32,7 @@ import { Welcome } from "./welcome";
 const MonthDashboard = () => {
   const { transactions, schedules } = useTransactions();
   const { t } = useI18n();
+  const money = useMoney();
   const [budget] = useMonthlyBudget();
   const [getStartedHidden, setGetStartedHidden] = useGetStartedHidden();
   const today = useToday();
@@ -38,6 +40,7 @@ const MonthDashboard = () => {
   const [month, setMonth] = useState<MonthKey>(currentMonth);
   const isCurrentMonth = month === currentMonth;
   const { summary, forecastCents, todaySpentCents } = monthOverview({
+    amountOf: money.amountOf,
     isCurrentMonth,
     month,
     schedules,
@@ -78,7 +81,7 @@ const MonthDashboard = () => {
         </>
       ) : null}
       <BudgetCard
-        budgetCents={budget}
+        budgetCents={budget ? money.amountOf(budget) : null}
         spentCents={summary.expenseCents}
         month={month}
       />

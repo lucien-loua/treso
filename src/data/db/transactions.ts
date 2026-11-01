@@ -22,9 +22,10 @@ export const insertTransaction = async (
   settlement: { scheduleId: number; due: string } | null = null
 ) => {
   await db.runAsync(
-    "INSERT INTO transactions (type, amount_cents, category_id, note, icon, color, date, schedule_id, settles_due, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO transactions (type, amount_cents, currency, category_id, note, icon, color, date, schedule_id, settles_due, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     input.type,
     input.amountCents,
+    input.currency,
     input.categoryId,
     input.note,
     input.icon,
@@ -51,9 +52,10 @@ export const updateTransaction = async (
   input: TransactionInput
 ) => {
   await db.runAsync(
-    "UPDATE transactions SET type = ?, amount_cents = ?, category_id = ?, note = ?, icon = ?, color = ?, date = ? WHERE id = ?",
+    "UPDATE transactions SET type = ?, amount_cents = ?, currency = ?, category_id = ?, note = ?, icon = ?, color = ?, date = ? WHERE id = ?",
     input.type,
     input.amountCents,
+    input.currency,
     input.categoryId,
     input.note,
     input.icon,

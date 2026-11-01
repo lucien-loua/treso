@@ -7,9 +7,10 @@ import { GroupedSection } from "@/components/ui/grouped-section";
 import { ListRow, ListRowText, SeparatedList } from "@/components/ui/list-row";
 import { PillButton } from "@/components/ui/pill-button";
 import { TextButton } from "@/components/ui/text-button";
-import { entryCategory, entryTitle, signedCents } from "@/data/entries";
+import { entryCategory, entryTitle, signedAmount } from "@/data/entries";
 import { useTransactions } from "@/data/transactions-provider";
 import type { Schedule, Transaction } from "@/data/types";
+import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
 import { advanceDue } from "@/lib/datetime";
 import { colors, spacing } from "@/theme";
@@ -40,6 +41,7 @@ const UpcomingRow = ({
   transactions: Transaction[];
 }) => {
   const { skip } = useTransactions();
+  const money = useMoney();
   const i18n = useI18n();
   const { t, dates } = i18n;
   const texts = t.overview.upcoming;
@@ -75,7 +77,10 @@ const UpcomingRow = ({
             subtitleColor={toneColor[status.tone]}
           />
           <View style={{ alignItems: "flex-end", gap: spacing.sm }}>
-            <SignedAmount cents={signedCents(schedule)} variant="subhead" />
+            <SignedAmount
+              cents={signedAmount(schedule, money.amountOf)}
+              variant="subhead"
+            />
             <PillButton
               label={actionLabel}
               accessibilityLabel={texts.action(actionLabel, title)}

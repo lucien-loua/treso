@@ -5,7 +5,10 @@ import type { TransactionInput } from "./types";
 
 type SampleName = keyof Messages["samples"]["names"];
 
-type Template = Omit<TransactionInput, "date" | "icon" | "color" | "note"> & {
+type Template = Omit<
+  TransactionInput,
+  "date" | "icon" | "color" | "note" | "currency"
+> & {
   day: number;
   name: SampleName;
 };
@@ -155,6 +158,7 @@ export const buildSampleTransactions = (
         ...rest,
         amountCents,
         color: null,
+        currency,
         date: toISODate(date),
         icon: null,
         note: names[name],

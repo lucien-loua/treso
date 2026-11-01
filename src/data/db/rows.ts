@@ -5,6 +5,7 @@ export interface TransactionRow {
   id: number;
   type: Transaction["type"];
   amount_cents: number;
+  currency: string;
   category_id: string;
   note: string;
   icon: string | null;
@@ -20,6 +21,7 @@ export interface ScheduleRow {
   id: number;
   type: Schedule["type"];
   amount_cents: number;
+  currency: string;
   category_id: string;
   note: string;
   icon: string | null;
@@ -33,6 +35,7 @@ export const transactionFromRow = (row: TransactionRow): Transaction => ({
   categoryId: row.category_id,
   color: row.color,
   createdAt: row.created_at,
+  currency: row.currency,
   date: row.date,
   icon: row.icon,
   id: row.id,
@@ -46,6 +49,7 @@ export const scheduleFromRow = (row: ScheduleRow): Schedule => ({
   amountCents: row.amount_cents,
   categoryId: row.category_id,
   color: row.color,
+  currency: row.currency,
   dayOfMonth: row.day_of_month,
   icon: row.icon,
   id: row.id,

@@ -29,7 +29,8 @@ export const TransactionList = () => {
   const [query, setQuery] = useState("");
   const [type, setType] = useState<TypeFilter>("all");
   const sections = groupByDay(
-    filterTransactions(transactions, { money, query, t, type })
+    filterTransactions(transactions, { money, query, t, type }),
+    money.amountOf
   );
 
   return (

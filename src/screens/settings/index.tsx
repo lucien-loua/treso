@@ -11,7 +11,8 @@ import { scrollDismissesKeyboard } from "@expo/ui/swift-ui/modifiers";
 import Constants from "expo-constants";
 import { router } from "expo-router";
 
-import { entryTitle, signedCents } from "@/data/entries";
+import { entryTitle, signedAmount } from "@/data/entries";
+import { useExchangeRates } from "@/data/exchange-rates";
 import { useCurrencyCode } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
 import type { Schedule } from "@/data/types";
@@ -20,10 +21,13 @@ import { useLoadSampleData } from "@/hooks/use-load-sample-data";
 import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
 import type { Messages } from "@/i18n/messages/fr";
+import { parseISODate } from "@/lib/datetime";
 import { confirm } from "@/utils/alerts";
 import { haptics } from "@/utils/haptics";
 
 import { BudgetRow } from "./budget-row";
+import { RateRow } from "./rate-row";
+import { SwitchRow } from "./switch-row";
 
 const isIOS = process.env.EXPO_OS === "ios";
 
@@ -32,9 +36,16 @@ const scheduleSummary = (schedule: Schedule, t: Messages) =>
 
 export const Settings = () => {
   const ink = useInk();
-  const { t, currencies } = useI18n();
+  const { t, currencies, dates } = useI18n();
   const money = useMoney();
   const [, setCurrencyCode] = useCurrencyCode();
+  const rates = useExchangeRates();
+  // Every rate is quoted against the dollar: one row per other currency
+  const dollar = currencies.find(rates.active.base) ?? currencies.default;
+  const quotedCurrencies = currencies.all.filter(
+    ({ code }) => code !== dollar.code
+  );
+  const ratesDate = dates.longDate(parseISODate(rates.active.date));
   const { transactions, schedules, removeAll } = useTransactions();
   const loadSamples = useLoadSampleData();
 
@@ -72,6 +83,37 @@ export const Settings = () => {
               ))}
             </Picker>
           </Row>
+          <FieldGroup.SectionFooter>
+            <Text textStyle={ink.footnote}>{t.settings.currencyFooter}</Text>
+          </FieldGroup.SectionFooter>
+        </FieldGroup.Section>
+
+        <FieldGroup.Section title={t.settings.rates.title}>
+          <SwitchRow
+            label={t.settings.rates.useSuggested}
+            value={!rates.manual}
+            onValueChange={(suggested) => {
+              haptics.selection();
+              rates.setManual(!suggested);
+            }}
+          />
+          {quotedCurrencies.map((currency) => (
+            <RateRow
+              key={currency.code}
+              currency={currency}
+              dollar={dollar}
+              rate={rates.active.rates[currency.code] ?? 0}
+              editable={rates.manual}
+              onSave={(rate) => rates.setRate(currency.code, rate)}
+            />
+          ))}
+          <FieldGroup.SectionFooter>
+            <Text textStyle={ink.footnote}>
+              {rates.manual
+                ? t.settings.rates.manualFooter(ratesDate)
+                : t.settings.rates.suggestedFooter(ratesDate)}
+            </Text>
+          </FieldGroup.SectionFooter>
         </FieldGroup.Section>
 
         <FieldGroup.Section title={t.settings.budget}>
@@ -93,7 +135,9 @@ export const Settings = () => {
                     color: schedule.type === "income" ? ink.income : ink.label,
                   }}
                 >
-                  {money.format(signedCents(schedule), { sign: "always" })}
+                  {money.format(signedAmount(schedule, money.amountOf), {
+                    sign: "always",
+                  })}
                 </Text>
               }
             >

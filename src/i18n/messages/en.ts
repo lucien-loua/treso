@@ -91,6 +91,7 @@ export const en: Messages = {
     category: "Category",
     categoryColor: (color) => `${color} (category color)`,
     color: "Color",
+    converted: (amount) => `About ${amount} at today’s rate`,
     date: "Date",
     deleteConfirm: (label) => `${label}?`,
     details: "Details",
@@ -327,6 +328,8 @@ export const en: Messages = {
       "A spending limit tracked on the Overview. Leave it empty to turn it off.",
     budgetIn: (symbol) => `Monthly budget in ${symbol}`,
     currency: "Currency",
+    currencyFooter:
+      "Each amount keeps the currency it was entered in and shows converted to this one: changing currency never alters your data.",
     data: "Data",
     eraseAll: "Erase all data",
     eraseConfirm: "Erase All",
@@ -338,6 +341,18 @@ export const en: Messages = {
     none: "None",
     preferences: "Preferences",
     privacy: "Treso keeps your data on this device: no account, no server.",
+    rates: {
+      invalid: "Invalid rate",
+      invalidHint: "Enter a positive number, for example 600.",
+      manualFooter: (date) =>
+        `Your own rates, changed on ${date}, are used for every conversion. Turn the suggested rates back on to return to today’s rates.`,
+      per: (amount) => `${amount} =`,
+      rateOf: (currency, amount) => `${currency} rate for ${amount}`,
+      suggestedFooter: (date) =>
+        `Rates of ${date}, updated daily from a free source when the phone is online. Turn off to enter your own rates.`,
+      title: "Exchange rates",
+      useSuggested: "Use suggested rates",
+    },
     recorded: "Saved transactions",
     schedules: "Recurring",
     schedulesFooter:

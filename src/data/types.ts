@@ -3,8 +3,10 @@ export type TransactionType = "expense" | "income";
 export interface Transaction {
   id: number;
   type: TransactionType;
-  /** Always positive, in hundredths of the currency unit. `type` carries the sign. */
+  /** Always positive, in hundredths of `currency`'s unit. `type` carries the sign. */
   amountCents: number;
+  /** ISO code of the currency the amount was recorded in; screens convert it to the chosen one. */
+  currency: string;
   categoryId: string;
   note: string;
   /** Local calendar date, `YYYY-MM-DD`. */

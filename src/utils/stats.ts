@@ -1,4 +1,5 @@
-import { signedCents } from "@/data/entries";
+import { signedAmount } from "@/data/entries";
+import type { AmountOf } from "@/data/entries";
 import type { Transaction } from "@/data/types";
 import type { MonthKey } from "@/lib/datetime";
 
@@ -22,9 +23,11 @@ export interface MonthSummary {
   transactions: Transaction[];
 }
 
+/** The month's figures, every amount converted with `amountOf` to the currency on screen. */
 export const summarizeMonth = (
   transactions: Transaction[],
-  month: MonthKey
+  month: MonthKey,
+  amountOf: AmountOf
 ): MonthSummary => {
   const inMonth = transactions.filter((t) => t.date.startsWith(month));
   const monthStart = `${month}-01`;
@@ -35,18 +38,19 @@ export const summarizeMonth = (
 
   for (const t of transactions) {
     if (t.date < monthStart) {
-      openingCents += signedCents(t);
+      openingCents += signedAmount(t, amountOf);
     }
   }
 
   for (const t of inMonth) {
+    const amount = amountOf(t);
     if (t.type === "income") {
-      incomeCents += t.amountCents;
+      incomeCents += amount;
     } else {
-      expenseCents += t.amountCents;
+      expenseCents += amount;
       byCategory.set(
         t.categoryId,
-        (byCategory.get(t.categoryId) ?? 0) + t.amountCents
+        (byCategory.get(t.categoryId) ?? 0) + amount
       );
     }
   }
@@ -77,16 +81,23 @@ export interface DaySection {
   data: Transaction[];
 }
 
-/** Groups transactions (already sorted newest first) into one section per day. */
-export const groupByDay = (transactions: Transaction[]): DaySection[] => {
+/** Groups transactions (already sorted newest first) into one section per day, with its net total. */
+export const groupByDay = (
+  transactions: Transaction[],
+  amountOf: AmountOf
+): DaySection[] => {
   const sections: DaySection[] = [];
   for (const t of transactions) {
     const last = sections.at(-1);
     if (last && last.date === t.date) {
       last.data.push(t);
-      last.netCents += signedCents(t);
+      last.netCents += signedAmount(t, amountOf);
     } else {
-      sections.push({ data: [t], date: t.date, netCents: signedCents(t) });
+      sections.push({
+        data: [t],
+        date: t.date,
+        netCents: signedAmount(t, amountOf),
+      });
     }
   }
   return sections;

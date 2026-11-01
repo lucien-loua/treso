@@ -180,6 +180,7 @@ export const fr = {
     category: "Catégorie",
     categoryColor: (color: string) => `${color} (couleur de la catégorie)`,
     color: "Couleur",
+    converted: (amount: string) => `Soit environ ${amount} au taux du jour`,
     date: "Date",
     deleteConfirm: (label: string) => `${label} ?`,
     details: "Détails",
@@ -332,6 +333,8 @@ export const fr = {
       "Plafond de dépenses suivi sur l’écran Aperçu. Laissez vide pour le désactiver.",
     budgetIn: (symbol: string) => `Budget mensuel en ${symbol}`,
     currency: "Devise",
+    currencyFooter:
+      "Chaque montant garde la devise dans laquelle il a été saisi et s’affiche converti dans celle-ci : changer de devise ne modifie aucune donnée.",
     data: "Données",
     eraseAll: "Effacer toutes les données",
     eraseConfirm: "Tout effacer",
@@ -344,6 +347,19 @@ export const fr = {
     preferences: "Préférences",
     privacy:
       "Treso garde vos données sur cet appareil : pas de compte, pas de serveur.",
+    rates: {
+      invalid: "Taux invalide",
+      invalidHint: "Saisissez un nombre positif, par exemple 600.",
+      manualFooter: (date: string) =>
+        `Vos propres taux, modifiés le ${date}, servent à toutes les conversions. Réactivez les taux proposés pour revenir aux taux du jour.`,
+      per: (amount: string) => `${amount} =`,
+      rateOf: (currency: string, amount: string) =>
+        `Taux du ${currency} pour ${amount}`,
+      suggestedFooter: (date: string) =>
+        `Taux du ${date}, mis à jour chaque jour depuis une source gratuite quand le téléphone est en ligne. Désactivez pour saisir vos propres taux.`,
+      title: "Taux de change",
+      useSuggested: "Utiliser les taux proposés",
+    },
     recorded: "Opérations enregistrées",
     schedules: "Échéances mensuelles",
     schedulesFooter:

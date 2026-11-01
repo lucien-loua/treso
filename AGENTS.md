@@ -34,7 +34,7 @@ src/
   components/       reusable, app-aware: transaction-row, category-icon, amount-text, load-error…
     ui/             generic building blocks, no business logic: list-row, grouped-section,
                     pill-button, text-button, empty-state, progress-bar, themed-text
-  data/             state and storage
+  data/             state and storage (storage.ts: local key-value store; exchange-rates.ts)
     db/             SQLite: migrate.ts, migrations/ (one file per version), rows.ts, transactions.ts, schedules.ts
     catalog/        fixed lists: categories, icons, icon suggestions
     transactions-provider.tsx · settings.ts · entries.ts · types.ts · sample-data.ts
@@ -49,9 +49,10 @@ src/
 ```
 
 - Before writing UI, reuse `components/ui` (`ListRow`, `SeparatedList`, `GroupedSection`, `PillButton`, `TextButton`) and theme tokens; no raw hex, font sizes or spacing numbers outside `theme/`.
-- Name and sign entries with `entryTitle` / `signedCents` (`data/entries.ts`); ask before destructive actions with `confirm` (`utils/alerts.ts`).
+- Name and sign entries with `entryTitle` / `signedAmount` (`data/entries.ts`); ask before destructive actions with `confirm` (`utils/alerts.ts`).
 - No user-facing text in code: every label, title, alert and accessibility string comes from `t` (`useI18n()` in `i18n/context.ts`). Add the key to `messages/fr.ts`, then to every other language (TypeScript rejects a missing one). Categories, icons and colors are named there too, by id.
 - Amounts go through `useMoney()` (`format`, `parse`, `toInput`, `symbol`, `decimals`), dates through `dates` from `useI18n()`, calendar math through `@/lib/datetime`. Never call `toLocaleString`, `Intl` or a hardcoded locale in a screen.
+- Every transaction, schedule and budget keeps the `currency` it was entered in; data is never rewritten when the user changes currency. Convert with `money.amountOf(entry)` before showing or adding up amounts (never sum `amountCents` directly). Rates live in `data/exchange-rates.ts`: downloaded daily, bundled fallback, or the user's own.
 - The app follows the phone's language (`expo-localization`), English when it isn't one of Treso's. A new language is a `messages/<code>.ts` added to `i18n.ts` and to `supportedLocales` in `app.json`.
 - `lib/` stays app-independent and Hermes-safe (no `formatToParts`, `Intl.RelativeTimeFormat` or `toSorted` without a fallback).
 - Schema changes: add `data/db/migrations/00N-what-changes.ts` (version N) and append it to `migrations/index.ts`; never edit a migration that shipped.

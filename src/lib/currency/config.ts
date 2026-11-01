@@ -7,6 +7,14 @@ import { GNF, USD, XOF } from "./currencies";
  */
 const OFFERED = [XOF, GNF, USD];
 
+/** The ISO codes Treso offers, the default first. */
+export const CURRENCY_CODES: readonly string[] = OFFERED.map(
+  ({ code }) => code
+);
+
+/** The currency used before any choice in Settings. */
+export const DEFAULT_CURRENCY_CODE = XOF.code;
+
 /**
  * The offered currencies, writing amounts in `locale`'s conventions: "1 234,50 $US" in French,
  * "$1,234.50" in English. Made once per locale.
@@ -14,6 +22,6 @@ const OFFERED = [XOF, GNF, USD];
 export const createCurrencies = (locale: string) =>
   createCurrencyRegistry({
     currencies: OFFERED,
-    defaultCode: XOF.code,
+    defaultCode: DEFAULT_CURRENCY_CODE,
     locale,
   });

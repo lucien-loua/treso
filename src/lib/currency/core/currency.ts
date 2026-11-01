@@ -1,9 +1,9 @@
 import type { CurrencyDefinition } from "./definition";
+import { createFigureReader, hasParts } from "./figures";
 
 /**
  * Treso stores every amount as an integer count of **hundredths** of the unit, whatever the
- * currency: 25 000 F CFA is 2 500 000. Switching the currency in Settings then never rescales
- * what was recorded.
+ * currency: 25 000 F CFA is 2 500 000, 12,50 $US is 1 250.
  */
 const AMOUNT_SCALE = 100;
 
@@ -39,29 +39,19 @@ export interface Currency {
    * the text is not a positive amount of this currency (letters, more decimals than it has).
    */
   parse: (text: string) => number | null;
-  /** The figure to prefill a field with: 125_050 → "1250,5" in French. */
+  /** The figure to prefill a field with, rounded to the currency's decimals: 125_050 → "1250,5" in French. */
   toInput: (amount: number) => string;
 }
 
 /** Hundredths → the unit amount `Intl` formats, sign removed. */
 const toMajor = (amount: number) => Math.abs(amount) / AMOUNT_SCALE;
 
-const DECIMAL = /^\d+(?:\.\d+)?$/u;
 const ONLY_ZEROS = /^0*$/u;
 const WHITESPACE = /\s/gu;
-const WHITESPACE_ONLY = /^\s*$/u;
-const DIGIT_RUN = /\d/gu;
 const REGEXP_SPECIAL = /[$()*+.?[\\\]^{|}]/gu;
 
 const escapeRegExp = (text: string) =>
   text.replaceAll(REGEXP_SPECIAL, String.raw`\$&`);
-
-/**
- * Does the engine split a formatted figure into parts? Hermes, React Native's engine, has
- * `Intl.NumberFormat` without `formatToParts`: the parts are then read back from `format`.
- */
-const hasParts = () =>
-  typeof Intl.NumberFormat.prototype.formatToParts === "function";
 
 /** The text a formatter writes for the currency of a figure (its sign). */
 const currencyText = (
@@ -81,32 +71,6 @@ const currencyText = (
     minimumFractionDigits,
   }).format(value);
   return formatter.format(value).replace(figure, "").trim() || undefined;
-};
-
-/** The decimal separator the locale writes figures with, read once from `Intl`. */
-const decimalSeparatorOf = (locale: string) => {
-  const formatter = new Intl.NumberFormat(locale);
-  if (!hasParts()) {
-    // "1,5": the separator is the character before the last digit
-    return formatter.format(1.5).at(-2) ?? ".";
-  }
-  return (
-    formatter.formatToParts(1.5).find((part) => part.type === "decimal")
-      ?.value ?? "."
-  );
-};
-
-/**
- * The thousands separator the locale writes, read once from `Intl`: "," in English, a space in
- * French (spaces are dropped anyway). `undefined` when the locale groups with a space or not at all.
- */
-const groupSeparatorOf = (locale: string) => {
-  const formatter = new Intl.NumberFormat(locale);
-  // Without parts, "1,000" minus its digits leaves the separator
-  const separator = hasParts()
-    ? formatter.formatToParts(1000).find((part) => part.type === "group")?.value
-    : formatter.format(1000).replaceAll(DIGIT_RUN, "");
-  return separator && !WHITESPACE_ONLY.test(separator) ? separator : undefined;
 };
 
 /**
@@ -136,8 +100,13 @@ export const createCurrency = (
     style: "currency",
   });
   const figureOnly = new Intl.NumberFormat(locale, digits);
-  const decimalSeparator = decimalSeparatorOf(locale);
-  const groupSeparator = groupSeparatorOf(locale);
+  // What a person would type: no grouping, decimals only when there are some ("1250,5")
+  const inputFigure = new Intl.NumberFormat(locale, {
+    maximumFractionDigits: decimals,
+    useGrouping: false,
+  });
+  const figures = createFigureReader(locale);
+  const { decimalSeparator } = figures;
   let signsPattern: RegExp | undefined;
 
   /** Intl places the sign and its spacing; only the sign's text may change. */
@@ -171,14 +140,10 @@ export const createCurrency = (
           .join("|"),
         "giu"
       );
-      let figure = text.replaceAll(WHITESPACE, "").replaceAll(signsPattern, "");
-      if (groupSeparator) {
-        // "25,000" is twenty-five thousand in English
-        figure = figure.replaceAll(groupSeparator, "");
-      }
-      // People type either decimal separator when the locale doesn't group with it
-      figure = figure.replaceAll(decimalSeparator, ".").replaceAll(",", ".");
-      if (!DECIMAL.test(figure)) {
+      const figure = figures.read(
+        text.replaceAll(WHITESPACE, "").replaceAll(signsPattern, "")
+      );
+      if (figure === null) {
         return null;
       }
       const [whole = "", fraction = ""] = figure.split(".");
@@ -191,7 +156,6 @@ export const createCurrency = (
       return Number.isSafeInteger(amount) && amount > 0 ? amount : null;
     },
     symbol,
-    toInput: (amount: number) =>
-      String(amount / AMOUNT_SCALE).replace(".", decimalSeparator),
+    toInput: (amount: number) => inputFigure.format(toMajor(amount)),
   });
 };

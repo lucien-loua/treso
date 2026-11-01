@@ -9,6 +9,8 @@ import { nextDueFrom, parseISODate, toISODate } from "@/lib/datetime";
 export interface EntryDraft {
   type: TransactionType;
   amountCents: number;
+  /** The currency the amount is typed in: the entry's own, else the one on screen. */
+  currency: string;
   categoryId: string;
   note: string;
   icon: string | null;
@@ -65,10 +67,10 @@ export const initialValues = (
 /** `keywords`: the words of the app's language that pick the automatic icon. */
 export const toDraft = (
   values: FormValues,
-  amountCents: number,
+  amount: { amountCents: number; currency: string },
   keywords: IconKeywords
 ): EntryDraft => ({
-  amountCents,
+  ...amount,
   categoryId: values.categoryId,
   color: values.colorId,
   date: toISODate(values.date),

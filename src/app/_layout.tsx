@@ -3,6 +3,7 @@ import { SQLiteProvider } from "expo-sqlite";
 import { useColorScheme } from "react-native";
 
 import { DATABASE_NAME, migrate } from "@/data/db";
+import { useRefreshExchangeRates } from "@/data/exchange-rates";
 import { TransactionsProvider } from "@/data/transactions-provider";
 import { I18nProvider } from "@/i18n/provider";
 import { colors } from "@/theme";
@@ -21,6 +22,7 @@ export const unstable_settings = { anchor: "(tabs)" };
 
 const RootLayout = () => {
   const colorScheme = useColorScheme();
+  useRefreshExchangeRates();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

@@ -1,5 +1,5 @@
-import { createCurrencies } from "@/lib/currency";
-import type { CurrencyRegistry } from "@/lib/currency";
+import { createCurrencies, createNumbers } from "@/lib/currency";
+import type { CurrencyRegistry, Numbers } from "@/lib/currency";
 import { createDateTexts } from "@/lib/datetime";
 import type { DateTexts } from "@/lib/datetime";
 
@@ -26,6 +26,8 @@ export interface I18n {
   dates: DateTexts;
   /** The offered currencies, writing amounts in `locale` */
   currencies: CurrencyRegistry;
+  /** Plain numbers in `locale`, such as exchange rates */
+  numbers: Numbers;
   /** @example percent(0.42) → "42 %" (fr) · "42%" (en) */
   percent: (ratio: number) => string;
 }
@@ -84,6 +86,7 @@ export const i18nFor = (locales: readonly DeviceLocale[]): I18n => {
       dates: createDateTexts(locale),
       language,
       locale,
+      numbers: createNumbers(locale),
       percent: (ratio: number) => percent.format(ratio),
       t: MESSAGES[language],
     });

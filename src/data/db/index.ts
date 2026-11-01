@@ -16,7 +16,7 @@ export {
   updateTransaction,
 } from "./transactions";
 
-/** Wipes every transaction and schedule (Réglages › Effacer toutes les données). */
+/** Wipes every transaction and schedule (Settings › Erase all data). */
 export const deleteAllData = async (db: SQLiteDatabase) => {
   await db.withTransactionAsync(async () => {
     await db.runAsync("DELETE FROM transactions");
