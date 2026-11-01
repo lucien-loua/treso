@@ -6,7 +6,8 @@ import { CategoryIcon } from "@/components/category-icon";
 import { symbols } from "@/constants/symbols";
 import type { Category } from "@/data/catalog/categories";
 import { suggestIcon } from "@/data/catalog/icon-suggestions";
-import { colors, radius, spacing, type } from "@/theme";
+import { useI18n } from "@/i18n/context";
+import { colors, glyph, radius, spacing, type } from "@/theme";
 
 import { AppearancePicker } from "./appearance-picker";
 
@@ -31,8 +32,9 @@ export const NameRow = ({
   onIconChange: (id: string | null) => void;
   onColorChange: (id: string | null) => void;
 }) => {
+  const { t } = useI18n();
   const [picking, setPicking] = useState(false);
-  const autoIconId = suggestIcon(note);
+  const autoIconId = suggestIcon(note, t.iconKeywords);
 
   return (
     <>
@@ -48,7 +50,7 @@ export const NameRow = ({
       >
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Changer l’icône et la couleur"
+          accessibilityLabel={t.form.appearance}
           accessibilityState={{ expanded: picking }}
           hitSlop={8}
           onPress={() => setPicking((open) => !open)}
@@ -65,28 +67,28 @@ export const NameRow = ({
               backgroundColor: colors.surface,
               borderRadius: radius.full,
               bottom: -5,
-              height: 18,
+              height: glyph.lg + 2,
               justifyContent: "center",
               position: "absolute",
               right: -5,
-              width: 18,
+              width: glyph.lg + 2,
             }}
           >
             <SymbolView
               name={symbols.edit}
               tintColor={colors.secondaryLabel}
               resizeMode="scaleAspectFit"
-              style={{ height: 16, width: 16 }}
+              style={{ height: glyph.lg, width: glyph.lg }}
             />
           </View>
         </Pressable>
-        {/* Empty name falls back to the category label, which the placeholder shows. */}
+        {/* Empty name falls back to the category name, which the placeholder shows. */}
         <TextInput
           value={note}
           onChangeText={onNoteChange}
-          placeholder={category.label}
+          placeholder={t.categories[category.id]}
           placeholderTextColor={colors.tertiaryLabel}
-          accessibilityLabel="Nom"
+          accessibilityLabel={t.form.name}
           returnKeyType="done"
           clearButtonMode="while-editing"
           maxLength={80}

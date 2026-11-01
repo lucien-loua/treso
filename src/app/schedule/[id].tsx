@@ -3,16 +3,14 @@ import { useLocalSearchParams } from "expo-router";
 import { SheetFallback } from "@/components/sheet-fallback";
 import { useTransactions } from "@/data/transactions-provider";
 import { useKeepWhileDeleting } from "@/hooks/use-keep-while-deleting";
-import {
-  EntryForm,
-  SCHEDULE_FOOTER,
-  toScheduleInput,
-} from "@/screens/entry-form";
+import { useI18n } from "@/i18n/context";
+import { EntryForm, toScheduleInput } from "@/screens/entry-form";
 
 const EditScheduleRoute = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { status, schedules, updateSchedule, removeSchedule } =
     useTransactions();
+  const { t } = useI18n();
   const [schedule, onDelete] = useKeepWhileDeleting(
     schedules.find((s) => s.id === Number(id)),
     (deleted) => removeSchedule(deleted.id)
@@ -22,8 +20,8 @@ const EditScheduleRoute = () => {
     return (
       <SheetFallback
         loading={status === "loading"}
-        title="Échéance"
-        missingLabel="Échéance introuvable"
+        title={t.sheets.schedule}
+        missingLabel={t.sheets.scheduleMissing}
       />
     );
   }
@@ -33,12 +31,12 @@ const EditScheduleRoute = () => {
       key={schedule.id}
       kind="schedule"
       initial={schedule}
-      title="Échéance"
-      submitLabel="Enregistrer"
-      footer={SCHEDULE_FOOTER}
+      title={t.sheets.schedule}
+      submitLabel={t.actions.save}
+      footer={t.sheets.scheduleFooter}
       onSubmit={(draft) => updateSchedule(schedule, toScheduleInput(draft))}
-      deleteLabel="Supprimer l’échéance"
-      deleteMessage="Elle ne sera plus rappelée. Les paiements déjà enregistrés sont conservés."
+      deleteLabel={t.sheets.deleteSchedule}
+      deleteMessage={t.sheets.deleteScheduleMessage}
       onDelete={onDelete}
     />
   );

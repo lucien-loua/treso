@@ -1,7 +1,7 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 
 import type { Schedule, ScheduleInput, TransactionInput } from "@/data/types";
-import { advanceDue } from "@/utils/dates";
+import { advanceDue } from "@/lib/datetime";
 
 import type { ScheduleRow } from "./rows";
 import { scheduleFromRow } from "./rows";

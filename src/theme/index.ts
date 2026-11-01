@@ -18,6 +18,18 @@ export const spacing = Object.freeze({
   xxs: 2,
 });
 
+const isAndroid = process.env.EXPO_OS === "android";
+
+/**
+ * Sizes of small interface glyphs (chevrons, arrows, checkmarks). Material Symbols carry more
+ * built-in padding than SF Symbols, so the same glyph needs more room on Android.
+ */
+export const glyph = Object.freeze({
+  lg: isAndroid ? 20 : 16,
+  md: isAndroid ? 20 : 14,
+  sm: isAndroid ? 18 : 12,
+});
+
 export const radius = Object.freeze({
   full: 9999,
   lg: 16,

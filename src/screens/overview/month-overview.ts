@@ -1,6 +1,6 @@
 import type { Schedule, Transaction } from "@/data/types";
-import { endOfMonth, toISODate } from "@/utils/dates";
-import type { MonthKey } from "@/utils/dates";
+import { endOfMonth, toISODate } from "@/lib/datetime";
+import type { MonthKey } from "@/lib/datetime";
 import { pendingNetCents } from "@/utils/schedules";
 import { summarizeMonth } from "@/utils/stats";
 

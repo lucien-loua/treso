@@ -10,9 +10,10 @@ import { TextButton } from "@/components/ui/text-button";
 import { entryCategory, entryTitle, signedCents } from "@/data/entries";
 import { useTransactions } from "@/data/transactions-provider";
 import type { Schedule, Transaction } from "@/data/types";
+import { useI18n } from "@/i18n/context";
+import { advanceDue } from "@/lib/datetime";
 import { colors, spacing } from "@/theme";
 import { confirm } from "@/utils/alerts";
-import { advanceDue, formatShortDate } from "@/utils/dates";
 import { haptics } from "@/utils/haptics";
 import { dueStatus } from "@/utils/schedules";
 
@@ -34,30 +35,35 @@ const settle = (schedule: Schedule) => {
 const UpcomingRow = ({
   schedule,
   transactions,
-  currency,
 }: {
   schedule: Schedule;
   transactions: Transaction[];
-  currency: string;
 }) => {
   const { skip } = useTransactions();
+  const i18n = useI18n();
+  const { t, dates } = i18n;
+  const texts = t.overview.upcoming;
   const isIncome = schedule.type === "income";
-  const title = entryTitle(schedule);
-  const status = dueStatus(schedule, transactions);
-  const actionLabel = isIncome ? "Reçu" : "Payer";
+  const title = entryTitle(schedule, t);
+  const status = dueStatus(schedule, transactions, i18n);
+  const actionLabel = isIncome ? texts.received : texts.pay;
 
   const confirmSkip = () =>
     confirm({
-      confirmLabel: "Ignorer",
-      message: `Rien ne sera enregistré. Prochaine échéance : ${formatShortDate(advanceDue(schedule.nextDue, schedule.dayOfMonth))}.`,
+      cancelLabel: t.actions.cancel,
+      confirmLabel: t.actions.skip,
+      failureTitle: t.errors.actionFailed,
+      message: texts.skipMessage(
+        dates.shortDate(advanceDue(schedule.nextDue, schedule.dayOfMonth))
+      ),
       onConfirm: () => skip(schedule),
-      title: `Ignorer « ${title} » ce mois-ci ?`,
+      title: texts.skipTitle(title),
     });
 
   return (
     <Link href={`/schedule/${schedule.id}`} asChild>
       <Link.Trigger>
-        <ListRow accessibilityHint="Ouvre l’échéance pour la modifier">
+        <ListRow accessibilityHint={texts.openHint}>
           <CategoryIcon
             category={entryCategory(schedule)}
             iconId={schedule.icon}
@@ -69,14 +75,10 @@ const UpcomingRow = ({
             subtitleColor={toneColor[status.tone]}
           />
           <View style={{ alignItems: "flex-end", gap: spacing.sm }}>
-            <SignedAmount
-              cents={signedCents(schedule)}
-              currency={currency}
-              variant="subhead"
-            />
+            <SignedAmount cents={signedCents(schedule)} variant="subhead" />
             <PillButton
               label={actionLabel}
-              accessibilityLabel={`${actionLabel} : ${title}`}
+              accessibilityLabel={texts.action(actionLabel, title)}
               size="sm"
               color={isIncome ? colors.income : colors.tint}
               onPress={() => settle(schedule)}
@@ -89,10 +91,10 @@ const UpcomingRow = ({
           icon="checkmark.circle"
           onPress={() => settle(schedule)}
         >
-          {isIncome ? "Marquer comme reçu" : "Marquer comme payé"}
+          {isIncome ? texts.markReceived : texts.markPaid}
         </Link.MenuAction>
         <Link.MenuAction icon="forward" onPress={confirmSkip}>
-          Ignorer ce mois-ci
+          {texts.skip}
         </Link.MenuAction>
       </Link.Menu>
     </Link>
@@ -103,32 +105,29 @@ const UpcomingRow = ({
 export const Upcoming = ({
   schedules,
   transactions,
-  currency,
 }: {
   schedules: Schedule[];
   transactions: Transaction[];
-  currency: string;
-}) => (
-  <GroupedSection
-    title="À venir"
-    accessory={
-      <TextButton
-        label="Ajouter"
-        onPress={() => router.push("/schedule/new")}
-      />
-    }
-    footer="Touchez « Payer » ou « Reçu » quand c’est fait. Touchez la ligne pour changer la date ou le montant, appui long pour ignorer un mois."
-  >
-    <SeparatedList
-      data={schedules}
-      keyExtractor={(schedule) => schedule.id}
-      renderItem={(schedule) => (
-        <UpcomingRow
-          schedule={schedule}
-          transactions={transactions}
-          currency={currency}
+}) => {
+  const { t } = useI18n();
+  return (
+    <GroupedSection
+      title={t.overview.upcoming.title}
+      accessory={
+        <TextButton
+          label={t.actions.add}
+          onPress={() => router.push("/schedule/new")}
         />
-      )}
-    />
-  </GroupedSection>
-);
+      }
+      footer={t.overview.upcoming.footer}
+    >
+      <SeparatedList
+        data={schedules}
+        keyExtractor={(schedule) => schedule.id}
+        renderItem={(schedule) => (
+          <UpcomingRow schedule={schedule} transactions={transactions} />
+        )}
+      />
+    </GroupedSection>
+  );
+};

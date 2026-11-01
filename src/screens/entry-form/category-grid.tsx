@@ -4,6 +4,7 @@ import { CategoryIcon } from "@/components/category-icon";
 import { ThemedText } from "@/components/ui/themed-text";
 import { categoriesFor } from "@/data/catalog/categories";
 import type { TransactionType } from "@/data/types";
+import { useI18n } from "@/i18n/context";
 import { colors, radius, spacing } from "@/theme";
 import { haptics } from "@/utils/haptics";
 
@@ -15,56 +16,61 @@ export const CategoryGrid = ({
   type: TransactionType;
   selectedId: string;
   onSelect: (id: string) => void;
-}) => (
-  <View
-    accessibilityRole="radiogroup"
-    style={{ flexDirection: "row", flexWrap: "wrap", padding: spacing.sm }}
-  >
-    {categoriesFor(type).map((category) => {
-      const selected = category.id === selectedId;
-      return (
-        <Pressable
-          key={category.id}
-          accessibilityRole="radio"
-          accessibilityLabel={category.label}
-          accessibilityState={{ selected }}
-          onPress={() => {
-            haptics.selection();
-            onSelect(category.id);
-          }}
-          style={({ pressed }) => ({
-            alignItems: "center",
-            backgroundColor: selected ? colors.fill : "transparent",
-            borderCurve: "continuous",
-            borderRadius: radius.md,
-            gap: spacing.xs,
-            opacity: pressed ? 0.6 : 1,
-            paddingVertical: spacing.sm,
-            width: "25%",
-          })}
-        >
-          <View
-            style={{
-              borderColor: selected ? colors.tint : "transparent",
-              borderCurve: "continuous",
-              borderRadius: radius.md + 2,
-              borderWidth: 2,
-              padding: spacing.xxs,
+}) => {
+  const { t } = useI18n();
+  return (
+    <View
+      accessibilityRole="radiogroup"
+      style={{ flexDirection: "row", flexWrap: "wrap", padding: spacing.sm }}
+    >
+      {categoriesFor(type).map((category) => {
+        const selected = category.id === selectedId;
+        return (
+          <Pressable
+            key={category.id}
+            accessibilityRole="radio"
+            accessibilityLabel={t.categories[category.id]}
+            accessibilityState={{ selected }}
+            onPress={() => {
+              haptics.selection();
+              onSelect(category.id);
             }}
+            style={({ pressed }) => ({
+              alignItems: "center",
+              backgroundColor: selected ? colors.fill : "transparent",
+              borderCurve: "continuous",
+              borderRadius: radius.md,
+              gap: spacing.xs,
+              opacity: pressed ? 0.6 : 1,
+              paddingVertical: spacing.sm,
+              width: "25%",
+            })}
           >
-            <CategoryIcon category={category} size={40} />
-          </View>
-          <ThemedText
-            variant="caption"
-            numberOfLines={1}
-            style={
-              selected ? { color: colors.label, fontWeight: "600" } : undefined
-            }
-          >
-            {category.label}
-          </ThemedText>
-        </Pressable>
-      );
-    })}
-  </View>
-);
+            <View
+              style={{
+                borderColor: selected ? colors.tint : "transparent",
+                borderCurve: "continuous",
+                borderRadius: radius.md + 2,
+                borderWidth: 2,
+                padding: spacing.xxs,
+              }}
+            >
+              <CategoryIcon category={category} size={40} />
+            </View>
+            <ThemedText
+              variant="caption"
+              numberOfLines={1}
+              style={
+                selected
+                  ? { color: colors.label, fontWeight: "600" }
+                  : undefined
+              }
+            >
+              {t.categories[category.id]}
+            </ThemedText>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+};

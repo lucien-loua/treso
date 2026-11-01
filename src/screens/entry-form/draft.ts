@@ -1,8 +1,9 @@
 import { defaultCategoryId } from "@/data/catalog/categories";
+import type { IconKeywords } from "@/data/catalog/icon-suggestions";
 import { suggestIcon } from "@/data/catalog/icon-suggestions";
 import type { TransactionType } from "@/data/types";
-import { nextDueFrom, parseISODate, toISODate } from "@/utils/dates";
-import { centsToInput } from "@/utils/money";
+import type { Currency } from "@/lib/currency";
+import { nextDueFrom, parseISODate, toISODate } from "@/lib/datetime";
 
 /** Everything the form edits. `date` matters for a transaction, `dayOfMonth` and `nextDue` for a schedule. */
 export interface EntryDraft {
@@ -23,7 +24,7 @@ export interface FormValues {
   amountText: string;
   categoryId: string;
   note: string;
-  /** `null` = automatic: the icon follows the name (« Taxi » → car), else the category. */
+  /** `null` = automatic: the icon follows the name ("Taxi" → car), else the category. */
   iconId: string | null;
   /** `null` = the category's color. */
   colorId: string | null;
@@ -32,9 +33,6 @@ export interface FormValues {
   /** A schedule's next due date: follows the day, but can be set by hand (e.g. this month's rent isn't paid yet). */
   nextDue: Date;
 }
-
-export const SCHEDULE_FOOTER =
-  "Treso vous la rappelle chaque mois dans « À venir ». Quand c’est payé (ou reçu), touchez le bouton : le montant et la date peuvent varier.";
 
 export const toTransactionInput = ({
   dayOfMonth: _day,
@@ -45,13 +43,14 @@ export const toTransactionInput = ({
 export const toScheduleInput = ({ date: _date, ...draft }: EntryDraft) => draft;
 
 export const initialValues = (
-  initial: Partial<EntryDraft> = {}
+  initial: Partial<EntryDraft>,
+  money: Currency
 ): FormValues => {
   const today = new Date();
   const type = initial.type ?? "expense";
   const dayOfMonth = initial.dayOfMonth ?? today.getDate();
   return {
-    amountText: initial.amountCents ? centsToInput(initial.amountCents) : "",
+    amountText: initial.amountCents ? money.toInput(initial.amountCents) : "",
     categoryId: initial.categoryId ?? defaultCategoryId[type],
     colorId: initial.color ?? null,
     date: initial.date ? parseISODate(initial.date) : today,
@@ -63,30 +62,42 @@ export const initialValues = (
   };
 };
 
+/** `keywords`: the words of the app's language that pick the automatic icon. */
 export const toDraft = (
   values: FormValues,
-  amountCents: number
+  amountCents: number,
+  keywords: IconKeywords
 ): EntryDraft => ({
   amountCents,
   categoryId: values.categoryId,
   color: values.colorId,
   date: toISODate(values.date),
   dayOfMonth: values.dayOfMonth,
-  icon: values.iconId ?? suggestIcon(values.note),
+  icon: values.iconId ?? suggestIcon(values.note, keywords),
   nextDue: toISODate(values.nextDue),
   note: values.note.trim(),
   type: values.type,
 });
 
-/** Keeps digits and, when the currency has cents, one decimal comma with at most `decimals` digits. */
-export const sanitizeAmount = (text: string, decimals: number) => {
-  const [whole, ...fraction] = text
-    .replaceAll(/[^\d.,]/gu, "")
-    .replaceAll(".", ",")
-    .split(",");
-  const integer = whole.slice(0, 12);
-  if (decimals === 0 || fraction.length === 0) {
+const NOT_A_FIGURE = /[^\d.,]/gu;
+const SEPARATORS = /[.,]/gu;
+/** Up to hundreds of billions: enough for francs, short of float rounding. */
+const MAX_WHOLE_DIGITS = 12;
+
+/**
+ * Keeps digits and, when the currency has cents, one decimal separator (the locale's, whichever
+ * the keyboard typed) with at most the currency's decimals. Without cents, separators are
+ * thousands: "25,000" stays twenty-five thousand.
+ */
+export const sanitizeAmount = (text: string, money: Currency) => {
+  const figure = text.replaceAll(NOT_A_FIGURE, "");
+  if (money.decimals === 0) {
+    return figure.replaceAll(SEPARATORS, "").slice(0, MAX_WHOLE_DIGITS);
+  }
+  const [whole, ...fraction] = figure.split(SEPARATORS);
+  const integer = whole.slice(0, MAX_WHOLE_DIGITS);
+  if (fraction.length === 0) {
     return integer;
   }
-  return `${integer || "0"},${fraction.join("").slice(0, decimals)}`;
+  return `${integer || "0"}${money.decimalSeparator}${fraction.join("").slice(0, money.decimals)}`;
 };

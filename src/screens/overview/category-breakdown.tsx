@@ -8,49 +8,50 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { rowInset } from "@/components/ui/row-inset";
 import { ThemedText } from "@/components/ui/themed-text";
 import { getCategory } from "@/data/catalog/categories";
+import { useI18n } from "@/i18n/context";
 import { categoryColors, radius, spacing } from "@/theme";
 import type { CategoryTotal } from "@/utils/stats";
 
 const ICON_SIZE = 32;
 
-const percent = (share: number) => `${Math.round(share * 100)} %`;
-
 /** All categories in one capsule, each segment sized by its share of the month's spending. */
-const ShareBar = ({ totals }: { totals: CategoryTotal[] }) => (
-  <View
-    accessible
-    accessibilityLabel={totals
-      .map((t) => `${getCategory(t.categoryId).label} ${percent(t.share)}`)
-      .join(", ")}
-    style={{
-      borderRadius: radius.full,
-      flexDirection: "row",
-      gap: spacing.xxs,
-      height: 12,
-      margin: spacing.md,
-      marginBottom: spacing.sm,
-      overflow: "hidden",
-    }}
-  >
-    {totals.map((t) => (
-      <View
-        key={t.categoryId}
-        style={{
-          backgroundColor: categoryColors[getCategory(t.categoryId).color],
-          flex: t.share,
-        }}
-      />
-    ))}
-  </View>
-);
+const ShareBar = ({ totals }: { totals: CategoryTotal[] }) => {
+  const { t, percent } = useI18n();
+  return (
+    <View
+      accessible
+      accessibilityLabel={totals
+        .map(
+          (total) =>
+            `${t.categories[getCategory(total.categoryId).id]} ${percent(total.share)}`
+        )
+        .join(", ")}
+      style={{
+        borderRadius: radius.full,
+        flexDirection: "row",
+        gap: spacing.xxs,
+        height: 12,
+        margin: spacing.md,
+        marginBottom: spacing.sm,
+        overflow: "hidden",
+      }}
+    >
+      {totals.map((total) => (
+        <View
+          key={total.categoryId}
+          style={{
+            backgroundColor:
+              categoryColors[getCategory(total.categoryId).color],
+            flex: total.share,
+          }}
+        />
+      ))}
+    </View>
+  );
+};
 
-const CategoryShareRow = ({
-  total,
-  currency,
-}: {
-  total: CategoryTotal;
-  currency: string;
-}) => {
+const CategoryShareRow = ({ total }: { total: CategoryTotal }) => {
+  const { t, percent } = useI18n();
   const category = getCategory(total.categoryId);
   return (
     <ListRow>
@@ -64,7 +65,7 @@ const CategoryShareRow = ({
           }}
         >
           <ThemedText variant="body" numberOfLines={1} style={{ flex: 1 }}>
-            {category.label}
+            {t.categories[category.id]}
           </ThemedText>
           <ThemedText
             variant="footnote"
@@ -72,11 +73,7 @@ const CategoryShareRow = ({
           >
             {percent(total.share)}
           </ThemedText>
-          <AmountText
-            cents={total.totalCents}
-            currency={currency}
-            style={{ fontWeight: "600" }}
-          />
+          <AmountText cents={total.totalCents} style={{ fontWeight: "600" }} />
         </View>
         <ProgressBar
           value={total.share}
@@ -89,30 +86,25 @@ const CategoryShareRow = ({
 };
 
 /** The month's spending: the share bar, then one row per category. */
-export const CategoryBreakdown = ({
-  totals,
-  currency,
-}: {
-  totals: CategoryTotal[];
-  currency: string;
-}) => (
-  <GroupedSection title="Dépenses par catégorie">
-    {totals.length === 0 ? (
-      <ThemedText variant="subhead" style={{ padding: spacing.md }}>
-        Aucune dépense ce mois-ci.
-      </ThemedText>
-    ) : (
-      <>
-        <ShareBar totals={totals} />
-        <SeparatedList
-          data={totals}
-          keyExtractor={(total) => total.categoryId}
-          inset={rowInset(ICON_SIZE)}
-          renderItem={(total) => (
-            <CategoryShareRow total={total} currency={currency} />
-          )}
-        />
-      </>
-    )}
-  </GroupedSection>
-);
+export const CategoryBreakdown = ({ totals }: { totals: CategoryTotal[] }) => {
+  const { t } = useI18n();
+  return (
+    <GroupedSection title={t.overview.byCategory.title}>
+      {totals.length === 0 ? (
+        <ThemedText variant="subhead" style={{ padding: spacing.md }}>
+          {t.overview.byCategory.none}
+        </ThemedText>
+      ) : (
+        <>
+          <ShareBar totals={totals} />
+          <SeparatedList
+            data={totals}
+            keyExtractor={(total) => total.categoryId}
+            inset={rowInset(ICON_SIZE)}
+            renderItem={(total) => <CategoryShareRow total={total} />}
+          />
+        </>
+      )}
+    </GroupedSection>
+  );
+};

@@ -1,9 +1,13 @@
-import { toISODate } from "@/utils/dates";
+import type { Messages } from "@/i18n/messages/fr";
+import { toISODate } from "@/lib/datetime";
 
 import type { TransactionInput } from "./types";
 
-type Template = Omit<TransactionInput, "date" | "icon" | "color"> & {
+type SampleName = keyof Messages["samples"]["names"];
+
+type Template = Omit<TransactionInput, "date" | "icon" | "color" | "note"> & {
   day: number;
+  name: SampleName;
 };
 
 // One typical month, replayed over the current month and the two before it.
@@ -12,105 +16,105 @@ const month: Template[] = [
     amountCents: 245_000,
     categoryId: "salary",
     day: 1,
-    note: "Salaire",
+    name: "salary",
     type: "income",
   },
   {
     amountCents: 75_000,
     categoryId: "housing",
     day: 2,
-    note: "Loyer",
+    name: "rent",
     type: "expense",
   },
   {
     amountCents: 6420,
     categoryId: "groceries",
     day: 3,
-    note: "Supermarché",
+    name: "supermarket",
     type: "expense",
   },
   {
     amountCents: 1599,
     categoryId: "subscriptions",
     day: 5,
-    note: "Musique",
+    name: "music",
     type: "expense",
   },
   {
     amountCents: 3200,
     categoryId: "restaurants",
     day: 6,
-    note: "Dîner entre amis",
+    name: "dinner",
     type: "expense",
   },
   {
     amountCents: 7500,
     categoryId: "transport",
     day: 8,
-    note: "Pass transport",
+    name: "transportPass",
     type: "expense",
   },
   {
     amountCents: 8990,
     categoryId: "bills",
     day: 10,
-    note: "Électricité",
+    name: "electricity",
     type: "expense",
   },
   {
     amountCents: 4875,
     categoryId: "groceries",
     day: 12,
-    note: "Marché",
+    name: "market",
     type: "expense",
   },
   {
     amountCents: 40_000,
     categoryId: "freelance",
     day: 14,
-    note: "Mission design",
+    name: "freelance",
     type: "income",
   },
   {
     amountCents: 5990,
     categoryId: "shopping",
     day: 15,
-    note: "Chaussures",
+    name: "shoes",
     type: "expense",
   },
   {
     amountCents: 2500,
     categoryId: "health",
     day: 17,
-    note: "Pharmacie",
+    name: "pharmacy",
     type: "expense",
   },
   {
     amountCents: 1850,
     categoryId: "leisure",
     day: 19,
-    note: "Cinéma",
+    name: "cinema",
     type: "expense",
   },
   {
     amountCents: 5730,
     categoryId: "groceries",
     day: 21,
-    note: "Supermarché",
+    name: "supermarket",
     type: "expense",
   },
   {
     amountCents: 2990,
     categoryId: "bills",
     day: 24,
-    note: "Internet",
+    name: "internet",
     type: "expense",
   },
   {
     amountCents: 1450,
     categoryId: "restaurants",
     day: 26,
-    note: "Déjeuner",
+    name: "lunch",
     type: "expense",
   },
 ];
@@ -122,8 +126,10 @@ const scale: Record<string, { factor: number; roundTo: number }> = {
   XOF: { factor: 600, roundTo: 10_000 },
 };
 
+/** Three months of transactions in `currency`, named in the app's language (`names`). */
 export const buildSampleTransactions = (
   currency: string,
+  names: Messages["samples"]["names"],
   today = new Date()
 ): TransactionInput[] => {
   const { factor, roundTo } = scale[currency] ?? scale.USD;
@@ -131,7 +137,7 @@ export const buildSampleTransactions = (
   for (let offset = 2; offset >= 0; offset -= 1) {
     const year = today.getFullYear();
     const monthIndex = today.getMonth() - offset;
-    for (const { day, ...rest } of month) {
+    for (const { day, name, ...rest } of month) {
       const date = new Date(year, monthIndex, day);
       if (date > today) {
         continue;
@@ -151,6 +157,7 @@ export const buildSampleTransactions = (
         color: null,
         date: toISODate(date),
         icon: null,
+        note: names[name],
       });
     }
   }

@@ -1,7 +1,7 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 
 import type { Transaction, TransactionInput } from "@/data/types";
-import { advanceDue } from "@/utils/dates";
+import { advanceDue } from "@/lib/datetime";
 
 import type { TransactionRow } from "./rows";
 import { transactionFromRow } from "./rows";

@@ -1,4 +1,4 @@
-import { router, Stack, useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import type { NativeStackNavigationProp } from "expo-router/native-stack";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentRef, ReactNode } from "react";
@@ -12,12 +12,12 @@ import {
   defaultCategoryId,
   getCategory,
 } from "@/data/catalog/categories";
-import { useCurrency } from "@/data/settings";
 import type { TransactionType } from "@/data/types";
+import { useMoney } from "@/hooks/use-money";
+import { useI18n } from "@/i18n/context";
+import { dateInMonth, monthKeyOf, parseISODate } from "@/lib/datetime";
 import { colors, spacing } from "@/theme";
-import { dateInMonth, monthKeyOf, parseISODate } from "@/utils/dates";
 import { haptics } from "@/utils/haptics";
-import { currencyDecimals, parseAmount } from "@/utils/money";
 
 import { AmountHeader } from "./amount-header";
 import { CategoryGrid } from "./category-grid";
@@ -25,9 +25,10 @@ import { DateField } from "./date-field";
 import { DayField } from "./day-field";
 import { initialValues, sanitizeAmount, toDraft } from "./draft";
 import type { EntryDraft, FormValues } from "./draft";
+import { FormHeader } from "./form-header";
 import { NameRow } from "./name-row";
 
-export { SCHEDULE_FOOTER, toScheduleInput, toTransactionInput } from "./draft";
+export { toScheduleInput, toTransactionInput } from "./draft";
 export type { EntryDraft } from "./draft";
 
 const Row = ({ label, children }: { label: string; children: ReactNode }) => (
@@ -75,34 +76,6 @@ const DeleteButton = ({
   </GroupedSection>
 );
 
-const Header = ({
-  title,
-  submitLabel,
-  canSave,
-  onSave,
-}: {
-  title: string;
-  submitLabel: string;
-  canSave: boolean;
-  onSave: () => void;
-}) => (
-  <>
-    <Stack.Screen.Title>{title}</Stack.Screen.Title>
-    {process.env.EXPO_OS === "ios" ? (
-      <Stack.Toolbar placement="left">
-        <Stack.Toolbar.Button onPress={() => router.back()}>
-          Annuler
-        </Stack.Toolbar.Button>
-      </Stack.Toolbar>
-    ) : null}
-    <Stack.Toolbar placement="right">
-      <Stack.Toolbar.Button variant="done" disabled={!canSave} onPress={onSave}>
-        {submitLabel}
-      </Stack.Toolbar.Button>
-    </Stack.Toolbar>
-  </>
-);
-
 /** Focuses `input` once the sheet has settled; focusing mid-animation scrolls the content under the header. */
 const useFocusAfterTransition = (
   enabled: boolean,
@@ -133,8 +106,8 @@ export const EntryForm = ({
   footer,
   onSubmit,
   onDelete,
-  deleteLabel = "Supprimer",
-  deleteMessage = "Cette action est définitive.",
+  deleteLabel,
+  deleteMessage,
 }: {
   /** A transaction has a date; a schedule has a day of the month. */
   kind: "transaction" | "schedule";
@@ -152,16 +125,18 @@ export const EntryForm = ({
   deleteLabel?: string;
   deleteMessage?: string;
 }) => {
-  const [currency] = useCurrency();
-  const [values, setValues] = useState(() => initialValues(initial));
+  const { t } = useI18n();
+  const money = useMoney();
+  const [values, setValues] = useState(() =>
+    initialValues(initial ?? {}, money)
+  );
   const [busy, setBusy] = useState(false);
   const amountInput = useRef<ComponentRef<typeof TextInput>>(null);
   useFocusAfterTransition(focusAmount, amountInput);
 
   const update = (patch: Partial<FormValues>) =>
     setValues((previous) => ({ ...previous, ...patch }));
-  const decimals = currencyDecimals(currency);
-  const amountCents = parseAmount(values.amountText, decimals);
+  const amountCents = money.parse(values.amountText);
   const category = getCategory(values.categoryId, values.type);
   const isIncome = values.type === "income";
 
@@ -181,13 +156,13 @@ export const EntryForm = ({
     }
     setBusy(true);
     try {
-      await onSubmit(toDraft(values, amountCents));
+      await onSubmit(toDraft(values, amountCents, t.iconKeywords));
       haptics.success();
       router.back();
     } catch (error) {
       // Keep the sheet open with the draft intact so nothing typed is lost.
       setBusy(false);
-      Alert.alert("Enregistrement impossible", String(error));
+      Alert.alert(t.errors.saveFailed, String(error));
     }
   };
 
@@ -198,20 +173,24 @@ export const EntryForm = ({
       router.back();
     } catch (error) {
       setBusy(false);
-      Alert.alert("Suppression impossible", String(error));
+      Alert.alert(t.errors.deleteFailed, String(error));
     }
   };
 
   const confirmDelete = (deleteEntry: () => Promise<void>) => {
     haptics.warning();
-    Alert.alert(`${deleteLabel} ?`, deleteMessage, [
-      { style: "cancel", text: "Annuler" },
-      {
-        onPress: () => remove(deleteEntry),
-        style: "destructive",
-        text: "Supprimer",
-      },
-    ]);
+    Alert.alert(
+      t.form.deleteConfirm(deleteLabel ?? t.actions.delete),
+      deleteMessage ?? t.form.irreversible,
+      [
+        { style: "cancel", text: t.actions.cancel },
+        {
+          onPress: () => remove(deleteEntry),
+          style: "destructive",
+          text: t.actions.delete,
+        },
+      ]
+    );
   };
 
   return (
@@ -231,23 +210,18 @@ export const EntryForm = ({
           inputRef={amountInput}
           amountText={values.amountText}
           onAmountChange={(text) =>
-            update({ amountText: sanitizeAmount(text, decimals) })
+            update({ amountText: sanitizeAmount(text, money) })
           }
-          decimals={decimals}
-          currency={currency}
+          money={money}
           kind={values.type}
           onKindChange={changeType}
           intro={intro}
-          hint={
-            kind === "schedule"
-              ? "Montant habituel : vous pourrez l’ajuster au moment de payer."
-              : undefined
-          }
+          hint={kind === "schedule" ? t.form.usualAmount : undefined}
           showKindPicker={!essentialsOnly}
         />
 
         {essentialsOnly ? null : (
-          <GroupedSection title="Catégorie">
+          <GroupedSection title={t.form.category}>
             <CategoryGrid
               type={values.type}
               selectedId={values.categoryId}
@@ -256,7 +230,7 @@ export const EntryForm = ({
           </GroupedSection>
         )}
 
-        <GroupedSection title="Détails" footer={footer}>
+        <GroupedSection title={t.form.details} footer={footer}>
           <NameRow
             category={category}
             note={values.note}
@@ -268,7 +242,7 @@ export const EntryForm = ({
           />
           <RowSeparator />
           {kind === "transaction" ? (
-            <Row label="Date">
+            <Row label={t.form.date}>
               <DateField
                 value={values.date}
                 onChange={(date) => update({ date })}
@@ -276,7 +250,7 @@ export const EntryForm = ({
             </Row>
           ) : (
             <>
-              <Row label={isIncome ? "Attendu vers le" : "À payer avant le"}>
+              <Row label={isIncome ? t.form.expectedAround : t.form.payBefore}>
                 <DayField
                   value={values.dayOfMonth}
                   onChange={(day) =>
@@ -290,9 +264,7 @@ export const EntryForm = ({
                 />
               </Row>
               <RowSeparator />
-              <Row
-                label={isIncome ? "Prochain versement" : "Prochaine échéance"}
-              >
+              <Row label={isIncome ? t.form.nextIncome : t.form.nextDue}>
                 <DateField
                   value={values.nextDue}
                   onChange={(nextDue) => update({ nextDue })}
@@ -304,14 +276,14 @@ export const EntryForm = ({
 
         {onDelete ? (
           <DeleteButton
-            label={deleteLabel}
+            label={deleteLabel ?? t.actions.delete}
             disabled={busy}
             onPress={() => confirmDelete(onDelete)}
           />
         ) : null}
       </ScrollView>
 
-      <Header
+      <FormHeader
         title={title}
         submitLabel={submitLabel}
         canSave={amountCents !== null && !busy}

@@ -2,6 +2,12 @@ import { Color } from "expo-router";
 import type { ColorValue } from "react-native";
 import { DynamicColorIOS, Platform } from "react-native";
 
+/** Indigo adapted for dark mode. `DynamicColorIOS` throws on Android, so it is only built on iOS. */
+const brandTintIOS = (): ColorValue =>
+  process.env.EXPO_OS === "ios"
+    ? DynamicColorIOS({ dark: "#7D7AFF", light: "#5856D6" })
+    : "#5856D6";
+
 const semantic = (
   ios: ColorValue,
   android: ColorValue,
@@ -21,6 +27,12 @@ export const colors = {
     Color.android.dynamic.onSurface,
     "#000000"
   ),
+  /** Floating action button (Android): Material You's primary container. */
+  fab: semantic(
+    brandTintIOS(),
+    Color.android.dynamic.primaryContainer,
+    "#5856D6"
+  ),
   fill: semantic(
     Color.ios.tertiarySystemFill,
     Color.android.dynamic.surfaceContainerHighest,
@@ -28,6 +40,11 @@ export const colors = {
   ),
   income: semantic(Color.ios.systemGreen, "#2E9D52", "#34C759"),
   label: semantic(Color.ios.label, Color.android.dynamic.onSurface, "#000000"),
+  onFab: semantic(
+    "#ffffff",
+    Color.android.dynamic.onPrimaryContainer,
+    "#ffffff"
+  ),
   onTint: "#ffffff",
   secondaryLabel: semantic(
     Color.ios.secondaryLabel,
@@ -50,11 +67,7 @@ export const colors = {
     "#3c3c434d"
   ),
   // Treso brand accent: indigo, adapted for dark mode on iOS, Material You on Android.
-  tint: semantic(
-    DynamicColorIOS({ dark: "#7D7AFF", light: "#5856D6" }),
-    Color.android.dynamic.primary,
-    "#5856D6"
-  ),
+  tint: semantic(brandTintIOS(), Color.android.dynamic.primary, "#5856D6"),
   warning: semantic(Color.ios.systemOrange, "#E8890C", "#FF9500"),
 };
 

@@ -1,5 +1,6 @@
 import { getCategory } from "@/data/catalog/categories";
 import type { TransactionType } from "@/data/types";
+import type { Messages } from "@/i18n/messages/fr";
 
 /** What transactions and schedules have in common, for naming and signing them the same way. */
 interface Entry {
@@ -21,7 +22,8 @@ export const entryCategory = ({
   type,
 }: Pick<Entry, "categoryId" | "type">) => getCategory(categoryId, type);
 
-/** The name the user gave, or the category's label when they left it empty. */
+/** The name the user gave, or the category's name when they left it empty. */
 export const entryTitle = (
-  entry: Pick<Entry, "categoryId" | "type" | "note">
-) => entry.note || entryCategory(entry).label;
+  entry: Pick<Entry, "categoryId" | "type" | "note">,
+  t: Messages
+) => entry.note || t.categories[entryCategory(entry).id];

@@ -12,24 +12,26 @@ export const runOrAlert = async (
   }
 };
 
-/** Native "Annuler / <confirmLabel>" alert. `onConfirm` failures are reported with `failureTitle`. */
+/** Native "<cancelLabel> / <confirmLabel>" alert. `onConfirm` failures are reported with `failureTitle`. */
 export const confirm = ({
   title,
   message,
   confirmLabel,
+  cancelLabel,
   destructive = false,
   onConfirm,
-  failureTitle = "Action impossible",
+  failureTitle,
 }: {
   title: string;
   message?: string;
   confirmLabel: string;
+  cancelLabel: string;
   destructive?: boolean;
   onConfirm: () => Promise<void> | void;
-  failureTitle?: string;
+  failureTitle: string;
 }) =>
   Alert.alert(title, message, [
-    { style: "cancel", text: "Annuler" },
+    { style: "cancel", text: cancelLabel },
     {
       onPress: () => runOrAlert(async () => await onConfirm(), failureTitle),
       style: destructive ? "destructive" : "default",

@@ -1,88 +1,96 @@
 import type { Href } from "expo-router";
 
+import type { CategoryId } from "@/data/catalog/categories";
 import type { Schedule, Transaction } from "@/data/types";
+import type { Messages } from "@/i18n/messages/fr";
 
 interface Step {
   key: string;
-  categoryId: string;
+  categoryId: CategoryId;
   title: string;
   hint: string;
   done: boolean;
   href: Href;
 }
 
+/** The first things to set up, named in the app's language; the forms open prefilled. */
 export const getStartedSteps = (
   schedules: Schedule[],
-  transactions: Transaction[]
+  transactions: Transaction[],
+  t: Messages
 ): Step[] => {
-  const hasSchedule = (categoryId: string) =>
+  const texts = t.overview.getStarted;
+  const hasSchedule = (categoryId: CategoryId) =>
     schedules.some((s) => s.categoryId === categoryId);
   return [
     {
       categoryId: "salary",
       done: hasSchedule("salary"),
-      hint: "Vers le 26 du mois, par exemple. Treso vous le rappelle.",
+      hint: texts.salary.hint,
       href: {
         params: {
           categoryId: "salary",
           day: "26",
-          note: "Salaire",
+          note: texts.salary.defaultName,
           type: "income",
         },
         pathname: "/schedule/new",
       },
       key: "salary",
-      title: "Votre salaire",
+      title: texts.salary.title,
     },
     {
       categoryId: "housing",
       done: hasSchedule("housing"),
-      hint: "À payer avant le 5, en avance ou le jour même.",
+      hint: texts.rent.hint,
       href: {
         params: {
           categoryId: "housing",
           day: "5",
-          note: "Loyer",
+          note: texts.rent.defaultName,
           type: "expense",
         },
         pathname: "/schedule/new",
       },
       key: "rent",
-      title: "Votre loyer",
+      title: texts.rent.title,
     },
     {
       categoryId: "bills",
       done: hasSchedule("bills"),
-      hint: "Eau, électricité, wifi… une échéance par facture.",
+      hint: texts.bills.hint,
       href: {
         params: {
           categoryId: "bills",
           day: "3",
-          note: "Électricité",
+          note: texts.bills.defaultName,
           type: "expense",
         },
         pathname: "/schedule/new",
       },
       key: "bills",
-      title: "Vos factures",
+      title: texts.bills.title,
     },
     {
       categoryId: "transport",
       done: transactions.some(
-        (t) => t.type === "expense" && t.scheduleId === null
+        (transaction) =>
+          transaction.type === "expense" && transaction.scheduleId === null
       ),
-      hint: "Transport, repas… notée en quelques secondes.",
+      hint: texts.daily.hint,
       href: {
         params: { categoryId: "transport" },
         pathname: "/transaction/new",
       },
       key: "daily",
-      title: "Une dépense du jour",
+      title: texts.daily.title,
     },
   ];
 };
 
+/** Done once there's a salary, a rent, a bill and a day-to-day expense; texts don't matter here. */
 export const isGetStartedComplete = (
   schedules: Schedule[],
-  transactions: Transaction[]
-) => getStartedSteps(schedules, transactions).every((step) => step.done);
+  transactions: Transaction[],
+  t: Messages
+) => getStartedSteps(schedules, transactions, t).every((step) => step.done);

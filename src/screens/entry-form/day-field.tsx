@@ -1,6 +1,6 @@
 import { Host, Picker } from "@expo/ui";
 
-import { formatDayOfMonth } from "@/utils/dates";
+import { useI18n } from "@/i18n/context";
 
 const days = Array.from({ length: 31 }, (_, index) => index + 1);
 
@@ -11,12 +11,15 @@ export const DayField = ({
 }: {
   value: number;
   onChange: (day: number) => void;
-}) => (
-  <Host matchContents>
-    <Picker selectedValue={value} onValueChange={onChange}>
-      {days.map((day) => (
-        <Picker.Item key={day} label={formatDayOfMonth(day)} value={day} />
-      ))}
-    </Picker>
-  </Host>
-);
+}) => {
+  const { t } = useI18n();
+  return (
+    <Host matchContents>
+      <Picker selectedValue={value} onValueChange={onChange}>
+        {days.map((day) => (
+          <Picker.Item key={day} label={t.dayOfMonth(day)} value={day} />
+        ))}
+      </Picker>
+    </Host>
+  );
+};

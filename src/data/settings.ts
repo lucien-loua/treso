@@ -1,14 +1,6 @@
 import "expo-sqlite/localStorage/install";
 import { useSyncExternalStore } from "react";
 
-export const currencies = [
-  { code: "XOF", label: "Franc CFA (F CFA)" },
-  { code: "GNF", label: "Franc guinéen (GNF)" },
-  { code: "USD", label: "Dollar US ($US)" },
-] as const;
-
-const DEFAULT_CURRENCY = "XOF";
-
 const CURRENCY_KEY = "treso.currency";
 const BUDGET_KEY = "treso.monthlyBudgetCents";
 
@@ -33,10 +25,7 @@ const write = (key: string, value: string | null) => {
 };
 
 // Snapshots are primitives so `useSyncExternalStore` sees stable values between renders.
-const readCurrency = (): string => {
-  const stored = localStorage.getItem(CURRENCY_KEY);
-  return currencies.find((c) => c.code === stored)?.code ?? DEFAULT_CURRENCY;
-};
+const readCurrencyCode = () => localStorage.getItem(CURRENCY_KEY);
 
 const readBudget = (): number | null => {
   const raw = localStorage.getItem(BUDGET_KEY);
@@ -47,9 +36,14 @@ const readBudget = (): number | null => {
   return Number.isFinite(cents) && cents > 0 ? cents : null;
 };
 
-export const useCurrency = (): [string, (code: string) => void] => {
-  const currency = useSyncExternalStore(subscribe, readCurrency, readCurrency);
-  return [currency, (code) => write(CURRENCY_KEY, code)];
+/** The ISO code chosen in Settings, `null` before any choice. Screens use `useMoney()`. */
+export const useCurrencyCode = (): [string | null, (code: string) => void] => {
+  const code = useSyncExternalStore(
+    subscribe,
+    readCurrencyCode,
+    readCurrencyCode
+  );
+  return [code, (next) => write(CURRENCY_KEY, next)];
 };
 
 const GET_STARTED_HIDDEN_KEY = "treso.getStartedHidden";
@@ -57,7 +51,7 @@ const GET_STARTED_HIDDEN_KEY = "treso.getStartedHidden";
 const readGetStartedHidden = () =>
   localStorage.getItem(GET_STARTED_HIDDEN_KEY) === "1";
 
-/** Whether the user dismissed the « Bien démarrer » checklist. */
+/** Whether the user dismissed the get-started checklist. */
 export const useGetStartedHidden = (): [boolean, (hidden: boolean) => void] => {
   const hidden = useSyncExternalStore(
     subscribe,

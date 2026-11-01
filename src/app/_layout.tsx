@@ -4,6 +4,7 @@ import { useColorScheme } from "react-native";
 
 import { DATABASE_NAME, migrate } from "@/data/db";
 import { TransactionsProvider } from "@/data/transactions-provider";
+import { I18nProvider } from "@/i18n/provider";
 import { colors } from "@/theme";
 
 // Opaque header so form content starts below it: with a translucent header, ScrollView's
@@ -15,26 +16,31 @@ const sheetOptions = {
   presentation: "modal",
 } as const;
 
+/** Sheets opened from a link (notification, shared URL) still get the tabs underneath to go back to. */
+export const unstable_settings = { anchor: "(tabs)" };
+
 const RootLayout = () => {
   const colorScheme = useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrate}>
-        <TransactionsProvider>
-          <Stack
-            screenOptions={{
-              contentStyle: { backgroundColor: colors.background },
-            }}
-          >
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="transaction/new" options={sheetOptions} />
-            <Stack.Screen name="transaction/[id]" options={sheetOptions} />
-            <Stack.Screen name="schedule/new" options={sheetOptions} />
-            <Stack.Screen name="schedule/[id]" options={sheetOptions} />
-          </Stack>
-        </TransactionsProvider>
-      </SQLiteProvider>
+      <I18nProvider>
+        <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrate}>
+          <TransactionsProvider>
+            <Stack
+              screenOptions={{
+                contentStyle: { backgroundColor: colors.background },
+              }}
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="transaction/new" options={sheetOptions} />
+              <Stack.Screen name="transaction/[id]" options={sheetOptions} />
+              <Stack.Screen name="schedule/new" options={sheetOptions} />
+              <Stack.Screen name="schedule/[id]" options={sheetOptions} />
+            </Stack>
+          </TransactionsProvider>
+        </SQLiteProvider>
+      </I18nProvider>
     </ThemeProvider>
   );
 };

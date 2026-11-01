@@ -4,9 +4,10 @@ import { Pressable, View } from "react-native";
 
 import { ThemedText } from "@/components/ui/themed-text";
 import { symbols } from "@/constants/symbols";
-import { colors, radius, spacing } from "@/theme";
-import { formatMonth, shiftMonth } from "@/utils/dates";
-import type { MonthKey } from "@/utils/dates";
+import { useI18n } from "@/i18n/context";
+import { shiftMonth } from "@/lib/datetime";
+import type { MonthKey } from "@/lib/datetime";
+import { colors, glyph, radius, spacing } from "@/theme";
 import { haptics } from "@/utils/haptics";
 
 const buttonOpacity = (disabled: boolean | undefined, pressed: boolean) => {
@@ -52,7 +53,7 @@ const ArrowButton = ({
       tintColor={colors.label}
       weight="semibold"
       resizeMode="scaleAspectFit"
-      style={{ height: 14, width: 14 }}
+      style={{ height: glyph.md, width: glyph.md }}
     />
   </Pressable>
 );
@@ -66,6 +67,7 @@ export const MonthSwitcher = ({
   currentMonth: MonthKey;
   onChange: (month: MonthKey) => void;
 }) => {
+  const { t, dates } = useI18n();
   const isCurrent = month === currentMonth;
   return (
     <View
@@ -78,22 +80,24 @@ export const MonthSwitcher = ({
     >
       <ArrowButton
         icon={symbols.chevronLeft}
-        label="Mois précédent"
+        label={t.overview.month.previous}
         onPress={() => onChange(shiftMonth(month, -1))}
       />
       <Pressable
         accessibilityRole="button"
-        accessibilityHint={isCurrent ? undefined : "Revient au mois en cours"}
+        accessibilityHint={
+          isCurrent ? undefined : t.overview.month.backToCurrent
+        }
         disabled={isCurrent}
         onPress={() => onChange(currentMonth)}
       >
         <ThemedText variant="headline" accessibilityRole="header">
-          {formatMonth(month)}
+          {dates.month(month)}
         </ThemedText>
       </Pressable>
       <ArrowButton
         icon={symbols.chevronRight}
-        label="Mois suivant"
+        label={t.overview.month.next}
         disabled={isCurrent}
         onPress={() => onChange(shiftMonth(month, 1))}
       />

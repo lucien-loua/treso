@@ -5,7 +5,7 @@ import { Pressable, View } from "react-native";
 import type { ColorValue, PressableProps, ViewStyle } from "react-native";
 
 import { symbols } from "@/constants/symbols";
-import { colors, spacing } from "@/theme";
+import { colors, glyph, spacing } from "@/theme";
 
 import { RowSeparator } from "./grouped-section";
 import { rowInset } from "./row-inset";
@@ -83,7 +83,7 @@ export const ListRowChevron = () => (
     tintColor={colors.tertiaryLabel}
     weight="semibold"
     resizeMode="scaleAspectFit"
-    style={{ height: 12, width: 12 }}
+    style={{ height: glyph.sm, width: glyph.sm }}
   />
 );
 

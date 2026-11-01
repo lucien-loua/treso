@@ -1,20 +1,17 @@
 import { entryCategory } from "@/data/entries";
 import type { Transaction, TransactionType } from "@/data/types";
-import { formatMoney } from "@/utils/money";
+import type { Messages } from "@/i18n/messages/fr";
+import type { Currency } from "@/lib/currency";
 import { foldText } from "@/utils/text";
 
 export type TypeFilter = "all" | TransactionType;
 
-export const typeFilters: { value: TypeFilter; label: string }[] = [
-  { label: "Tout", value: "all" },
-  { label: "Dépenses", value: "expense" },
-  { label: "Revenus", value: "income" },
-];
+export const TYPE_FILTERS: TypeFilter[] = ["all", "expense", "income"];
 
 /** Searchable text of a transaction: name, category and amount (as shown and as typed). */
-const searchText = (t: Transaction, currency: string) =>
+const searchText = (transaction: Transaction, money: Currency, t: Messages) =>
   foldText(
-    `${t.note} ${entryCategory(t).label} ${formatMoney(t.amountCents, currency)} ${t.amountCents / 100}`
+    `${transaction.note} ${t.categories[entryCategory(transaction).id]} ${money.format(transaction.amountCents)} ${money.toInput(transaction.amountCents)}`
   );
 
 /** Transactions of the chosen type whose name, category or amount contains `query`. */
@@ -23,13 +20,14 @@ export const filterTransactions = (
   {
     type,
     query,
-    currency,
-  }: { type: TypeFilter; query: string; currency: string }
+    money,
+    t,
+  }: { type: TypeFilter; query: string; money: Currency; t: Messages }
 ) => {
   const folded = foldText(query.trim());
   return transactions.filter(
-    (t) =>
-      (type === "all" || t.type === type) &&
-      (!folded || searchText(t, currency).includes(folded))
+    (transaction) =>
+      (type === "all" || transaction.type === type) &&
+      (!folded || searchText(transaction, money, t).includes(folded))
   );
 };

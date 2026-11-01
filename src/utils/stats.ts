@@ -1,7 +1,6 @@
 import { signedCents } from "@/data/entries";
 import type { Transaction } from "@/data/types";
-
-import type { MonthKey } from "./dates";
+import type { MonthKey } from "@/lib/datetime";
 
 export interface CategoryTotal {
   categoryId: string;

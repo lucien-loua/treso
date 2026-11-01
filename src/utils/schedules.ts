@@ -1,17 +1,17 @@
 import { signedCents } from "@/data/entries";
 import type { Schedule, Transaction } from "@/data/types";
-
+import type { I18n } from "@/i18n/i18n";
 import {
   dateInMonth,
   daysBetween,
-  formatShortDate,
   monthKeyOf,
   toISODate,
-} from "./dates";
+} from "@/lib/datetime";
 
 export type DueTone = "danger" | "warning" | "normal" | "done";
 
-const inDays = (days: number) => (days === 1 ? "demain" : `dans ${days} j`);
+/** Days before a bill's due date from which it shows in orange. */
+const SOON_DAYS = 3;
 
 /** The payment that settled this month's due date, if any. */
 export const paymentThisMonth = (
@@ -30,48 +30,54 @@ export const paymentThisMonth = (
 };
 
 /**
- * « Avant le 5 nov. · dans 4 j », « En retard · échéance le 3 nov. », « Payé le 1 nov. · prochain avant le 5 déc. »…
+ * « Avant le 5 nov. · dans 4 jours », « En retard · échéance le 3 nov. », « Payé le 1 nov. · prochain avant le 5 déc. »…
  * When this month is already settled, say by which payment, so a date in the next month never looks like a bug.
  */
 export const dueStatus = (
   schedule: Schedule,
   transactions: Transaction[],
+  { t, dates }: Pick<I18n, "t" | "dates">,
   today = new Date()
 ): { label: string; tone: DueTone } => {
   const isIncome = schedule.type === "income";
   const days = daysBetween(toISODate(today), schedule.nextDue);
-  const when = formatShortDate(schedule.nextDue);
-  const next = `${isIncome ? "vers" : "avant"} le ${when}`;
+  const when = dates.shortDate(schedule.nextDue);
 
   const payment =
     schedule.nextDue.slice(0, 7) > monthKeyOf(today)
       ? paymentThisMonth(schedule, transactions, today)
       : undefined;
   if (payment) {
+    const paidOn = dates.shortDate(payment.date);
     return {
-      label: `${isIncome ? "Reçu" : "Payé"} le ${formatShortDate(payment.date)} · prochain ${next}`,
+      label: isIncome
+        ? t.schedules.received(paidOn, when)
+        : t.schedules.paid(paidOn, when),
       tone: "done",
     };
   }
 
   if (isIncome) {
     if (days < 0) {
-      return { label: `Attendu depuis le ${when}`, tone: "warning" };
+      return { label: t.schedules.expectedSince(when), tone: "warning" };
     }
     if (days === 0) {
-      return { label: "Attendu aujourd’hui", tone: "warning" };
+      return { label: t.schedules.expectedToday, tone: "warning" };
     }
-    return { label: `Attendu ${next} · ${inDays(days)}`, tone: "normal" };
+    return {
+      label: t.schedules.expected(when, dates.relativeDays(days)),
+      tone: "normal",
+    };
   }
   if (days < 0) {
-    return { label: `En retard · échéance le ${when}`, tone: "danger" };
+    return { label: t.schedules.late(when), tone: "danger" };
   }
   if (days === 0) {
-    return { label: "À payer aujourd’hui", tone: "danger" };
+    return { label: t.schedules.dueToday, tone: "danger" };
   }
   return {
-    label: `Avant le ${when} · ${inDays(days)}`,
-    tone: days <= 3 ? "warning" : "normal",
+    label: t.schedules.dueBy(when, dates.relativeDays(days)),
+    tone: days <= SOON_DAYS ? "warning" : "normal",
   };
 };
 

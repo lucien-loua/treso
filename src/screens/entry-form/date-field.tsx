@@ -4,6 +4,7 @@ import { Pressable } from "react-native";
 
 import { ThemedText } from "@/components/ui/themed-text";
 import { useInk } from "@/hooks/use-ink";
+import { useI18n } from "@/i18n/context";
 import { colors } from "@/theme";
 
 /** iOS: inline compact SwiftUI picker. Android: tappable value that opens the Material 3 dialog. */
@@ -15,6 +16,7 @@ export const DateField = ({
   onChange: (date: Date) => void;
 }) => {
   const ink = useInk();
+  const { t, locale, dates } = useI18n();
   const [open, setOpen] = useState(false);
 
   if (process.env.EXPO_OS === "ios") {
@@ -23,7 +25,7 @@ export const DateField = ({
         value={value}
         mode="date"
         display="compact"
-        locale="fr-FR"
+        locale={locale}
         accentColor={ink.tint}
         onValueChange={(_, date) => onChange(date)}
       />
@@ -38,11 +40,7 @@ export const DateField = ({
         onPress={() => setOpen(true)}
       >
         <ThemedText variant="body" style={{ color: colors.tint }}>
-          {value.toLocaleDateString("fr-FR", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+          {dates.longDate(value)}
         </ThemedText>
       </Pressable>
       {open ? (
@@ -50,8 +48,8 @@ export const DateField = ({
           value={value}
           mode="date"
           presentation="dialog"
-          positiveButton={{ label: "OK" }}
-          negativeButton={{ label: "Annuler" }}
+          positiveButton={{ label: t.actions.ok }}
+          negativeButton={{ label: t.actions.cancel }}
           onValueChange={(_, date) => {
             setOpen(false);
             onChange(date);

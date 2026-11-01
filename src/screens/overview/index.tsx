@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 
-import { AddTransactionToolbar } from "@/components/add-transaction-toolbar";
-import { LoadError } from "@/components/load-error";
 import {
-  useCurrency,
-  useGetStartedHidden,
-  useMonthlyBudget,
-} from "@/data/settings";
+  ADD_BUTTON_CLEARANCE,
+  AddTransactionButton,
+} from "@/components/add-transaction-button";
+import { LoadError } from "@/components/load-error";
+import { useGetStartedHidden, useMonthlyBudget } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
 import { useToday } from "@/hooks/use-today";
+import { useI18n } from "@/i18n/context";
+import { monthKeyOf } from "@/lib/datetime";
+import type { MonthKey } from "@/lib/datetime";
 import { spacing } from "@/theme";
-import type { MonthKey } from "@/utils/dates";
-import { monthKeyOf } from "@/utils/dates";
 import { frequentExpenses } from "@/utils/shortcuts";
 
 import { BalanceCard } from "./balance-card";
@@ -30,7 +30,7 @@ import { Welcome } from "./welcome";
 /** The month at a glance. Past months show the figures only; the current one adds what's next. */
 const MonthDashboard = () => {
   const { transactions, schedules } = useTransactions();
-  const [currency] = useCurrency();
+  const { t } = useI18n();
   const [budget] = useMonthlyBudget();
   const [getStartedHidden, setGetStartedHidden] = useGetStartedHidden();
   const today = useToday();
@@ -57,24 +57,18 @@ const MonthDashboard = () => {
         month={month}
         isCurrentMonth={isCurrentMonth}
         forecastCents={forecastCents}
-        currency={currency}
       />
       {isCurrentMonth ? (
         <>
           <QuickAdd
             shortcuts={frequentExpenses(transactions, 4, today)}
             todaySpentCents={todaySpentCents}
-            currency={currency}
           />
           {schedules.length > 0 ? (
-            <Upcoming
-              schedules={schedules}
-              transactions={transactions}
-              currency={currency}
-            />
+            <Upcoming schedules={schedules} transactions={transactions} />
           ) : null}
           {getStartedHidden ||
-          isGetStartedComplete(schedules, transactions) ? null : (
+          isGetStartedComplete(schedules, transactions, t) ? null : (
             <GetStarted
               schedules={schedules}
               transactions={transactions}
@@ -87,17 +81,9 @@ const MonthDashboard = () => {
         budgetCents={budget}
         spentCents={summary.expenseCents}
         month={month}
-        currency={currency}
       />
-      <CategoryBreakdown
-        totals={summary.expensesByCategory}
-        currency={currency}
-      />
-      <MonthTransactions
-        transactions={summary.transactions}
-        month={month}
-        currency={currency}
-      />
+      <CategoryBreakdown totals={summary.expensesByCategory} />
+      <MonthTransactions transactions={summary.transactions} month={month} />
     </>
   );
 };
@@ -122,12 +108,12 @@ export const Overview = () => {
         contentContainerStyle={{
           gap: spacing.lg,
           padding: spacing.md,
-          paddingBottom: spacing.xxl,
+          paddingBottom: spacing.xxl + ADD_BUTTON_CLEARANCE,
         }}
       >
         {content}
       </ScrollView>
-      <AddTransactionToolbar />
+      <AddTransactionButton />
     </>
   );
 };

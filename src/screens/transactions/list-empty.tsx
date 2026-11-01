@@ -5,11 +5,13 @@ import { LoadError } from "@/components/load-error";
 import { EmptyState } from "@/components/ui/empty-state";
 import { symbols } from "@/constants/symbols";
 import { useTransactions } from "@/data/transactions-provider";
+import { useI18n } from "@/i18n/context";
 import { spacing } from "@/theme";
 
 /** What the list shows when it has no rows: loading, error, no data yet, or no match for the search. */
 export const ListEmpty = ({ query }: { query: string }) => {
   const state = useTransactions();
+  const { t } = useI18n();
   const handleRetry = state.reload;
 
   if (state.status === "loading") {
@@ -22,9 +24,9 @@ export const ListEmpty = ({ query }: { query: string }) => {
     return (
       <EmptyState
         icon={symbols.empty}
-        title="Aucune opération"
-        message="Vos dépenses et revenus apparaîtront ici, regroupés par jour."
-        actionLabel="Ajouter une opération"
+        title={t.transactions.empty}
+        message={t.transactions.emptyHint}
+        actionLabel={t.addTransaction}
         onAction={() => router.push("/transaction/new")}
       />
     );
@@ -32,11 +34,11 @@ export const ListEmpty = ({ query }: { query: string }) => {
   return (
     <EmptyState
       icon={symbols.search}
-      title="Aucun résultat"
+      title={t.transactions.noResults}
       message={
         query.trim()
-          ? `Rien ne correspond à « ${query.trim()} ».`
-          : "Aucune opération de ce type."
+          ? t.transactions.noResultsForQuery(query.trim())
+          : t.transactions.noResultsForType
       }
     />
   );

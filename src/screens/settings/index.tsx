@@ -12,38 +12,42 @@ import Constants from "expo-constants";
 import { router } from "expo-router";
 
 import { entryTitle, signedCents } from "@/data/entries";
-import { currencies, useCurrency } from "@/data/settings";
+import { useCurrencyCode } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
 import type { Schedule } from "@/data/types";
 import { useInk } from "@/hooks/use-ink";
 import { useLoadSampleData } from "@/hooks/use-load-sample-data";
+import { useMoney } from "@/hooks/use-money";
+import { useI18n } from "@/i18n/context";
+import type { Messages } from "@/i18n/messages/fr";
 import { confirm } from "@/utils/alerts";
-import { formatDayOfMonth } from "@/utils/dates";
 import { haptics } from "@/utils/haptics";
-import { formatMoney } from "@/utils/money";
 
 import { BudgetRow } from "./budget-row";
 
 const isIOS = process.env.EXPO_OS === "ios";
 
-const scheduleSummary = (schedule: Schedule) =>
-  `${schedule.type === "income" ? "Vers" : "Avant"} le ${formatDayOfMonth(schedule.dayOfMonth)} de chaque mois`;
+const scheduleSummary = (schedule: Schedule, t: Messages) =>
+  t.schedules.eachMonth[schedule.type](t.dayOfMonth(schedule.dayOfMonth));
 
 export const Settings = () => {
   const ink = useInk();
-  const [currency, setCurrency] = useCurrency();
+  const { t, currencies } = useI18n();
+  const money = useMoney();
+  const [, setCurrencyCode] = useCurrencyCode();
   const { transactions, schedules, removeAll } = useTransactions();
   const loadSamples = useLoadSampleData();
 
   const confirmReset = () => {
     haptics.warning();
     confirm({
-      confirmLabel: "Tout effacer",
+      cancelLabel: t.actions.cancel,
+      confirmLabel: t.settings.eraseConfirm,
       destructive: true,
-      failureTitle: "Suppression impossible",
-      message: `${transactions.length} opération(s) et ${schedules.length} échéance(s) seront supprimées définitivement de cet appareil.`,
+      failureTitle: t.errors.deleteFailed,
+      message: t.settings.eraseMessage(transactions.length, schedules.length),
       onConfirm: removeAll,
-      title: "Effacer toutes les données ?",
+      title: t.settings.eraseTitle,
     });
   };
 
@@ -54,97 +58,86 @@ export const Settings = () => {
           isIOS ? [scrollDismissesKeyboard("interactively")] : undefined
         }
       >
-        <FieldGroup.Section title="Préférences">
+        <FieldGroup.Section title={t.settings.preferences}>
           <Row alignment="center">
-            <Text textStyle={{ color: ink.label }}>Devise</Text>
+            <Text textStyle={{ color: ink.label }}>{t.settings.currency}</Text>
             <Spacer flexible />
-            <Picker selectedValue={currency} onValueChange={setCurrency}>
-              {currencies.map((c) => (
-                <Picker.Item key={c.code} label={c.label} value={c.code} />
+            <Picker selectedValue={money.code} onValueChange={setCurrencyCode}>
+              {currencies.all.map((currency) => (
+                <Picker.Item
+                  key={currency.code}
+                  label={`${t.currencies[currency.code] ?? currency.code} (${currency.symbol})`}
+                  value={currency.code}
+                />
               ))}
             </Picker>
           </Row>
         </FieldGroup.Section>
 
-        <FieldGroup.Section title="Budget mensuel">
+        <FieldGroup.Section title={t.settings.budget}>
           <BudgetRow />
           <FieldGroup.SectionFooter>
-            <Text textStyle={ink.footnote}>
-              Plafond de dépenses suivi sur l’écran Aperçu. Laissez vide pour le
-              désactiver.
-            </Text>
+            <Text textStyle={ink.footnote}>{t.settings.budgetFooter}</Text>
           </FieldGroup.SectionFooter>
         </FieldGroup.Section>
 
-        <FieldGroup.Section title="Échéances mensuelles">
+        <FieldGroup.Section title={t.settings.schedules}>
           {schedules.map((schedule) => (
             <ListItem
               key={schedule.id}
               onPress={() => router.push(`/schedule/${schedule.id}`)}
-              supportingText={scheduleSummary(schedule)}
+              supportingText={scheduleSummary(schedule, t)}
               trailing={
                 <Text
                   textStyle={{
                     color: schedule.type === "income" ? ink.income : ink.label,
                   }}
                 >
-                  {formatMoney(signedCents(schedule), currency, {
-                    showPlus: true,
-                  })}
+                  {money.format(signedCents(schedule), { sign: "always" })}
                 </Text>
               }
             >
               <Text textStyle={{ color: ink.label }}>
-                {entryTitle(schedule)}
+                {entryTitle(schedule, t)}
               </Text>
             </ListItem>
           ))}
           <ListItem onPress={() => router.push("/schedule/new")}>
-            <Text textStyle={{ color: ink.tint }}>Ajouter une échéance</Text>
+            <Text textStyle={{ color: ink.tint }}>
+              {t.settings.addSchedule}
+            </Text>
           </ListItem>
           <FieldGroup.SectionFooter>
-            <Text textStyle={ink.footnote}>
-              Salaire, loyer, factures… Treso vous les rappelle chaque mois sur
-              l’Aperçu, et vous confirmez quand c’est payé ou reçu.
-            </Text>
+            <Text textStyle={ink.footnote}>{t.settings.schedulesFooter}</Text>
           </FieldGroup.SectionFooter>
         </FieldGroup.Section>
 
-        <FieldGroup.Section title="Données">
+        <FieldGroup.Section title={t.settings.data}>
           <Row alignment="center">
-            <Text textStyle={{ color: ink.label }}>
-              Opérations enregistrées
-            </Text>
+            <Text textStyle={{ color: ink.label }}>{t.settings.recorded}</Text>
             <Spacer flexible />
             <Text textStyle={{ color: ink.secondaryLabel }}>
               {String(transactions.length)}
             </Text>
           </Row>
           <ListItem onPress={loadSamples}>
-            <Text textStyle={{ color: ink.tint }}>
-              Ajouter des données d’exemple
-            </Text>
+            <Text textStyle={{ color: ink.tint }}>{t.settings.addSamples}</Text>
           </ListItem>
           <ListItem onPress={confirmReset}>
-            <Text textStyle={{ color: ink.danger }}>
-              Effacer toutes les données
-            </Text>
+            <Text textStyle={{ color: ink.danger }}>{t.settings.eraseAll}</Text>
           </ListItem>
         </FieldGroup.Section>
 
-        <FieldGroup.Section title="À propos">
+        <FieldGroup.Section title={t.settings.about}>
           <Row alignment="center">
-            <Text textStyle={{ color: ink.label }}>Version</Text>
+            <Text textStyle={{ color: ink.label }}>{t.settings.version}</Text>
             <Spacer flexible />
             <Text textStyle={{ color: ink.secondaryLabel }}>
               {Constants.expoConfig?.version ?? "1.0.0"}
             </Text>
           </Row>
           <FieldGroup.SectionFooter>
-            <Text textStyle={ink.footnote}>
-              Treso garde vos données sur cet appareil : pas de compte, pas de
-              serveur.
-            </Text>
+            <Text textStyle={ink.footnote}>{t.settings.privacy}</Text>
           </FieldGroup.SectionFooter>
         </FieldGroup.Section>
       </FieldGroup>

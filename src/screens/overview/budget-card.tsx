@@ -5,10 +5,11 @@ import { GroupedSection } from "@/components/ui/grouped-section";
 import { ListRow, ListRowChevron, ListRowText } from "@/components/ui/list-row";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { ThemedText } from "@/components/ui/themed-text";
+import { useMoney } from "@/hooks/use-money";
+import { useI18n } from "@/i18n/context";
+import { daysLeftInMonth } from "@/lib/datetime";
+import type { MonthKey } from "@/lib/datetime";
 import { colors, spacing } from "@/theme";
-import { daysLeftInMonth } from "@/utils/dates";
-import type { MonthKey } from "@/utils/dates";
-import { formatMoney } from "@/utils/money";
 
 /** Share of the budget spent from which the bar turns orange. */
 const WARNING_RATIO = 0.8;
@@ -17,21 +18,19 @@ export const BudgetCard = ({
   budgetCents,
   spentCents,
   month,
-  currency,
 }: {
   budgetCents: number | null;
   spentCents: number;
   month: MonthKey;
-  currency: string;
 }) => {
+  const { t, percent } = useI18n();
+  const money = useMoney();
+  const texts = t.overview.budget;
   if (budgetCents === null) {
     return (
-      <GroupedSection title="Budget">
+      <GroupedSection title={texts.title}>
         <ListRow onPress={() => router.navigate("/settings")}>
-          <ListRowText
-            title="Définir un budget mensuel"
-            subtitle="Suivez ce qu’il vous reste à dépenser chaque mois."
-          />
+          <ListRowText title={texts.setUp} subtitle={texts.setUpHint} />
           <ListRowChevron />
         </ListRow>
       </GroupedSection>
@@ -48,18 +47,16 @@ export const BudgetCard = ({
     barColor = colors.warning;
   }
 
-  let hint = `${formatMoney(spentCents, currency)} dépensés sur ${formatMoney(budgetCents, currency)}`;
+  let hint = texts.spentOf(money.format(spentCents), money.format(budgetCents));
   if (remaining > 0 && daysLeft > 0) {
-    hint += ` · ${formatMoney(Math.floor(remaining / daysLeft), currency)} par jour sur ${daysLeft} j`;
+    hint += ` · ${texts.perDay(money.format(Math.floor(remaining / daysLeft)), daysLeft)}`;
   }
 
   return (
     <GroupedSection
-      title="Budget"
+      title={texts.title}
       accessory={
-        <ThemedText variant="footnote">
-          {Math.round(ratio * 100)} % utilisé
-        </ThemedText>
+        <ThemedText variant="footnote">{texts.used(percent(ratio))}</ThemedText>
       }
     >
       <View style={{ gap: spacing.smd, padding: spacing.md }}>
@@ -72,8 +69,8 @@ export const BudgetCard = ({
           }}
         >
           {remaining >= 0
-            ? `Reste ${formatMoney(remaining, currency)}`
-            : `Dépassé de ${formatMoney(-remaining, currency)}`}
+            ? texts.left(money.format(remaining))
+            : texts.over(money.format(-remaining))}
         </ThemedText>
         <ProgressBar value={ratio} color={barColor} height={8} />
         <ThemedText variant="footnote">{hint}</ThemedText>

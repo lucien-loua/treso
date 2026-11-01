@@ -1,6 +1,5 @@
 import type { Transaction } from "@/data/types";
-
-import { toISODate } from "./dates";
+import { toISODate } from "@/lib/datetime";
 
 export interface Shortcut {
   categoryId: string;

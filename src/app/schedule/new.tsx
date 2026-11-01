@@ -2,11 +2,8 @@ import { useLocalSearchParams } from "expo-router";
 
 import { useTransactions } from "@/data/transactions-provider";
 import type { TransactionType } from "@/data/types";
-import {
-  EntryForm,
-  SCHEDULE_FOOTER,
-  toScheduleInput,
-} from "@/screens/entry-form";
+import { useI18n } from "@/i18n/context";
+import { EntryForm, toScheduleInput } from "@/screens/entry-form";
 
 /** New monthly schedule. Params (`type`, `categoryId`, `note`, `day`) prefill presets such as salary or rent. */
 const NewScheduleRoute = () => {
@@ -17,6 +14,7 @@ const NewScheduleRoute = () => {
     day?: string;
   }>();
   const { addSchedule } = useTransactions();
+  const { t } = useI18n();
 
   return (
     <EntryForm
@@ -27,10 +25,10 @@ const NewScheduleRoute = () => {
         note: params.note,
         type: params.type,
       }}
-      title="Nouvelle échéance"
-      submitLabel="Ajouter"
+      title={t.sheets.newSchedule}
+      submitLabel={t.actions.add}
       focusAmount
-      footer={SCHEDULE_FOOTER}
+      footer={t.sheets.scheduleFooter}
       onSubmit={(draft) => addSchedule(toScheduleInput(draft))}
     />
   );

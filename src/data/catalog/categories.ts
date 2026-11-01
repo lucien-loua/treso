@@ -3,10 +3,29 @@ import type { SymbolViewProps } from "expo-symbols";
 import type { TransactionType } from "@/data/types";
 import type { CategoryColor } from "@/theme";
 
+/** Stored in the database: never rename one. Each language names them (`t.categories`). */
+export type CategoryId =
+  | "groceries"
+  | "restaurants"
+  | "transport"
+  | "housing"
+  | "bills"
+  | "shopping"
+  | "leisure"
+  | "health"
+  | "education"
+  | "subscriptions"
+  | "help"
+  | "other-expense"
+  | "salary"
+  | "freelance"
+  | "gifts"
+  | "investments"
+  | "other-income";
+
 export interface Category {
-  id: string;
+  id: CategoryId;
   type: TransactionType;
-  label: string;
   icon: SymbolViewProps["name"];
   color: CategoryColor;
 }
@@ -16,42 +35,36 @@ export const categories: Category[] = [
     color: "orange",
     icon: { android: "shopping_cart", ios: "cart.fill", web: "shopping_cart" },
     id: "groceries",
-    label: "Courses",
     type: "expense",
   },
   {
     color: "pink",
     icon: { android: "restaurant", ios: "fork.knife", web: "restaurant" },
     id: "restaurants",
-    label: "Restaurants",
     type: "expense",
   },
   {
     color: "blue",
     icon: { android: "directions_car", ios: "car.fill", web: "directions_car" },
     id: "transport",
-    label: "Transport",
     type: "expense",
   },
   {
     color: "brown",
     icon: { android: "home", ios: "house.fill", web: "home" },
     id: "housing",
-    label: "Logement",
     type: "expense",
   },
   {
     color: "yellow",
     icon: { android: "bolt", ios: "bolt.fill", web: "bolt" },
     id: "bills",
-    label: "Factures",
     type: "expense",
   },
   {
     color: "purple",
     icon: { android: "shopping_bag", ios: "bag.fill", web: "shopping_bag" },
     id: "shopping",
-    label: "Shopping",
     type: "expense",
   },
   {
@@ -62,7 +75,6 @@ export const categories: Category[] = [
       web: "sports_esports",
     },
     id: "leisure",
-    label: "Loisirs",
     type: "expense",
   },
   {
@@ -73,21 +85,18 @@ export const categories: Category[] = [
       web: "medical_services",
     },
     id: "health",
-    label: "Santé",
     type: "expense",
   },
   {
     color: "cyan",
     icon: { android: "school", ios: "book.fill", web: "school" },
     id: "education",
-    label: "Éducation",
     type: "expense",
   },
   {
     color: "indigo",
     icon: { android: "autorenew", ios: "repeat", web: "autorenew" },
     id: "subscriptions",
-    label: "Abonnements",
     type: "expense",
   },
   {
@@ -98,35 +107,30 @@ export const categories: Category[] = [
       web: "volunteer_activism",
     },
     id: "help",
-    label: "Aide",
     type: "expense",
   },
   {
     color: "gray",
     icon: { android: "more_horiz", ios: "ellipsis", web: "more_horiz" },
     id: "other-expense",
-    label: "Autre",
     type: "expense",
   },
   {
     color: "green",
     icon: { android: "payments", ios: "banknote.fill", web: "payments" },
     id: "salary",
-    label: "Salaire",
     type: "income",
   },
   {
     color: "blue",
     icon: { android: "work", ios: "briefcase.fill", web: "work" },
     id: "freelance",
-    label: "Freelance",
     type: "income",
   },
   {
     color: "pink",
     icon: { android: "redeem", ios: "gift.fill", web: "redeem" },
     id: "gifts",
-    label: "Cadeaux",
     type: "income",
   },
   {
@@ -137,21 +141,21 @@ export const categories: Category[] = [
       web: "trending_up",
     },
     id: "investments",
-    label: "Placements",
     type: "income",
   },
   {
     color: "gray",
     icon: { android: "add", ios: "plus", web: "add" },
     id: "other-income",
-    label: "Autre revenu",
     type: "income",
   },
 ];
 
-const byId = new Map(categories.map((category) => [category.id, category]));
+const byId = new Map<string, Category>(
+  categories.map((category) => [category.id, category])
+);
 
-const requireCategory = (id: string): Category => {
+const requireCategory = (id: CategoryId): Category => {
   const category = byId.get(id);
   if (!category) {
     throw new Error(`Unknown category: ${id}`);
@@ -172,7 +176,7 @@ export const getCategory = (
 export const categoriesFor = (type: TransactionType): Category[] =>
   categories.filter((category) => category.type === type);
 
-export const defaultCategoryId: Record<TransactionType, string> = {
+export const defaultCategoryId: Record<TransactionType, CategoryId> = {
   expense: "groceries",
   income: "salary",
 };

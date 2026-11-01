@@ -7,8 +7,9 @@ import { ThemedText } from "@/components/ui/themed-text";
 import { symbols } from "@/constants/symbols";
 import type { Category } from "@/data/catalog/categories";
 import { getIcon, icons } from "@/data/catalog/icons";
+import { useI18n } from "@/i18n/context";
 import type { CategoryColor } from "@/theme";
-import { categoryColors, colors, radius, spacing } from "@/theme";
+import { categoryColors, colors, glyph, radius, spacing } from "@/theme";
 import { haptics } from "@/utils/haptics";
 
 // Clearly distinct colors; near-duplicates (cyan, mint, teal…) only appear as a category's own color.
@@ -39,22 +40,6 @@ const paletteFor = (
     keys[keys.length - 1] = saved;
   }
   return keys;
-};
-
-const colorNames: Record<CategoryColor, string> = {
-  blue: "Bleu",
-  brown: "Marron",
-  cyan: "Cyan",
-  gray: "Gris",
-  green: "Vert",
-  indigo: "Indigo",
-  mint: "Menthe",
-  orange: "Orange",
-  pink: "Rose",
-  purple: "Violet",
-  red: "Rouge",
-  teal: "Bleu canard",
-  yellow: "Jaune",
 };
 
 const IconCell = ({
@@ -117,6 +102,7 @@ export const AppearancePicker = ({
   onIconChange: (id: string | null) => void;
   onColorChange: (id: string | null) => void;
 }) => {
+  const { t } = useI18n();
   const activeColor = (colorId as CategoryColor | null) ?? category.color;
   // The "automatic" cell already shows this glyph: don't list it twice (unless it's the saved choice).
   const autoGlyph = (getIcon(autoIconId)?.symbol ?? category.icon) as {
@@ -138,7 +124,7 @@ export const AppearancePicker = ({
     >
       <View
         accessibilityRole="radiogroup"
-        accessibilityLabel="Couleur"
+        accessibilityLabel={t.form.color}
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -153,8 +139,8 @@ export const AppearancePicker = ({
               accessibilityRole="radio"
               accessibilityLabel={
                 key === category.color
-                  ? `${colorNames[key]} (couleur de la catégorie)`
-                  : colorNames[key]
+                  ? t.form.categoryColor(t.colors[key])
+                  : t.colors[key]
               }
               accessibilityState={{ selected }}
               hitSlop={6}
@@ -189,7 +175,7 @@ export const AppearancePicker = ({
                     tintColor={colors.onTint}
                     weight="bold"
                     resizeMode="scaleAspectFit"
-                    style={{ height: 12, width: 12 }}
+                    style={{ height: glyph.sm, width: glyph.sm }}
                   />
                 ) : null}
               </View>
@@ -208,11 +194,11 @@ export const AppearancePicker = ({
 
       <View
         accessibilityRole="radiogroup"
-        accessibilityLabel="Icône"
+        accessibilityLabel={t.form.icon}
         style={{ flexDirection: "row", flexWrap: "wrap" }}
       >
         <IconCell
-          label="Automatique, selon le nom"
+          label={t.form.autoIcon}
           selected={iconId === null}
           onPress={() => onIconChange(null)}
         >
@@ -226,7 +212,7 @@ export const AppearancePicker = ({
         {library.map((option) => (
           <IconCell
             key={option.id}
-            label={option.label}
+            label={t.icons[option.id]}
             selected={iconId === option.id}
             onPress={() => onIconChange(option.id)}
           >
@@ -240,8 +226,7 @@ export const AppearancePicker = ({
         ))}
       </View>
       <ThemedText variant="footnote" style={{ paddingHorizontal: spacing.sm }}>
-        Par défaut, la couleur suit la catégorie et la première icône s’adapte
-        au nom.
+        {t.form.appearanceHint}
       </ThemedText>
     </View>
   );

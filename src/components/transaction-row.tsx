@@ -6,28 +6,29 @@ import { ListRow, ListRowText } from "@/components/ui/list-row";
 import { entryCategory, entryTitle, signedCents } from "@/data/entries";
 import { useTransactions } from "@/data/transactions-provider";
 import type { Transaction } from "@/data/types";
+import { useMoney } from "@/hooks/use-money";
+import { useI18n } from "@/i18n/context";
+import { toISODate } from "@/lib/datetime";
 import { confirm, runOrAlert } from "@/utils/alerts";
-import { formatShortDate, toISODate } from "@/utils/dates";
 import { haptics } from "@/utils/haptics";
-import { formatMoney } from "@/utils/money";
 
 /** A transaction in a list. Tap to edit; long press to duplicate or delete. */
 export const TransactionRow = ({
   transaction,
-  currency,
   showDate = false,
 }: {
   transaction: Transaction;
-  currency: string;
   showDate?: boolean;
 }) => {
   const { add, remove } = useTransactions();
+  const { t, dates } = useI18n();
+  const money = useMoney();
   const category = entryCategory(transaction);
-  const title = entryTitle(transaction);
+  const title = entryTitle(transaction, t);
   const subtitle = [
-    transaction.note ? category.label : null,
-    showDate ? formatShortDate(transaction.date) : null,
-    transaction.scheduleId === null ? null : "Échéance",
+    transaction.note ? t.categories[category.id] : null,
+    showDate ? dates.shortDate(transaction.date) : null,
+    transaction.scheduleId === null ? null : t.transactions.scheduled,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -36,39 +37,40 @@ export const TransactionRow = ({
     runOrAlert(async () => {
       await add({ ...transaction, date: toISODate(new Date()) });
       haptics.success();
-    }, "Impossible de dupliquer");
+    }, t.errors.duplicateFailed);
 
   const confirmDelete = () => {
     haptics.warning();
     confirm({
-      confirmLabel: "Supprimer",
+      cancelLabel: t.actions.cancel,
+      confirmLabel: t.actions.delete,
       destructive: true,
-      failureTitle: "Suppression impossible",
-      message: `${title} · ${formatMoney(signedCents(transaction), currency)}`,
+      failureTitle: t.errors.deleteFailed,
+      message: `${title} · ${money.format(signedCents(transaction))}`,
       onConfirm: () => remove(transaction.id),
-      title: "Supprimer cette opération ?",
+      title: t.transactions.deleteTitle,
     });
   };
 
   return (
     <Link href={`/transaction/${transaction.id}`} asChild>
       <Link.Trigger>
-        <ListRow accessibilityHint="Ouvre l’opération pour la modifier">
+        <ListRow accessibilityHint={t.transactions.openHint}>
           <CategoryIcon
             category={category}
             iconId={transaction.icon}
             colorId={transaction.color}
           />
           <ListRowText title={title} subtitle={subtitle} subtitleLines={1} />
-          <SignedAmount cents={signedCents(transaction)} currency={currency} />
+          <SignedAmount cents={signedCents(transaction)} />
         </ListRow>
       </Link.Trigger>
       <Link.Menu>
         <Link.MenuAction icon="plus.square.on.square" onPress={duplicate}>
-          Dupliquer aujourd’hui
+          {t.transactions.duplicate}
         </Link.MenuAction>
         <Link.MenuAction icon="trash" destructive onPress={confirmDelete}>
-          Supprimer
+          {t.actions.delete}
         </Link.MenuAction>
       </Link.Menu>
     </Link>

@@ -5,10 +5,11 @@ import type { ColorValue } from "react-native";
 
 import { ThemedText } from "@/components/ui/themed-text";
 import { symbols } from "@/constants/symbols";
-import { colors, radius, spacing } from "@/theme";
-import { formatMonth, shiftMonth } from "@/utils/dates";
-import type { MonthKey } from "@/utils/dates";
-import { formatMoney } from "@/utils/money";
+import { useMoney } from "@/hooks/use-money";
+import { useI18n } from "@/i18n/context";
+import { shiftMonth } from "@/lib/datetime";
+import type { MonthKey } from "@/lib/datetime";
+import { colors, glyph, radius, spacing } from "@/theme";
 import type { MonthSummary } from "@/utils/stats";
 
 const Flow = ({
@@ -45,7 +46,7 @@ const Flow = ({
         tintColor={color}
         weight="bold"
         resizeMode="scaleAspectFit"
-        style={{ height: 14, width: 14 }}
+        style={{ height: glyph.md, width: glyph.md }}
       />
     </View>
     <View style={{ flex: 1 }}>
@@ -68,16 +69,15 @@ export const BalanceCard = ({
   month,
   isCurrentMonth,
   forecastCents,
-  currency,
 }: {
   summary: MonthSummary;
   month: MonthKey;
   isCurrentMonth: boolean;
   /** Expected end-of-month balance once the remaining schedules are settled; `null` hides the line. */
   forecastCents: number | null;
-  currency: string;
 }) => {
-  const previousMonth = formatMonth(shiftMonth(month, -1)).toLowerCase();
+  const { t, dates } = useI18n();
+  const money = useMoney();
   return (
     <View
       style={{
@@ -91,8 +91,8 @@ export const BalanceCard = ({
       <View style={{ gap: spacing.xs }}>
         <ThemedText variant="subhead">
           {isCurrentMonth
-            ? "Solde actuel"
-            : `Solde fin ${formatMonth(month).toLowerCase()}`}
+            ? t.overview.currentBalance
+            : t.overview.balanceAtEnd(dates.monthInText(month))}
         </ThemedText>
         <ThemedText
           variant="hero"
@@ -103,12 +103,17 @@ export const BalanceCard = ({
             color: summary.closingCents < 0 ? colors.danger : colors.label,
           }}
         >
-          {formatMoney(summary.closingCents, currency)}
+          {money.format(summary.closingCents)}
         </ThemedText>
         <ThemedText variant="footnote" selectable>
-          Report de {previousMonth} :{" "}
-          {formatMoney(summary.openingCents, currency)} · Ce mois :{" "}
-          {formatMoney(summary.balanceCents, currency, { showPlus: true })}
+          {t.overview.carriedOver(
+            dates.monthInText(shiftMonth(month, -1)),
+            money.format(summary.openingCents)
+          )}{" "}
+          ·{" "}
+          {t.overview.thisMonth(
+            money.format(summary.balanceCents, { sign: "always" })
+          )}
         </ThemedText>
       </View>
       {forecastCents === null ? null : (
@@ -128,11 +133,9 @@ export const BalanceCard = ({
         >
           <View style={{ flexShrink: 1 }}>
             <ThemedText variant="subhead" style={{ color: colors.label }}>
-              Prévu fin {formatMonth(month).toLowerCase().split(" ")[0]}
+              {t.overview.forecast(dates.monthName(month))}
             </ThemedText>
-            <ThemedText variant="caption">
-              Après les échéances à venir
-            </ThemedText>
+            <ThemedText variant="caption">{t.overview.forecastHint}</ThemedText>
           </View>
           <ThemedText
             variant="headline"
@@ -142,7 +145,7 @@ export const BalanceCard = ({
               fontVariant: ["tabular-nums"],
             }}
           >
-            {formatMoney(forecastCents, currency)}
+            {money.format(forecastCents)}
           </ThemedText>
         </View>
       )}
@@ -151,14 +154,14 @@ export const BalanceCard = ({
         <Flow
           icon={symbols.arrowDown}
           color={colors.income}
-          label="Revenus"
-          value={formatMoney(summary.incomeCents, currency)}
+          label={t.overview.income}
+          value={money.format(summary.incomeCents)}
         />
         <Flow
           icon={symbols.arrowUp}
           color={colors.danger}
-          label="Dépenses"
-          value={formatMoney(summary.expenseCents, currency)}
+          label={t.overview.expenses}
+          value={money.format(summary.expenseCents)}
         />
       </View>
     </View>

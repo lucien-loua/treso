@@ -1,52 +1,100 @@
 import { foldText } from "@/utils/text";
 
-/** Keyword → icon id from `./icons`. First match wins, so put specific words before generic ones. */
-const rules: [RegExp, string][] = [
-  [/\b(?:essence|carburant|plein|gasoil|station)\b/u, "fuel"],
-  [/\b(?:taxi|uber|yango|voiture|parking|peage)\b/u, "car"],
-  [/\b(?:bus|gbaka|woro|sotra|car|metro|train|transport)\b/u, "bus"],
-  [/\b(?:avion|vol|billet|voyage)\b/u, "plane"],
-  [/\b(?:wifi|internet|fibre|box|canal)\b/u, "wifi"],
-  [
-    /\b(?:credit|forfait|telephone|orange|mtn|moov|recharge|unites)\b/u,
-    "phone",
-  ],
-  [/\b(?:eau|sodeci)\b/u, "water"],
-  [/\b(?:electricite|cie|courant|lumiere|compteur)\b/u, "bolt"],
-  [/\b(?:loyer|maison|logement|appartement)\b/u, "house"],
-  [/\b(?:cafe|the|petit dejeuner)\b/u, "coffee"],
-  [
-    /\b(?:dejeuner|diner|resto|restaurant|maquis|repas|garba|alloco)\b/u,
-    "food",
-  ],
-  [/\b(?:livraison|emporter|fast food|pizza|burger)\b/u, "takeout"],
-  [/\b(?:marche|supermarche|courses|boutique|epicerie|carrefour)\b/u, "cart"],
-  [/\b(?:pharmacie|medicament)s?\b/u, "pills"],
-  [/\b(?:medecin|docteur|hopital|clinique|sante)\b/u, "health"],
-  [/\b(?:sport|salle|gym|foot)\b/u, "sport"],
-  [/\b(?:cinema|film|netflix)\b/u, "movie"],
-  [/\b(?:musique|spotify|concert)\b/u, "music"],
-  [/\b(?:jeu|jeux|playstation|console)\b/u, "game"],
-  [/\b(?:vetement|vetements|habits|pagne|chaussures|tailleur)\b/u, "clothes"],
-  [/\b(?:coiffure|coiffeur|tresse|tresses|barbier|salon)\b/u, "beauty"],
-  [/\b(?:ecole|scolarite|cours|formation|universite)\b/u, "school"],
-  [/\b(?:livre|livres|fournitures)\b/u, "book"],
-  [/\b(?:famille|maman|papa|parents|enfant|enfants|frere|soeur)\b/u, "family"],
-  [/\b(?:don|aide|soutien|eglise|mosquee|quete|dime)\b/u, "heart"],
-  [/\b(?:cadeau|anniversaire|mariage|bapteme)\b/u, "gift"],
-  [/\b(?:chien|chat|animal|veterinaire)\b/u, "pet"],
-  [/\b(?:reparation|garage|mecanicien|plombier|electricien)\b/u, "repair"],
-  [/\b(?:banque|frais bancaires|agios)\b/u, "bank"],
-  [/\b(?:tontine|epargne|placement|investissement)\b/u, "invest"],
-  [/\b(?:salaire|paie|prime)\b/u, "cash"],
-  [/\b(?:freelance|mission|client|facture client)\b/u, "work"],
+import type { IconId } from "./icons";
+
+/** Words of one language that call for an icon; accents and case don't matter. */
+export type IconKeywords = Partial<Record<IconId, readonly string[]>>;
+
+/** Tried in this order, so specific icons come before generic ones (« plein d'essence » is fuel, not cart). */
+const ORDER: IconId[] = [
+  "fuel",
+  "car",
+  "bus",
+  "plane",
+  "wifi",
+  "phone",
+  "water",
+  "bolt",
+  "house",
+  "coffee",
+  "food",
+  "takeout",
+  "cart",
+  "pills",
+  "health",
+  "sport",
+  "movie",
+  "music",
+  "game",
+  "clothes",
+  "beauty",
+  "school",
+  "book",
+  "family",
+  "heart",
+  "gift",
+  "pet",
+  "repair",
+  "bank",
+  "invest",
+  "cash",
+  "work",
 ];
 
-/** Icon id that fits a transaction name (« Taxi » → car, « Wifi » → wifi), or `null` to keep the category icon. */
-export const suggestIcon = (name: string): string | null => {
+/** Brands, operators and local words people type whatever the language of their phone. */
+const SHARED: IconKeywords = {
+  bolt: ["cie"],
+  bus: ["gbaka", "woro", "sotra"],
+  car: ["uber", "yango", "taxi"],
+  cart: ["carrefour"],
+  food: ["maquis", "garba", "alloco"],
+  game: ["playstation"],
+  invest: ["tontine"],
+  movie: ["netflix"],
+  music: ["spotify"],
+  phone: ["orange", "mtn", "moov"],
+  water: ["sodeci"],
+  wifi: ["wifi", "internet", "canal"],
+};
+
+const REGEXP_SPECIAL = /[$()*+.?[\\\]^{|}]/gu;
+
+/** Whole words only, plural or not: « pharmacies » matches « pharmacie », « car » doesn't match « carte ». */
+const wordsPattern = (words: readonly string[]) =>
+  new RegExp(
+    String.raw`\b(?:${words
+      .map((word) => foldText(word).replaceAll(REGEXP_SPECIAL, String.raw`\$&`))
+      .join("|")})s?\b`,
+    "u"
+  );
+
+const compiled = new WeakMap<IconKeywords, [IconId, RegExp][]>();
+
+const rulesFor = (keywords: IconKeywords) => {
+  let rules = compiled.get(keywords);
+  if (!rules) {
+    rules = ORDER.flatMap((id): [IconId, RegExp][] => {
+      const words = [...(keywords[id] ?? []), ...(SHARED[id] ?? [])];
+      return words.length > 0 ? [[id, wordsPattern(words)]] : [];
+    });
+    compiled.set(keywords, rules);
+  }
+  return rules;
+};
+
+/**
+ * Icon that fits a transaction name in the language of `keywords` (« Taxi » → car, « Rent » →
+ * house), or `null` to keep the category icon.
+ */
+export const suggestIcon = (
+  name: string,
+  keywords: IconKeywords
+): IconId | null => {
   const text = foldText(name);
   if (!text.trim()) {
     return null;
   }
-  return rules.find(([pattern]) => pattern.test(text))?.[1] ?? null;
+  return (
+    rulesFor(keywords).find(([, pattern]) => pattern.test(text))?.[0] ?? null
+  );
 };
