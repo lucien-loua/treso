@@ -33,7 +33,8 @@ export const EmptyState = ({
       name={icon}
       tintColor={colors.tertiaryLabel}
       resizeMode="scaleAspectFit"
-      style={{ height: 48, marginBottom: spacing.sm, width: 48 }}
+      size={48}
+      style={{ marginBottom: spacing.sm }}
     />
     <ThemedText variant="headline" style={{ textAlign: "center" }}>
       {title}

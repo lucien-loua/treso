@@ -175,7 +175,7 @@ export const AppearancePicker = ({
                     tintColor={colors.onTint}
                     weight="bold"
                     resizeMode="scaleAspectFit"
-                    style={{ height: glyph.sm, width: glyph.sm }}
+                    size={glyph.sm}
                   />
                 ) : null}
               </View>

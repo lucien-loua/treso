@@ -46,7 +46,7 @@ const Flow = ({
         tintColor={color}
         weight="bold"
         resizeMode="scaleAspectFit"
-        style={{ height: glyph.md, width: glyph.md }}
+        size={glyph.md}
       />
     </View>
     <View style={{ flex: 1 }}>

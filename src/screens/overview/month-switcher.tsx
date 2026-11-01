@@ -53,7 +53,7 @@ const ArrowButton = ({
       tintColor={colors.label}
       weight="semibold"
       resizeMode="scaleAspectFit"
-      style={{ height: glyph.md, width: glyph.md }}
+      size={glyph.md}
     />
   </Pressable>
 );

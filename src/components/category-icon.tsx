@@ -6,6 +6,9 @@ import { getIcon } from "@/data/catalog/icons";
 import { categoryColors, colors, radius } from "@/theme";
 import type { CategoryColor } from "@/theme";
 
+/** Share of the tile the glyph takes; Material Symbols carry more built-in padding than SF Symbols. */
+const GLYPH_RATIO = process.env.EXPO_OS === "android" ? 0.64 : 0.55;
+
 /**
  * Rounded-square glyph in the category color, like iOS Settings icons.
  * `iconId` and `colorId` override the category's glyph and color.
@@ -42,7 +45,7 @@ export const CategoryIcon = ({
         tintColor={colors.onTint}
         resizeMode="scaleAspectFit"
         weight="semibold"
-        style={{ height: size * 0.55, width: size * 0.55 }}
+        size={Math.round(size * GLYPH_RATIO)}
       />
     </View>
   );

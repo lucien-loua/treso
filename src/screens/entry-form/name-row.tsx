@@ -78,7 +78,7 @@ export const NameRow = ({
               name={symbols.edit}
               tintColor={colors.secondaryLabel}
               resizeMode="scaleAspectFit"
-              style={{ height: glyph.lg, width: glyph.lg }}
+              size={glyph.lg}
             />
           </View>
         </Pressable>

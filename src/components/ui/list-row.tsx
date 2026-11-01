@@ -83,7 +83,7 @@ export const ListRowChevron = () => (
     tintColor={colors.tertiaryLabel}
     weight="semibold"
     resizeMode="scaleAspectFit"
-    style={{ height: glyph.sm, width: glyph.sm }}
+    size={glyph.sm}
   />
 );
 

@@ -37,7 +37,7 @@ export const AddTransactionButton = () => {
         name={symbols.add}
         tintColor={colors.onFab}
         resizeMode="scaleAspectFit"
-        style={{ height: 24, width: 24 }}
+        size={24}
       />
     </Pressable>
   );

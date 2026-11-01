@@ -60,7 +60,7 @@ export const GetStarted = ({
                 name={symbols.checkCircle}
                 tintColor={colors.income}
                 resizeMode="scaleAspectFit"
-                style={{ height: 22, width: 22 }}
+                size={22}
               />
             ) : (
               <ListRowChevron />
