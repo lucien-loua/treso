@@ -7,6 +7,7 @@ import { GroupedSection } from "@/components/ui/grouped-section";
 import { ListRow, ListRowText, SeparatedList } from "@/components/ui/list-row";
 import { PillButton } from "@/components/ui/pill-button";
 import { TextButton } from "@/components/ui/text-button";
+import { ThemedText } from "@/components/ui/themed-text";
 import { entryCategory, entryTitle, signedAmount } from "@/data/entries";
 import { useTransactions } from "@/data/transactions-provider";
 import type { Schedule, Transaction } from "@/data/types";
@@ -125,13 +126,19 @@ export const Upcoming = ({
         />
       }
     >
-      <SeparatedList
-        data={schedules}
-        keyExtractor={(schedule) => schedule.id}
-        renderItem={(schedule) => (
-          <UpcomingRow schedule={schedule} transactions={transactions} />
-        )}
-      />
+      {schedules.length === 0 ? (
+        <ThemedText variant="subhead" style={{ padding: spacing.md }}>
+          {t.overview.upcoming.none}
+        </ThemedText>
+      ) : (
+        <SeparatedList
+          data={schedules}
+          keyExtractor={(schedule) => schedule.id}
+          renderItem={(schedule) => (
+            <UpcomingRow schedule={schedule} transactions={transactions} />
+          )}
+        />
+      )}
     </GroupedSection>
   );
 };

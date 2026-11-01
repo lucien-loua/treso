@@ -269,6 +269,7 @@ export const en: Messages = {
       action: (action, name) => `${action}: ${name}`,
       markPaid: "Mark as paid",
       markReceived: "Mark as received",
+      none: "Nothing upcoming. Add your salary, rent or a bill: Treso will remind you.",
       openHint: "Opens the recurring item to edit it",
       pay: "Pay",
       received: "Received",
@@ -315,10 +316,6 @@ export const en: Messages = {
   schedules: {
     dueBy: (date, inDays) => `Due by ${date} · ${inDays}`,
     dueToday: "Due today",
-    eachMonth: {
-      expense: (day) => `By the ${day}`,
-      income: (day) => `Around the ${day}`,
-    },
     expected: (date, inDays) => `Expected around ${date} · ${inDays}`,
     expectedSince: (date) => `Expected since ${date}`,
     expectedToday: "Expected today",
@@ -329,7 +326,6 @@ export const en: Messages = {
   },
   settings: {
     about: "About",
-    addSchedule: "Add a recurring item",
     amount: "Amount",
     budget: "Monthly budget",
     budgetFooter: "Tracked on the Overview. Leave empty for none.",
@@ -363,8 +359,6 @@ export const en: Messages = {
       title: "Exchange rates",
       useSuggested: "Use suggested rates",
     },
-    schedules: "Recurring",
-    schedulesFooter: "Reminded each month under “Upcoming”.",
     version: "Version",
   },
   sheets: {

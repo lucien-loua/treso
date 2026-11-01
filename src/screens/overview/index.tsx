@@ -42,6 +42,9 @@ const MonthDashboard = () => {
   const currentMonth = monthKeyOf(today);
   const [month, setMonth] = useState<MonthKey>(currentMonth);
   const isCurrentMonth = month === currentMonth;
+  const showGetStarted =
+    !getStartedHidden &&
+    !isGetStartedComplete(profile, { schedules, transactions }, t);
   const { summary, forecastCents, todaySpentCents } = monthOverview({
     amountOf: money.amountOf,
     isCurrentMonth,
@@ -75,22 +78,18 @@ const MonthDashboard = () => {
             )}
             todaySpentCents={todaySpentCents}
           />
-          {schedules.length > 0 ? (
+          {/* Where schedules live; while the checklist offers them, an empty one would repeat it */}
+          {schedules.length > 0 || !showGetStarted ? (
             <Upcoming schedules={schedules} transactions={transactions} />
           ) : null}
-          {getStartedHidden ||
-          isGetStartedComplete(
-            profile,
-            { schedules, transactions },
-            t
-          ) ? null : (
+          {showGetStarted ? (
             <GetStarted
               profile={profile}
               schedules={schedules}
               transactions={transactions}
               onHide={() => setGetStartedHidden(true)}
             />
-          )}
+          ) : null}
         </>
       ) : null}
       {budget ? (

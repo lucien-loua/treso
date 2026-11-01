@@ -12,16 +12,13 @@ import { scrollDismissesKeyboard } from "@expo/ui/swift-ui/modifiers";
 import Constants from "expo-constants";
 import { router } from "expo-router";
 
-import { entryTitle, signedAmount } from "@/data/entries";
 import { useExchangeRates } from "@/data/exchange-rates";
 import { useCurrencyCode } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
-import type { Schedule } from "@/data/types";
 import { useDataTransfer } from "@/hooks/use-data-transfer";
 import { useInk } from "@/hooks/use-ink";
 import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
-import type { Messages } from "@/i18n/messages/fr";
 import { parseISODate } from "@/lib/datetime";
 import { confirm } from "@/utils/alerts";
 import { haptics } from "@/utils/haptics";
@@ -31,9 +28,6 @@ import { BudgetRow } from "./budget-row";
 const isIOS = process.env.EXPO_OS === "ios";
 /** iOS draws a disclosure chevron on rows that open a screen; Android settings don't. */
 const CHEVRON_SIZE = 13;
-
-const scheduleSummary = (schedule: Schedule, t: Messages) =>
-  t.schedules.eachMonth[schedule.type](t.dayOfMonth(schedule.dayOfMonth));
 
 export const Settings = () => {
   const ink = useInk();
@@ -113,39 +107,6 @@ export const Settings = () => {
           <BudgetRow />
           <FieldGroup.SectionFooter>
             <Text textStyle={ink.footnote}>{t.settings.budgetFooter}</Text>
-          </FieldGroup.SectionFooter>
-        </FieldGroup.Section>
-
-        <FieldGroup.Section title={t.settings.schedules}>
-          {schedules.map((schedule) => (
-            <ListItem
-              key={schedule.id}
-              onPress={() => router.push(`/schedule/${schedule.id}`)}
-              supportingText={scheduleSummary(schedule, t)}
-              trailing={
-                <Text
-                  textStyle={{
-                    color: schedule.type === "income" ? ink.income : ink.label,
-                  }}
-                >
-                  {money.format(signedAmount(schedule, money.amountOf), {
-                    sign: "always",
-                  })}
-                </Text>
-              }
-            >
-              <Text textStyle={{ color: ink.label }}>
-                {entryTitle(schedule, t)}
-              </Text>
-            </ListItem>
-          ))}
-          <ListItem onPress={() => router.push("/schedule/new")}>
-            <Text textStyle={{ color: ink.tint }}>
-              {t.settings.addSchedule}
-            </Text>
-          </ListItem>
-          <FieldGroup.SectionFooter>
-            <Text textStyle={ink.footnote}>{t.settings.schedulesFooter}</Text>
           </FieldGroup.SectionFooter>
         </FieldGroup.Section>
 

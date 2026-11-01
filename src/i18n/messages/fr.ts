@@ -265,6 +265,7 @@ export const fr = {
       action: (action: string, name: string) => `${action} : ${name}`,
       markPaid: "Marquer comme payé",
       markReceived: "Marquer comme reçu",
+      none: "Aucune échéance. Ajoutez votre salaire, votre loyer ou une facture : Treso vous les rappellera.",
       openHint: "Ouvre l’échéance pour la modifier",
       pay: "Payer",
       received: "Reçu",
@@ -313,10 +314,6 @@ export const fr = {
   schedules: {
     dueBy: (date: string, inDays: string) => `Avant le ${date} · ${inDays}`,
     dueToday: "À payer aujourd’hui",
-    eachMonth: {
-      expense: (day: string) => `Avant le ${day}`,
-      income: (day: string) => `Vers le ${day}`,
-    },
     expected: (date: string, inDays: string) =>
       `Attendu vers le ${date} · ${inDays}`,
     expectedSince: (date: string) => `Attendu depuis le ${date}`,
@@ -329,7 +326,6 @@ export const fr = {
   },
   settings: {
     about: "À propos",
-    addSchedule: "Ajouter une échéance",
     amount: "Montant",
     budget: "Budget mensuel",
     budgetFooter: "Suivi sur l’Aperçu. Laissez vide pour ne pas en avoir.",
@@ -365,8 +361,6 @@ export const fr = {
       title: "Taux de change",
       useSuggested: "Utiliser les taux proposés",
     },
-    schedules: "Échéances",
-    schedulesFooter: "Rappelées chaque mois dans « À venir ».",
     version: "Version",
   },
   sheets: {
