@@ -1,11 +1,13 @@
-import { Text, type TextProps } from "react-native";
+import { Text } from "react-native";
+import type { TextProps } from "react-native";
 
-import { type, type TypeVariant } from "@/theme";
+import { type } from "@/theme";
+import type { TypeVariant } from "@/theme";
 
-export function ThemedText({
-	variant = "body",
-	style,
-	...props
-}: TextProps & { variant?: TypeVariant }) {
-	return <Text style={[type[variant], style]} {...props} />;
-}
+export const ThemedText = ({
+  variant = "body",
+  style,
+  ...props
+}: TextProps & { variant?: TypeVariant }) => (
+  <Text style={[type[variant], style]} {...props} />
+);

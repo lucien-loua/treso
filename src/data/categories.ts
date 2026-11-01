@@ -4,167 +4,176 @@ import type { CategoryColor } from "@/theme";
 
 import type { TransactionType } from "./types";
 
-export type Category = {
-	id: string;
-	type: TransactionType;
-	label: string;
-	icon: SymbolViewProps["name"];
-	color: CategoryColor;
-};
+export interface Category {
+  id: string;
+  type: TransactionType;
+  label: string;
+  icon: SymbolViewProps["name"];
+  color: CategoryColor;
+}
 
 export const categories: Category[] = [
-	{
-		id: "groceries",
-		type: "expense",
-		label: "Courses",
-		icon: { ios: "cart.fill", android: "shopping_cart", web: "shopping_cart" },
-		color: "orange",
-	},
-	{
-		id: "restaurants",
-		type: "expense",
-		label: "Restaurants",
-		icon: { ios: "fork.knife", android: "restaurant", web: "restaurant" },
-		color: "pink",
-	},
-	{
-		id: "transport",
-		type: "expense",
-		label: "Transport",
-		icon: { ios: "car.fill", android: "directions_car", web: "directions_car" },
-		color: "blue",
-	},
-	{
-		id: "housing",
-		type: "expense",
-		label: "Logement",
-		icon: { ios: "house.fill", android: "home", web: "home" },
-		color: "brown",
-	},
-	{
-		id: "bills",
-		type: "expense",
-		label: "Factures",
-		icon: { ios: "bolt.fill", android: "bolt", web: "bolt" },
-		color: "yellow",
-	},
-	{
-		id: "shopping",
-		type: "expense",
-		label: "Shopping",
-		icon: { ios: "bag.fill", android: "shopping_bag", web: "shopping_bag" },
-		color: "purple",
-	},
-	{
-		id: "leisure",
-		type: "expense",
-		label: "Loisirs",
-		icon: {
-			ios: "gamecontroller.fill",
-			android: "sports_esports",
-			web: "sports_esports",
-		},
-		color: "teal",
-	},
-	{
-		id: "health",
-		type: "expense",
-		label: "Santé",
-		icon: {
-			ios: "cross.case.fill",
-			android: "medical_services",
-			web: "medical_services",
-		},
-		color: "red",
-	},
-	{
-		id: "education",
-		type: "expense",
-		label: "Éducation",
-		icon: { ios: "book.fill", android: "school", web: "school" },
-		color: "cyan",
-	},
-	{
-		id: "subscriptions",
-		type: "expense",
-		label: "Abonnements",
-		icon: { ios: "repeat", android: "autorenew", web: "autorenew" },
-		color: "indigo",
-	},
-	{
-		id: "help",
-		type: "expense",
-		label: "Aide",
-		icon: { ios: "heart.fill", android: "volunteer_activism", web: "volunteer_activism" },
-		color: "mint",
-	},
-	{
-		id: "other-expense",
-		type: "expense",
-		label: "Autre",
-		icon: { ios: "ellipsis", android: "more_horiz", web: "more_horiz" },
-		color: "gray",
-	},
-	{
-		id: "salary",
-		type: "income",
-		label: "Salaire",
-		icon: { ios: "banknote.fill", android: "payments", web: "payments" },
-		color: "green",
-	},
-	{
-		id: "freelance",
-		type: "income",
-		label: "Freelance",
-		icon: { ios: "briefcase.fill", android: "work", web: "work" },
-		color: "blue",
-	},
-	{
-		id: "gifts",
-		type: "income",
-		label: "Cadeaux",
-		icon: { ios: "gift.fill", android: "redeem", web: "redeem" },
-		color: "pink",
-	},
-	{
-		id: "investments",
-		type: "income",
-		label: "Placements",
-		icon: {
-			ios: "chart.line.uptrend.xyaxis",
-			android: "trending_up",
-			web: "trending_up",
-		},
-		color: "mint",
-	},
-	{
-		id: "other-income",
-		type: "income",
-		label: "Autre revenu",
-		icon: { ios: "plus", android: "add", web: "add" },
-		color: "gray",
-	},
+  {
+    color: "orange",
+    icon: { android: "shopping_cart", ios: "cart.fill", web: "shopping_cart" },
+    id: "groceries",
+    label: "Courses",
+    type: "expense",
+  },
+  {
+    color: "pink",
+    icon: { android: "restaurant", ios: "fork.knife", web: "restaurant" },
+    id: "restaurants",
+    label: "Restaurants",
+    type: "expense",
+  },
+  {
+    color: "blue",
+    icon: { android: "directions_car", ios: "car.fill", web: "directions_car" },
+    id: "transport",
+    label: "Transport",
+    type: "expense",
+  },
+  {
+    color: "brown",
+    icon: { android: "home", ios: "house.fill", web: "home" },
+    id: "housing",
+    label: "Logement",
+    type: "expense",
+  },
+  {
+    color: "yellow",
+    icon: { android: "bolt", ios: "bolt.fill", web: "bolt" },
+    id: "bills",
+    label: "Factures",
+    type: "expense",
+  },
+  {
+    color: "purple",
+    icon: { android: "shopping_bag", ios: "bag.fill", web: "shopping_bag" },
+    id: "shopping",
+    label: "Shopping",
+    type: "expense",
+  },
+  {
+    color: "teal",
+    icon: {
+      android: "sports_esports",
+      ios: "gamecontroller.fill",
+      web: "sports_esports",
+    },
+    id: "leisure",
+    label: "Loisirs",
+    type: "expense",
+  },
+  {
+    color: "red",
+    icon: {
+      android: "medical_services",
+      ios: "cross.case.fill",
+      web: "medical_services",
+    },
+    id: "health",
+    label: "Santé",
+    type: "expense",
+  },
+  {
+    color: "cyan",
+    icon: { android: "school", ios: "book.fill", web: "school" },
+    id: "education",
+    label: "Éducation",
+    type: "expense",
+  },
+  {
+    color: "indigo",
+    icon: { android: "autorenew", ios: "repeat", web: "autorenew" },
+    id: "subscriptions",
+    label: "Abonnements",
+    type: "expense",
+  },
+  {
+    color: "mint",
+    icon: {
+      android: "volunteer_activism",
+      ios: "heart.fill",
+      web: "volunteer_activism",
+    },
+    id: "help",
+    label: "Aide",
+    type: "expense",
+  },
+  {
+    color: "gray",
+    icon: { android: "more_horiz", ios: "ellipsis", web: "more_horiz" },
+    id: "other-expense",
+    label: "Autre",
+    type: "expense",
+  },
+  {
+    color: "green",
+    icon: { android: "payments", ios: "banknote.fill", web: "payments" },
+    id: "salary",
+    label: "Salaire",
+    type: "income",
+  },
+  {
+    color: "blue",
+    icon: { android: "work", ios: "briefcase.fill", web: "work" },
+    id: "freelance",
+    label: "Freelance",
+    type: "income",
+  },
+  {
+    color: "pink",
+    icon: { android: "redeem", ios: "gift.fill", web: "redeem" },
+    id: "gifts",
+    label: "Cadeaux",
+    type: "income",
+  },
+  {
+    color: "mint",
+    icon: {
+      android: "trending_up",
+      ios: "chart.line.uptrend.xyaxis",
+      web: "trending_up",
+    },
+    id: "investments",
+    label: "Placements",
+    type: "income",
+  },
+  {
+    color: "gray",
+    icon: { android: "add", ios: "plus", web: "add" },
+    id: "other-income",
+    label: "Autre revenu",
+    type: "income",
+  },
 ];
 
 const byId = new Map(categories.map((category) => [category.id, category]));
 
-const fallback: Record<TransactionType, Category> = {
-	expense: byId.get("other-expense")!,
-	income: byId.get("other-income")!,
+const requireCategory = (id: string): Category => {
+  const category = byId.get(id);
+  if (!category) {
+    throw new Error(`Unknown category: ${id}`);
+  }
+  return category;
 };
 
-export function getCategory(
-	id: string,
-	type: TransactionType = "expense",
-): Category {
-	return byId.get(id) ?? fallback[type];
-}
+const fallback: Record<TransactionType, Category> = {
+  expense: requireCategory("other-expense"),
+  income: requireCategory("other-income"),
+};
 
-export function categoriesFor(type: TransactionType): Category[] {
-	return categories.filter((category) => category.type === type);
-}
+export const getCategory = (
+  id: string,
+  type: TransactionType = "expense"
+): Category => byId.get(id) ?? fallback[type];
+
+export const categoriesFor = (type: TransactionType): Category[] =>
+  categories.filter((category) => category.type === type);
 
 export const defaultCategoryId: Record<TransactionType, string> = {
-	expense: "groceries",
-	income: "salary",
+  expense: "groceries",
+  income: "salary",
 };

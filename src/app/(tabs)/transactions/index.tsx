@@ -1,5 +1,5 @@
 import { TransactionList } from "@/screens/transactions";
 
-export default function TransactionsRoute() {
-	return <TransactionList />;
-}
+const TransactionsRoute = () => <TransactionList />;
+
+export default TransactionsRoute;

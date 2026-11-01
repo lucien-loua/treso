@@ -1,5 +1,5 @@
 import { Overview } from "@/screens/overview";
 
-export default function OverviewRoute() {
-	return <Overview />;
-}
+const OverviewRoute = () => <Overview />;
+
+export default OverviewRoute;

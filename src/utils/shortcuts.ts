@@ -2,12 +2,17 @@ import type { Transaction } from "@/data/types";
 
 import { toISODate } from "./dates";
 
-export type Shortcut = { categoryId: string; note: string; icon: string | null; color: string | null };
+export interface Shortcut {
+  categoryId: string;
+  note: string;
+  icon: string | null;
+  color: string | null;
+}
 
 const FALLBACK: Shortcut[] = [
-	{ categoryId: "transport", note: "", icon: null, color: null },
-	{ categoryId: "groceries", note: "", icon: null, color: null },
-	{ categoryId: "restaurants", note: "", icon: null, color: null },
+  { categoryId: "transport", color: null, icon: null, note: "" },
+  { categoryId: "groceries", color: null, icon: null, note: "" },
+  { categoryId: "restaurants", color: null, icon: null, note: "" },
 ];
 
 /**
@@ -15,26 +20,53 @@ const FALLBACK: Shortcut[] = [
  * topped up with common categories for new users. Scheduled payments are left out: they have
  * their own "Payer" button.
  */
-export function frequentExpenses(transactions: Transaction[], max = 4, today = new Date()): Shortcut[] {
-	const since = toISODate(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 60));
-	const counts = new Map<string, { shortcut: Shortcut; count: number; last: string }>();
+export const frequentExpenses = (
+  transactions: Transaction[],
+  max = 4,
+  today = new Date()
+): Shortcut[] => {
+  const since = toISODate(
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() - 60)
+  );
+  const counts = new Map<
+    string,
+    { shortcut: Shortcut; count: number; last: string }
+  >();
 
-	for (const t of transactions) {
-		if (t.type !== "expense" || t.scheduleId !== null || t.date < since) continue;
-		const key = `${t.categoryId}|${t.note.toLowerCase()}|${t.icon ?? ""}|${t.color ?? ""}`;
-		const entry = counts.get(key);
-		if (entry) entry.count += 1;
-		else counts.set(key, { shortcut: { categoryId: t.categoryId, note: t.note, icon: t.icon, color: t.color }, count: 1, last: t.date });
-	}
+  for (const t of transactions) {
+    if (t.type !== "expense" || t.scheduleId !== null || t.date < since) {
+      continue;
+    }
+    const key = `${t.categoryId}|${t.note.toLowerCase()}|${t.icon ?? ""}|${t.color ?? ""}`;
+    const entry = counts.get(key);
+    if (entry) {
+      entry.count += 1;
+    } else {
+      counts.set(key, {
+        count: 1,
+        last: t.date,
+        shortcut: {
+          categoryId: t.categoryId,
+          color: t.color,
+          icon: t.icon,
+          note: t.note,
+        },
+      });
+    }
+  }
 
-	const result = [...counts.values()]
-		.sort((a, b) => b.count - a.count || b.last.localeCompare(a.last))
-		.map((entry) => entry.shortcut)
-		.slice(0, max);
+  const result = [...counts.values()]
+    .sort((a, b) => b.count - a.count || b.last.localeCompare(a.last))
+    .map((entry) => entry.shortcut)
+    .slice(0, max);
 
-	for (const fallback of FALLBACK) {
-		if (result.length >= max) break;
-		if (!result.some((s) => s.categoryId === fallback.categoryId)) result.push(fallback);
-	}
-	return result;
-}
+  for (const fallback of FALLBACK) {
+    if (result.length >= max) {
+      break;
+    }
+    if (!result.some((s) => s.categoryId === fallback.categoryId)) {
+      result.push(fallback);
+    }
+  }
+  return result;
+};

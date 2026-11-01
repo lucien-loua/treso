@@ -1,29 +1,27 @@
 {
-  "fill" : {
-    "automatic-gradient" : "extended-srgb:0.34510,0.33725,0.83922,1.00000"
+  "fill": {
+    "automatic-gradient": "extended-srgb:0.34510,0.33725,0.83922,1.00000"
   },
-  "groups" : [
+  "groups": [
     {
-      "layers" : [
+      "layers": [
         {
-          "image-name" : "treso-foreground.svg",
-          "name" : "treso-foreground"
+          "image-name": "treso-foreground.svg",
+          "name": "treso-foreground"
         }
       ],
-      "shadow" : {
-        "kind" : "neutral",
-        "opacity" : 0.5
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
       },
-      "translucency" : {
-        "enabled" : true,
-        "value" : 0.5
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
       }
     }
   ],
-  "supported-platforms" : {
-    "circles" : [
-      "watchOS"
-    ],
-    "squares" : "shared"
+  "supported-platforms": {
+    "circles": ["watchOS"],
+    "squares": "shared"
   }
 }
