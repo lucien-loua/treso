@@ -35,6 +35,7 @@ export const en: Messages = {
     retry: "Try Again",
     save: "Save",
     seeAll: "See All",
+    seeLess: "Show Less",
     skip: "Skip",
   },
   addTransaction: "Add a transaction",
@@ -91,16 +92,14 @@ export const en: Messages = {
   form: {
     amountIn: (symbol) => `Amount in ${symbol}`,
     appearance: "Change icon and color",
-    appearanceHint:
-      "By default, the color follows the category and the first icon matches the name.",
     autoIcon: "Automatic, from the name",
     category: "Category",
     categoryColor: (color) => `${color} (category color)`,
+    categoryValue: (name) => `Category: ${name}`,
     color: "Color",
     converted: (amount) => `About ${amount} at today’s rate`,
     date: "Date",
     deleteConfirm: (label) => `${label}?`,
-    details: "Details",
     expectedAround: "Expected around the",
     expense: "Expense",
     icon: "Icon",
@@ -111,7 +110,7 @@ export const en: Messages = {
     nextDue: "Next due date",
     nextIncome: "Next expected",
     payBefore: "Due by the",
-    usualAmount: "Usual amount: you can adjust it when you pay.",
+    usualAmount: "Usual amount, adjustable when you pay.",
   },
   iconKeywords: {
     bank: ["bank", "bank fees"],
@@ -211,8 +210,6 @@ export const en: Messages = {
       over: (amount) => `${amount} over`,
       perDay: (amount, days) =>
         `${amount} a day for ${plural(days, "day", "days")}`,
-      setUp: "Set a monthly budget",
-      setUpHint: "See how much you have left to spend each month.",
       spentOf: (spent, budget) => `${spent} spent of ${budget}`,
       title: "Budget",
       used: (percent) => `${percent} used`,
@@ -221,11 +218,9 @@ export const en: Messages = {
       none: "No spending this month.",
       title: "Spending by category",
     },
-    carriedOver: (month, amount) => `Carried over from ${month}: ${amount}`,
     currentBalance: "Current balance",
     expenses: "Expenses",
     forecast: (month) => `${month} forecast`,
-    forecastHint: "After the upcoming items",
     getStarted: {
       bills: {
         defaultName: "Electricity",
@@ -236,7 +231,6 @@ export const en: Messages = {
         hint: "Transport, meals… logged in seconds.",
         title: "An everyday expense",
       },
-      footer: "You can change everything later: amounts, days, names.",
       rent: {
         defaultName: "Rent",
         hint: "Due by the 5th, paid early or on the day.",
@@ -255,21 +249,14 @@ export const en: Messages = {
       next: "Next month",
       previous: "Previous month",
     },
-    monthTransactions: {
-      none: (month) => `No transactions in ${month}.`,
-      title: "This month’s transactions",
-    },
     quickAdd: {
       add: (name) => `Add: ${name}`,
-      other: "Other",
       title: "Quick add",
       today: (amount) => `Today: ${amount}`,
     },
     thisMonth: (amount) => `This month: ${amount}`,
     upcoming: {
       action: (action, name) => `${action}: ${name}`,
-      footer:
-        "Tap “Pay” or “Received” once it’s done. Tap the row to change the date or amount; touch and hold to skip a month.",
       markPaid: "Mark as paid",
       markReceived: "Mark as received",
       openHint: "Opens the recurring item to edit it",
@@ -291,8 +278,8 @@ export const en: Messages = {
     dueBy: (date, inDays) => `Due by ${date} · ${inDays}`,
     dueToday: "Due today",
     eachMonth: {
-      expense: (day) => `By the ${day} of every month`,
-      income: (day) => `Around the ${day} of every month`,
+      expense: (day) => `By the ${day}`,
+      income: (day) => `Around the ${day}`,
     },
     expected: (date, inDays) => `Expected around ${date} · ${inDays}`,
     expectedSince: (date) => `Expected since ${date}`,
@@ -307,12 +294,11 @@ export const en: Messages = {
     addSchedule: "Add a recurring item",
     amount: "Amount",
     budget: "Monthly budget",
-    budgetFooter:
-      "A spending limit tracked on the Overview. Leave it empty to turn it off.",
+    budgetFooter: "Tracked on the Overview. Leave empty for none.",
     budgetIn: (symbol) => `Monthly budget in ${symbol}`,
     currency: "Currency",
     currencyFooter:
-      "Each amount keeps the currency it was entered in and shows converted to this one: changing currency never alters your data.",
+      "Amounts entered in another currency are converted, never changed.",
     data: "Data",
     eraseAll: "Erase all data",
     eraseConfirm: "Erase All",
@@ -327,19 +313,18 @@ export const en: Messages = {
     rates: {
       invalid: "Invalid rate",
       invalidHint: "Enter a positive number, for example 600.",
-      manualFooter: (date) =>
-        `Your own rates, changed on ${date}, are used for every conversion. Turn the suggested rates back on to return to today’s rates.`,
+      manualFooter: (date) => `Your rates, changed on ${date}.`,
+      own: "Your own rates",
       per: (amount) => `${amount} =`,
       rateOf: (currency, amount) => `${currency} rate for ${amount}`,
+      suggested: (date) => `Suggested rates of ${date}`,
       suggestedFooter: (date) =>
-        `Rates of ${date}, updated daily from a free source when the phone is online. Turn off to enter your own rates.`,
+        `Rates of ${date}, updated daily when the phone is online.`,
       title: "Exchange rates",
       useSuggested: "Use suggested rates",
     },
-    recorded: "Saved transactions",
     schedules: "Recurring",
-    schedulesFooter:
-      "Salary, rent, bills… Treso reminds you each month on the Overview, and you confirm once it’s paid or received.",
+    schedulesFooter: "Reminded each month under “Upcoming”.",
     version: "Version",
   },
   sheets: {
@@ -353,13 +338,11 @@ export const en: Messages = {
     newTransaction: "New transaction",
     payment: "Payment",
     schedule: "Recurring item",
-    scheduleFooter:
-      "Treso reminds you every month under “Upcoming”. Once it’s paid (or received), tap the button: the amount and date can vary.",
+    scheduleFooter: "Reminded each month under “Upcoming”.",
     scheduleMissing: "Recurring item not found",
     scheduledPayment:
       "Payment of a monthly recurring item. Deleting it makes the item due again.",
-    settleFooter:
-      "Adjust the amount or date if they differ from usual. The item then moves on to next month.",
+    settleFooter: "Adjust if needed: the item then moves on to next month.",
     settleIntro: {
       expense: (name, date) => `${name} · due ${date}`,
       income: (name, date) => `${name} · expected around ${date}`,
@@ -402,8 +385,7 @@ export const en: Messages = {
       backup: (date) => `treso-backup-${date}`,
       csv: (date) => `treso-transactions-${date}`,
     },
-    footer:
-      "The backup holds everything (transactions, recurring items, budget, currency and rates) and can be imported on this phone or another. The spreadsheet opens in Excel or Google Sheets.",
+    footer: "A backup can be imported on this phone or another.",
     importBackup: "Import a backup",
     imported: "Backup imported",
     importedMessage: (transactions, schedules) =>
@@ -416,6 +398,5 @@ export const en: Messages = {
     replaceMessage: (date, backup, current) =>
       `The backup from ${date} has ${backup}. It will replace the data on this phone (${current}), along with the currency, budget and rates.`,
     replaceTitle: "Replace your data?",
-    title: "Export & import",
   },
 };

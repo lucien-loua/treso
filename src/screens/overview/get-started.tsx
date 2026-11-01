@@ -36,7 +36,6 @@ export const GetStarted = ({
       accessory={
         onHide ? <TextButton label={t.actions.hide} onPress={onHide} /> : null
       }
-      footer={t.overview.getStarted.footer}
     >
       <SeparatedList
         data={getStartedSteps(schedules, transactions, t)}

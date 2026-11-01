@@ -82,19 +82,23 @@ const rulesFor = (keywords: IconKeywords) => {
   return rules;
 };
 
+/** Every icon a name's words call for, most specific first (« Cadeau maman » → family, gift). */
+export const matchingIcons = (
+  name: string,
+  keywords: IconKeywords
+): IconId[] => {
+  const text = foldText(name);
+  if (!text.trim()) {
+    return [];
+  }
+  return rulesFor(keywords)
+    .filter(([, pattern]) => pattern.test(text))
+    .map(([id]) => id);
+};
+
 /**
  * Icon that fits a transaction name in the language of `keywords` (« Taxi » → car, « Rent » →
  * house), or `null` to keep the category icon.
  */
-export const suggestIcon = (
-  name: string,
-  keywords: IconKeywords
-): IconId | null => {
-  const text = foldText(name);
-  if (!text.trim()) {
-    return null;
-  }
-  return (
-    rulesFor(keywords).find(([, pattern]) => pattern.test(text))?.[0] ?? null
-  );
-};
+export const suggestIcon = (name: string, keywords: IconKeywords) =>
+  matchingIcons(name, keywords)[0] ?? null;

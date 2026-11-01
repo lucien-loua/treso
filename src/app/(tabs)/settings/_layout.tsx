@@ -8,6 +8,7 @@ const SettingsStack = () => {
   return (
     <Stack screenOptions={tabStackScreenOptions}>
       <Stack.Screen name="index" options={{ title: t.tabs.settings }} />
+      <Stack.Screen name="rates" options={{ title: t.settings.rates.title }} />
     </Stack>
   );
 };

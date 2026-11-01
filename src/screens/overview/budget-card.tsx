@@ -1,8 +1,6 @@
-import { router } from "expo-router";
 import { View } from "react-native";
 
 import { GroupedSection } from "@/components/ui/grouped-section";
-import { ListRow, ListRowChevron, ListRowText } from "@/components/ui/list-row";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { ThemedText } from "@/components/ui/themed-text";
 import { useMoney } from "@/hooks/use-money";
@@ -14,28 +12,19 @@ import { colors, spacing } from "@/theme";
 /** Share of the budget spent from which the bar turns orange. */
 const WARNING_RATIO = 0.8;
 
+/** The month's spending against the budget set in Settings. */
 export const BudgetCard = ({
   budgetCents,
   spentCents,
   month,
 }: {
-  budgetCents: number | null;
+  budgetCents: number;
   spentCents: number;
   month: MonthKey;
 }) => {
   const { t, percent } = useI18n();
   const money = useMoney();
   const texts = t.overview.budget;
-  if (budgetCents === null) {
-    return (
-      <GroupedSection title={texts.title}>
-        <ListRow onPress={() => router.navigate("/settings")}>
-          <ListRowText title={texts.setUp} subtitle={texts.setUpHint} />
-          <ListRowChevron />
-        </ListRow>
-      </GroupedSection>
-    );
-  }
 
   const ratio = spentCents / budgetCents;
   const remaining = budgetCents - spentCents;

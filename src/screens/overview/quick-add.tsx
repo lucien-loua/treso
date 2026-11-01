@@ -1,15 +1,13 @@
 import { router } from "expo-router";
-import { SymbolView } from "expo-symbols";
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
 import { CategoryIcon } from "@/components/category-icon";
 import { ThemedText } from "@/components/ui/themed-text";
-import { symbols } from "@/constants/symbols";
 import { getCategory } from "@/data/catalog/categories";
 import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
-import { colors, glyph, radius, spacing } from "@/theme";
+import { colors, radius, spacing } from "@/theme";
 import { haptics } from "@/utils/haptics";
 import type { Shortcut } from "@/utils/shortcuts";
 
@@ -126,30 +124,6 @@ export const QuickAdd = ({
             </Chip>
           );
         })}
-        <Chip
-          label={t.overview.quickAdd.other}
-          onPress={() => router.push("/transaction/new")}
-        >
-          <View
-            style={{
-              alignItems: "center",
-              backgroundColor: colors.fill,
-              borderCurve: "continuous",
-              borderRadius: radius.sm,
-              height: 28,
-              justifyContent: "center",
-              width: 28,
-            }}
-          >
-            <SymbolView
-              name={symbols.add}
-              tintColor={colors.label}
-              weight="semibold"
-              resizeMode="scaleAspectFit"
-              size={glyph.md}
-            />
-          </View>
-        </Chip>
       </ScrollView>
     </View>
   );

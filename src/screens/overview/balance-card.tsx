@@ -7,7 +7,6 @@ import { ThemedText } from "@/components/ui/themed-text";
 import { symbols } from "@/constants/symbols";
 import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
-import { shiftMonth } from "@/lib/datetime";
 import type { MonthKey } from "@/lib/datetime";
 import { colors, glyph, radius, spacing } from "@/theme";
 import type { MonthSummary } from "@/utils/stats";
@@ -106,11 +105,6 @@ export const BalanceCard = ({
           {money.format(summary.closingCents)}
         </ThemedText>
         <ThemedText variant="footnote" selectable>
-          {t.overview.carriedOver(
-            dates.monthInText(shiftMonth(month, -1)),
-            money.format(summary.openingCents)
-          )}{" "}
-          ·{" "}
           {t.overview.thisMonth(
             money.format(summary.balanceCents, { sign: "always" })
           )}
@@ -120,23 +114,18 @@ export const BalanceCard = ({
         <View
           accessible
           style={{
-            alignItems: "center",
-            backgroundColor: colors.fill,
-            borderCurve: "continuous",
-            borderRadius: radius.md,
+            alignItems: "baseline",
             flexDirection: "row",
             gap: spacing.sm,
             justifyContent: "space-between",
-            paddingHorizontal: spacing.smd,
-            paddingVertical: spacing.sm,
           }}
         >
-          <View style={{ flexShrink: 1 }}>
-            <ThemedText variant="subhead" style={{ color: colors.label }}>
-              {t.overview.forecast(dates.monthName(month))}
-            </ThemedText>
-            <ThemedText variant="caption">{t.overview.forecastHint}</ThemedText>
-          </View>
+          <ThemedText
+            variant="subhead"
+            style={{ color: colors.label, flexShrink: 1 }}
+          >
+            {t.overview.forecast(dates.monthName(month))}
+          </ThemedText>
           <ThemedText
             variant="headline"
             selectable

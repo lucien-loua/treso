@@ -25,6 +25,8 @@ export interface FormValues {
   type: TransactionType;
   amountText: string;
   categoryId: string;
+  /** Picked by the user (or given by the caller): the name no longer suggests one. */
+  categoryChosen: boolean;
   note: string;
   /** `null` = automatic: the icon follows the name ("Taxi" → car), else the category. */
   iconId: string | null;
@@ -53,6 +55,7 @@ export const initialValues = (
   const dayOfMonth = initial.dayOfMonth ?? today.getDate();
   return {
     amountText: initial.amountCents ? money.toInput(initial.amountCents) : "",
+    categoryChosen: initial.categoryId !== undefined,
     categoryId: initial.categoryId ?? defaultCategoryId[type],
     colorId: initial.color ?? null,
     date: initial.date ? parseISODate(initial.date) : today,

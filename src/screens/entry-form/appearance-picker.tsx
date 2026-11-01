@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { Pressable, View } from "react-native";
 
 import { CategoryIcon } from "@/components/category-icon";
-import { ThemedText } from "@/components/ui/themed-text";
 import { symbols } from "@/constants/symbols";
 import type { Category } from "@/data/catalog/categories";
 import { getIcon, icons } from "@/data/catalog/icons";
@@ -225,9 +224,6 @@ export const AppearancePicker = ({
           </IconCell>
         ))}
       </View>
-      <ThemedText variant="footnote" style={{ paddingHorizontal: spacing.sm }}>
-        {t.form.appearanceHint}
-      </ThemedText>
     </View>
   );
 };

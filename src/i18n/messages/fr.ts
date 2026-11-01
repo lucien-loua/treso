@@ -11,11 +11,6 @@ const plural = (count: number, one: string, many: string) =>
 const dataCounts = (transactions: number, schedules: number) =>
   `${plural(transactions, "opération", "opérations")} et ${plural(schedules, "échéance", "échéances")}`;
 
-const VOWEL = /^[aeiouyàâéèêîôû]/iu;
-
-/** « de novembre », « d’octobre » */
-const de = (word: string) => (VOWEL.test(word) ? `d’${word}` : `de ${word}`);
-
 const categories: Record<CategoryId, string> = {
   bills: "Factures",
   education: "Éducation",
@@ -159,6 +154,7 @@ export const fr = {
     retry: "Réessayer",
     save: "Enregistrer",
     seeAll: "Tout voir",
+    seeLess: "Réduire",
     skip: "Ignorer",
   },
   addTransaction: "Ajouter une opération",
@@ -180,16 +176,14 @@ export const fr = {
   form: {
     amountIn: (symbol: string) => `Montant en ${symbol}`,
     appearance: "Changer l’icône et la couleur",
-    appearanceHint:
-      "Par défaut, la couleur suit la catégorie et la première icône s’adapte au nom.",
     autoIcon: "Automatique, selon le nom",
     category: "Catégorie",
     categoryColor: (color: string) => `${color} (couleur de la catégorie)`,
+    categoryValue: (name: string) => `Catégorie : ${name}`,
     color: "Couleur",
     converted: (amount: string) => `Soit environ ${amount} au taux du jour`,
     date: "Date",
     deleteConfirm: (label: string) => `${label} ?`,
-    details: "Détails",
     expectedAround: "Attendu vers le",
     expense: "Dépense",
     icon: "Icône",
@@ -200,8 +194,7 @@ export const fr = {
     nextDue: "Prochaine échéance",
     nextIncome: "Prochain versement",
     payBefore: "À payer avant le",
-    usualAmount:
-      "Montant habituel : vous pourrez l’ajuster au moment de payer.",
+    usualAmount: "Montant habituel, ajustable au moment de payer.",
   },
   iconKeywords,
   icons,
@@ -212,8 +205,6 @@ export const fr = {
       over: (amount: string) => `Dépassé de ${amount}`,
       perDay: (amount: string, days: number) =>
         `${amount} par jour sur ${days} j`,
-      setUp: "Définir un budget mensuel",
-      setUpHint: "Suivez ce qu’il vous reste à dépenser chaque mois.",
       spentOf: (spent: string, budget: string) =>
         `${spent} dépensés sur ${budget}`,
       title: "Budget",
@@ -223,12 +214,9 @@ export const fr = {
       none: "Aucune dépense ce mois-ci.",
       title: "Dépenses par catégorie",
     },
-    carriedOver: (month: string, amount: string) =>
-      `Report ${de(month)} : ${amount}`,
     currentBalance: "Solde actuel",
     expenses: "Dépenses",
     forecast: (month: string) => `Prévu fin ${month}`,
-    forecastHint: "Après les échéances à venir",
     getStarted: {
       bills: {
         defaultName: "Électricité",
@@ -239,7 +227,6 @@ export const fr = {
         hint: "Transport, repas… notée en quelques secondes.",
         title: "Une dépense du jour",
       },
-      footer: "Vous pourrez tout modifier ensuite : montants, jours, noms.",
       rent: {
         defaultName: "Loyer",
         hint: "À payer avant le 5, en avance ou le jour même.",
@@ -258,21 +245,14 @@ export const fr = {
       next: "Mois suivant",
       previous: "Mois précédent",
     },
-    monthTransactions: {
-      none: (month: string) => `Aucune opération en ${month}.`,
-      title: "Opérations du mois",
-    },
     quickAdd: {
       add: (name: string) => `Ajouter : ${name}`,
-      other: "Autre",
       title: "Ajout rapide",
       today: (amount: string) => `Aujourd’hui : ${amount}`,
     },
     thisMonth: (amount: string) => `Ce mois : ${amount}`,
     upcoming: {
       action: (action: string, name: string) => `${action} : ${name}`,
-      footer:
-        "Touchez « Payer » ou « Reçu » quand c’est fait. Touchez la ligne pour changer la date ou le montant, appui long pour ignorer un mois.",
       markPaid: "Marquer comme payé",
       markReceived: "Marquer comme reçu",
       openHint: "Ouvre l’échéance pour la modifier",
@@ -294,8 +274,8 @@ export const fr = {
     dueBy: (date: string, inDays: string) => `Avant le ${date} · ${inDays}`,
     dueToday: "À payer aujourd’hui",
     eachMonth: {
-      expense: (day: string) => `Avant le ${day} de chaque mois`,
-      income: (day: string) => `Vers le ${day} de chaque mois`,
+      expense: (day: string) => `Avant le ${day}`,
+      income: (day: string) => `Vers le ${day}`,
     },
     expected: (date: string, inDays: string) =>
       `Attendu vers le ${date} · ${inDays}`,
@@ -312,12 +292,11 @@ export const fr = {
     addSchedule: "Ajouter une échéance",
     amount: "Montant",
     budget: "Budget mensuel",
-    budgetFooter:
-      "Plafond de dépenses suivi sur l’écran Aperçu. Laissez vide pour le désactiver.",
+    budgetFooter: "Suivi sur l’Aperçu. Laissez vide pour ne pas en avoir.",
     budgetIn: (symbol: string) => `Budget mensuel en ${symbol}`,
     currency: "Devise",
     currencyFooter:
-      "Chaque montant garde la devise dans laquelle il a été saisi et s’affiche converti dans celle-ci : changer de devise ne modifie aucune donnée.",
+      "Les montants saisis dans une autre devise sont convertis, jamais modifiés.",
     data: "Données",
     eraseAll: "Effacer toutes les données",
     eraseConfirm: "Tout effacer",
@@ -333,20 +312,19 @@ export const fr = {
     rates: {
       invalid: "Taux invalide",
       invalidHint: "Saisissez un nombre positif, par exemple 600.",
-      manualFooter: (date: string) =>
-        `Vos propres taux, modifiés le ${date}, servent à toutes les conversions. Réactivez les taux proposés pour revenir aux taux du jour.`,
+      manualFooter: (date: string) => `Vos taux, modifiés le ${date}.`,
+      own: "Vos propres taux",
       per: (amount: string) => `${amount} =`,
       rateOf: (currency: string, amount: string) =>
         `Taux du ${currency} pour ${amount}`,
+      suggested: (date: string) => `Taux proposés du ${date}`,
       suggestedFooter: (date: string) =>
-        `Taux du ${date}, mis à jour chaque jour depuis une source gratuite quand le téléphone est en ligne. Désactivez pour saisir vos propres taux.`,
+        `Taux du ${date}, mis à jour chaque jour quand le téléphone est en ligne.`,
       title: "Taux de change",
       useSuggested: "Utiliser les taux proposés",
     },
-    recorded: "Opérations enregistrées",
-    schedules: "Échéances mensuelles",
-    schedulesFooter:
-      "Salaire, loyer, factures… Treso vous les rappelle chaque mois sur l’Aperçu, et vous confirmez quand c’est payé ou reçu.",
+    schedules: "Échéances",
+    schedulesFooter: "Rappelées chaque mois dans « À venir ».",
     version: "Version",
   },
   sheets: {
@@ -360,13 +338,12 @@ export const fr = {
     newTransaction: "Nouvelle opération",
     payment: "Paiement",
     schedule: "Échéance",
-    scheduleFooter:
-      "Treso vous la rappelle chaque mois dans « À venir ». Quand c’est payé (ou reçu), touchez le bouton : le montant et la date peuvent varier.",
+    scheduleFooter: "Rappelée chaque mois dans « À venir ».",
     scheduleMissing: "Échéance introuvable",
     scheduledPayment:
       "Paiement d’une échéance mensuelle. Le supprimer remet l’échéance à payer.",
     settleFooter:
-      "Ajustez le montant ou la date s’ils diffèrent de d’habitude. L’échéance passera ensuite au mois suivant.",
+      "Ajustez si besoin : l’échéance passera ensuite au mois suivant.",
     settleIntro: {
       expense: (name: string, date: string) => `${name} · échéance le ${date}`,
       income: (name: string, date: string) =>
@@ -410,8 +387,7 @@ export const fr = {
       backup: (date: string) => `treso-sauvegarde-${date}`,
       csv: (date: string) => `treso-operations-${date}`,
     },
-    footer:
-      "La sauvegarde contient tout (opérations, échéances, budget, devise et taux) et se réimporte sur ce téléphone ou un autre. Le tableur s’ouvre dans Excel ou Google Sheets.",
+    footer: "Une sauvegarde se réimporte sur ce téléphone ou un autre.",
     importBackup: "Importer une sauvegarde",
     imported: "Sauvegarde importée",
     importedMessage: (transactions: number, schedules: number) =>
@@ -425,7 +401,6 @@ export const fr = {
     replaceMessage: (date: string, backup: string, current: string) =>
       `La sauvegarde du ${date} contient ${backup}. Elle remplacera les données de ce téléphone (${current}), ainsi que la devise, le budget et les taux.`,
     replaceTitle: "Remplacer vos données ?",
-    title: "Exporter et importer",
   },
 };
 

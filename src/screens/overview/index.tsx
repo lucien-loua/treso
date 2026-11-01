@@ -23,7 +23,6 @@ import { GetStarted } from "./get-started";
 import { isGetStartedComplete } from "./get-started-steps";
 import { monthOverview } from "./month-overview";
 import { MonthSwitcher } from "./month-switcher";
-import { MonthTransactions } from "./month-transactions";
 import { QuickAdd } from "./quick-add";
 import { Upcoming } from "./upcoming";
 import { Welcome } from "./welcome";
@@ -80,13 +79,14 @@ const MonthDashboard = () => {
           )}
         </>
       ) : null}
-      <BudgetCard
-        budgetCents={budget ? money.amountOf(budget) : null}
-        spentCents={summary.expenseCents}
-        month={month}
-      />
+      {budget ? (
+        <BudgetCard
+          budgetCents={money.amountOf(budget)}
+          spentCents={summary.expenseCents}
+          month={month}
+        />
+      ) : null}
       <CategoryBreakdown totals={summary.expensesByCategory} />
-      <MonthTransactions transactions={summary.transactions} month={month} />
     </>
   );
 };

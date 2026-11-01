@@ -12,6 +12,7 @@ import {
   defaultCategoryId,
   getCategory,
 } from "@/data/catalog/categories";
+import { suggestCategory } from "@/data/catalog/category-suggestions";
 import type { TransactionType } from "@/data/types";
 import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
@@ -21,6 +22,7 @@ import { haptics } from "@/utils/haptics";
 
 import { AmountHeader } from "./amount-header";
 import { CategoryGrid } from "./category-grid";
+import { CategoryRow } from "./category-row";
 import { DateField } from "./date-field";
 import { DayField } from "./day-field";
 import { initialValues, sanitizeAmount, toDraft } from "./draft";
@@ -133,6 +135,7 @@ export const EntryForm = ({
     initialValues(initial ?? {}, entryMoney)
   );
   const [busy, setBusy] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
   const amountInput = useRef<ComponentRef<typeof TextInput>>(null);
   useFocusAfterTransition(focusAmount, amountInput);
 
@@ -151,7 +154,13 @@ export const EntryForm = ({
   ]
     .filter(Boolean)
     .join("\n");
-  const category = getCategory(values.categoryId, values.type);
+  // Until the user picks one, the name suggests the category (« Taxi » → transport)
+  const categoryId =
+    (values.categoryChosen
+      ? null
+      : suggestCategory(values.note, values.type, t.iconKeywords)) ??
+    values.categoryId;
+  const category = getCategory(categoryId, values.type);
   const isIncome = values.type === "income";
 
   const changeType = (next: TransactionType) => {
@@ -172,7 +181,7 @@ export const EntryForm = ({
     try {
       await onSubmit(
         toDraft(
-          values,
+          { ...values, categoryId: category.id },
           { amountCents, currency: entryMoney.code },
           t.iconKeywords
         )
@@ -240,17 +249,7 @@ export const EntryForm = ({
           showKindPicker={!essentialsOnly}
         />
 
-        {essentialsOnly ? null : (
-          <GroupedSection title={t.form.category}>
-            <CategoryGrid
-              type={values.type}
-              selectedId={values.categoryId}
-              onSelect={(categoryId) => update({ categoryId })}
-            />
-          </GroupedSection>
-        )}
-
-        <GroupedSection title={t.form.details} footer={footer}>
+        <GroupedSection footer={footer}>
           <NameRow
             category={category}
             note={values.note}
@@ -261,6 +260,26 @@ export const EntryForm = ({
             onColorChange={(colorId) => update({ colorId })}
           />
           <RowSeparator />
+          {essentialsOnly ? null : (
+            <>
+              <CategoryRow
+                category={category}
+                open={categoryOpen}
+                onToggle={() => setCategoryOpen((open) => !open)}
+              />
+              {categoryOpen ? (
+                <CategoryGrid
+                  type={values.type}
+                  selectedId={category.id}
+                  onSelect={(picked) => {
+                    update({ categoryChosen: true, categoryId: picked });
+                    setCategoryOpen(false);
+                  }}
+                />
+              ) : null}
+              <RowSeparator />
+            </>
+          )}
           {kind === "transaction" ? (
             <Row label={t.form.date}>
               <DateField

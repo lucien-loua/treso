@@ -1,6 +1,7 @@
 import {
   FieldGroup,
   Host,
+  Icon,
   ListItem,
   Picker,
   Row,
@@ -26,10 +27,10 @@ import { confirm } from "@/utils/alerts";
 import { haptics } from "@/utils/haptics";
 
 import { BudgetRow } from "./budget-row";
-import { RateRow } from "./rate-row";
-import { SwitchRow } from "./switch-row";
 
 const isIOS = process.env.EXPO_OS === "ios";
+/** iOS draws a disclosure chevron on rows that open a screen; Android settings don't. */
+const CHEVRON_SIZE = 13;
 
 const scheduleSummary = (schedule: Schedule, t: Messages) =>
   t.schedules.eachMonth[schedule.type](t.dayOfMonth(schedule.dayOfMonth));
@@ -40,12 +41,11 @@ export const Settings = () => {
   const money = useMoney();
   const [, setCurrencyCode] = useCurrencyCode();
   const rates = useExchangeRates();
-  // Every rate is quoted against the dollar: one row per other currency
-  const dollar = currencies.find(rates.active.base) ?? currencies.default;
-  const quotedCurrencies = currencies.all.filter(
-    ({ code }) => code !== dollar.code
-  );
-  const ratesDate = dates.longDate(parseISODate(rates.active.date));
+  const ratesSummary = rates.manual
+    ? t.settings.rates.own
+    : t.settings.rates.suggested(
+        dates.longDate(parseISODate(rates.active.date))
+      );
   const { transactions, schedules, removeAll } = useTransactions();
   const { exportBackup, exportCsv, importBackup } = useDataTransfer();
 
@@ -83,36 +83,25 @@ export const Settings = () => {
               ))}
             </Picker>
           </Row>
+          <ListItem
+            onPress={() => router.push("/settings/rates")}
+            supportingText={ratesSummary}
+            trailing={
+              isIOS ? (
+                <Icon
+                  name="chevron.right"
+                  size={CHEVRON_SIZE}
+                  color={ink.tertiaryLabel}
+                />
+              ) : undefined
+            }
+          >
+            <Text textStyle={{ color: ink.label }}>
+              {t.settings.rates.title}
+            </Text>
+          </ListItem>
           <FieldGroup.SectionFooter>
             <Text textStyle={ink.footnote}>{t.settings.currencyFooter}</Text>
-          </FieldGroup.SectionFooter>
-        </FieldGroup.Section>
-
-        <FieldGroup.Section title={t.settings.rates.title}>
-          <SwitchRow
-            label={t.settings.rates.useSuggested}
-            value={!rates.manual}
-            onValueChange={(suggested) => {
-              haptics.selection();
-              rates.setManual(!suggested);
-            }}
-          />
-          {quotedCurrencies.map((currency) => (
-            <RateRow
-              key={currency.code}
-              currency={currency}
-              dollar={dollar}
-              rate={rates.active.rates[currency.code] ?? 0}
-              editable={rates.manual}
-              onSave={(rate) => rates.setRate(currency.code, rate)}
-            />
-          ))}
-          <FieldGroup.SectionFooter>
-            <Text textStyle={ink.footnote}>
-              {rates.manual
-                ? t.settings.rates.manualFooter(ratesDate)
-                : t.settings.rates.suggestedFooter(ratesDate)}
-            </Text>
           </FieldGroup.SectionFooter>
         </FieldGroup.Section>
 
@@ -157,19 +146,6 @@ export const Settings = () => {
         </FieldGroup.Section>
 
         <FieldGroup.Section title={t.settings.data}>
-          <Row alignment="center">
-            <Text textStyle={{ color: ink.label }}>{t.settings.recorded}</Text>
-            <Spacer flexible />
-            <Text textStyle={{ color: ink.secondaryLabel }}>
-              {String(transactions.length)}
-            </Text>
-          </Row>
-          <ListItem onPress={confirmReset}>
-            <Text textStyle={{ color: ink.danger }}>{t.settings.eraseAll}</Text>
-          </ListItem>
-        </FieldGroup.Section>
-
-        <FieldGroup.Section title={t.transfer.title}>
           <ListItem onPress={exportBackup}>
             <Text textStyle={{ color: ink.tint }}>
               {t.transfer.exportBackup}
@@ -182,6 +158,9 @@ export const Settings = () => {
           </ListItem>
           <ListItem onPress={exportCsv}>
             <Text textStyle={{ color: ink.tint }}>{t.transfer.exportCsv}</Text>
+          </ListItem>
+          <ListItem onPress={confirmReset}>
+            <Text textStyle={{ color: ink.danger }}>{t.settings.eraseAll}</Text>
           </ListItem>
           <FieldGroup.SectionFooter>
             <Text textStyle={ink.footnote}>{t.transfer.footer}</Text>

@@ -16,6 +16,7 @@ export const useInk = () => {
     income: dark ? "#30D158" : "#34C759",
     label: dark ? "#FFFFFF" : "#000000",
     secondaryLabel,
+    tertiaryLabel: dark ? "#48484A" : "#C7C7CC",
     tint: dark ? "#7D7AFF" : "#5856D6",
   };
 };

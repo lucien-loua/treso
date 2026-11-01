@@ -124,7 +124,6 @@ export const Upcoming = ({
           onPress={() => router.push("/schedule/new")}
         />
       }
-      footer={t.overview.upcoming.footer}
     >
       <SeparatedList
         data={schedules}
