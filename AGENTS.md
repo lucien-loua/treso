@@ -65,6 +65,12 @@ src/
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
+## Release setup
+
+- App identifier `com.lucienloua.treso` (Android package and iOS bundle ID): never change it once published. Versions: bump `version` in `app.json`; build numbers are managed by EAS (`appVersionSource: remote` in `eas.json`).
+- Android permissions are explicit: only `INTERNET` (exchange rates) and `VIBRATE` (haptics); storage and overlay permissions are blocked in `app.json`. A new permission needs a reason, and an update to `PRIVACY.md`.
+- Store listings: `fastlane/metadata/android/<locale>/` (Google Play) and `store.config.json` (App Store, EAS Metadata). Keep them, `README.md` and `PRIVACY.md` true to what the app does.
+
 ## Building with EAS
 
 Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples. Docs: https://docs.expo.dev/eas/index.md

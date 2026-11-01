@@ -1,46 +1,61 @@
 # Treso
 
-Personal finance tracker built with [Expo](https://expo.dev) (SDK 58) and Expo Router. Data stays on the device (SQLite).
+Treso is a personal finance app for Android and iOS: follow your money month by month, what comes in, what goes out, and what's left. It is built for everyday life in West Africa (CFA franc, Guinean franc, US dollar) and speaks French and English, following the phone's language.
 
-## Get started
+Private by design: no account, no server, no tracking. Your data stays on your phone.
 
-1. Install dependencies
+## Features
 
-   ```bash
-   bun install
-   ```
+- **Built around you.** A one-minute first launch asks where your money comes from, what you pay every month and what you spend on day to day; the app then only suggests what applies to you. Change it anytime in Settings.
+- **Monthly overview.** Current balance, what this month added, the expected end-of-month balance, spending by category and an optional budget.
+- **Recurring items.** Salary around the 26th, rent by the 5th, bills by the 3rd: Treso keeps track of them under "Upcoming", and you confirm with one tap when they're paid or received.
+- **Quick add.** Everyday expenses (transport, meals…) in one tap; when you type a name, the category is guessed ("Taxi" is transport).
+- **Several currencies.** Each amount keeps the currency it was entered in; switching currency converts at the day's rates (downloaded daily, or your own).
+- **Your data, your files.** Export a full backup and import it on this phone or another, or export a spreadsheet (CSV) for Excel or Google Sheets.
 
-2. Start the app
+## Privacy
 
-   ```bash
-   bun start
-   ```
+Everything is stored on the device (SQLite). The only network request downloads public exchange rates once a day. See [PRIVACY.md](PRIVACY.md).
 
-In the output, you'll find options to open the app in a
+## Tech
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+[Expo](https://expo.dev) SDK 58 · React Native · Expo Router (native tabs and stacks) · `@expo/ui` (SwiftUI and Jetpack Compose) · expo-sqlite · expo-localization · TypeScript with the React Compiler · [Ultracite](https://www.ultracite.ai) (Oxlint + Oxfmt) · [bun](https://bun.sh).
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Getting started
 
-### Other setup steps
+```bash
+bun install
+bun start
+```
 
-- Lint and format with [Ultracite](https://www.ultracite.ai) (Oxlint + Oxfmt): `bun run check`, or `bun run fix` to fix automatically
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Then open the app in [Expo Go](https://expo.dev/go), an Android emulator or the iOS simulator.
 
-## Learn more
+| Command             | What it does                      |
+| ------------------- | --------------------------------- |
+| `bun start`         | Start the dev server              |
+| `bun run check`     | Lint and format check             |
+| `bun run fix`       | Fix lint and formatting           |
+| `bun run typecheck` | Type-check                        |
+| `bun run doctor`    | Check dependencies and app config |
 
-To learn more about developing your project with Expo, look at the following resources:
+The code layout and conventions are described in [AGENTS.md](AGENTS.md).
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Release
 
-## Join the community
+Builds and store submissions go through [EAS](https://docs.expo.dev/eas/). The app identifier is `com.lucienloua.treso` on both stores; version numbers are managed by EAS (`appVersionSource: remote`).
 
-Join our community of developers creating universal apps.
+```bash
+bunx eas-cli login
+bunx eas-cli init                                        # once: links the project to your Expo account
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+bunx eas-cli build -p android --profile preview          # APK to install on test phones
+bunx eas-cli build -p android --profile production       # AAB for Google Play
+bunx eas-cli submit -p android --latest                  # upload to the internal testing track
+bunx eas-cli build -p ios --profile production --auto-submit
+```
+
+Android submission needs a Google Play service account key at `./google-service-account.json` (ignored by git). Store listing texts live in [`fastlane/metadata/android`](fastlane/metadata/android) (Google Play) and [`store.config.json`](store.config.json) (App Store, pushed with `bunx eas-cli metadata:push`).
+
+## License
+
+[MIT](LICENSE) © 2026 Lucien Loua

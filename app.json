@@ -2,27 +2,50 @@
   "expo": {
     "name": "Treso",
     "slug": "treso",
+    "description": "Track your money month by month: income, expenses, monthly bills and a budget. Private by design: your data stays on your phone.",
     "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "githubUrl": "https://github.com/lucien-loua/treso",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "treso",
     "userInterfaceStyle": "automatic",
+    "primaryColor": "#5856D6",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "bundleIdentifier": "com.lucienloua.treso",
+      "buildNumber": "1",
+      "icon": "./assets/expo.icon",
+      "supportsTablet": false,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "CFBundleLocalizations": [
+          "en",
+          "fr"
+        ]
+      }
     },
     "android": {
+      "package": "com.lucienloua.treso",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#5856D6",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "allowBackup": false,
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize"
-    },
-    "web": {
-      "output": "server",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
@@ -42,7 +65,10 @@
       [
         "expo-localization",
         {
-          "supportedLocales": ["en", "fr"]
+          "supportedLocales": [
+            "en",
+            "fr"
+          ]
         }
       ],
       "expo-sharing"
@@ -50,6 +76,17 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "e975c3e0-6cf7-4a85-bbea-9dfe362afa74"
+      }
+    },
+    "owner": "lucien-loua"
   }
 }

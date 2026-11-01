@@ -1,0 +1,22 @@
+Treso : suivez votre argent mois par mois, ce qui rentre, ce qui sort et ce qu'il vous reste.
+
+FAIT POUR VOTRE VIE
+Au premier lancement, quelques questions suffisent : d'où vient votre argent, ce que vous payez chaque mois, vos dépenses du quotidien. Treso ne vous propose ensuite que ce qui vous concerne. Pas de loyer ? Pas d'étape loyer.
+
+TOUT LE MOIS EN UN COUP D'ŒIL
+• Solde actuel, ce que le mois a ajouté et solde prévu en fin de mois
+• Dépenses par catégorie et budget mensuel facultatif
+• Ajout rapide des dépenses du quotidien, en un geste
+
+VOS ÉCHÉANCES
+Salaire vers le 26, loyer avant le 5, factures avant le 3 : Treso les affiche chaque mois dans « À venir » avec leur date, et vous confirmez d'un geste quand c'est payé ou reçu.
+
+PLUSIEURS DEVISES
+Franc CFA, franc guinéen et dollar US. Chaque montant garde la devise dans laquelle il a été saisi ; changer de devise convertit au taux du jour, ou au vôtre.
+
+VOS DONNÉES VOUS APPARTIENNENT
+• Aucun compte, aucun serveur, aucune publicité, aucun pistage
+• Tout reste sur votre téléphone
+• Sauvegarde complète à réimporter sur un autre téléphone, et export en tableur (CSV) pour Excel ou Google Sheets
+
+En français et en anglais, selon la langue de votre téléphone.
