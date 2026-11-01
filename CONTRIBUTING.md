@@ -16,7 +16,7 @@ bun install
 bun run android    # or bun run ios: builds a development build and starts the dev server
 ```
 
-Afterwards, `bun start` is enough. Build again only after adding a native library, changing `app.json` or upgrading the Expo SDK. Without Android Studio or Xcode, `bunx expo start --go` runs the app in [Expo Go](https://expo.dev/go): every feature works there, but not the native setup (icon, permissions, per-app language).
+Afterwards, `bun start` is enough. After adding a native library, changing `app.json` or upgrading the Expo SDK, run `bunx expo prebuild --clean` and build again. Without Android Studio or Xcode, `bunx expo start --go` runs the app in [Expo Go](https://expo.dev/go): every feature works there, but not the native setup (icon, permissions, per-app language).
 
 Use `bun` and `bunx`, never npm or npx. Add a package with `bunx expo install <package>`, so its version matches the Expo SDK.
 
@@ -34,6 +34,7 @@ Use `bun` and `bunx`, never npm or npx. Add a package with `bunx expo install <p
 ```bash
 bun run check       # lint and format; bun run fix repairs most issues
 bun run typecheck
+bun test
 bun run doctor      # when you change dependencies or app.json
 ```
 

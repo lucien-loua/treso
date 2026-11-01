@@ -29,14 +29,14 @@ Private by design: no account, no server, no tracking. Your data stays on your p
 
 - **Built around you.** A one-minute first launch asks where your money comes from, what you pay every month and what you spend on day to day; the app then only suggests what applies to you. Change it anytime in Settings.
 - **Monthly overview.** Current balance, what this month added, the expected end-of-month balance, spending by category and an optional budget.
-- **Recurring items.** Salary around the 26th, rent by the 5th, bills by the 3rd: Treso keeps track of them under "Upcoming", and you confirm with one tap when they're paid or received.
+- **Recurring items.** Salary around the 26th, rent by the 5th, bills by the 3rd: Treso keeps track of them under "Upcoming", and you confirm with one tap when they're paid or received. A notification reminds you the day before a payment.
 - **Quick add.** Everyday expenses (transport, meals…) in one tap; when you type a name, the category is guessed ("Taxi" is transport).
 - **Several currencies.** Each amount keeps the currency it was entered in; switching currency converts at the day's rates (downloaded daily, or your own).
 - **Your data, your files.** Export a full backup and import it on this phone or another, or export a spreadsheet (CSV) for Excel or Google Sheets.
 
 ## Privacy
 
-Everything is stored on the device (SQLite). The only network request downloads public exchange rates once a day. Backups and exports leave the phone only when you share them. See [PRIVACY.md](PRIVACY.md).
+Everything is stored on the device (SQLite). The only network request downloads public exchange rates once a day. Reminders are scheduled on the phone, and backups and exports leave it only when you share them. See [PRIVACY.md](PRIVACY.md).
 
 ## Getting started
 
@@ -55,9 +55,9 @@ bun run android
 bun run ios        # on a Mac
 ```
 
-The command builds the app, installs it on an emulator, simulator or connected phone, and starts the dev server. Afterwards, `bun start` is enough. Build again only after adding a native library, changing `app.json` or upgrading the Expo SDK.
+The command builds the app, installs it on an emulator, simulator or connected phone, and starts the dev server. Afterwards, `bun start` is enough. After adding a native library, changing `app.json` or upgrading the Expo SDK, run `bunx expo prebuild --clean` and build again.
 
-**In Expo Go.** Without Android Studio or Xcode, run `bunx expo start --go` and scan the QR code with [Expo Go](https://expo.dev/go). Every feature works there; only the native setup differs.
+**In Expo Go.** Without Android Studio or Xcode, run `bunx expo start --go` and scan the QR code with [Expo Go](https://expo.dev/go). Every feature works there; only the native setup differs. Expo Go logs a warning about push notifications, which Treso doesn't use.
 
 | Command             | What it does                      |
 | ------------------- | --------------------------------- |
@@ -65,6 +65,7 @@ The command builds the app, installs it on an emulator, simulator or connected p
 | `bun run check`     | Lint and format check             |
 | `bun run fix`       | Fix lint and formatting           |
 | `bun run typecheck` | Type-check                        |
+| `bun test`          | Run the tests                     |
 | `bun run doctor`    | Check dependencies and app config |
 
 ## Tech

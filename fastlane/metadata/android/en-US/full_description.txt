@@ -9,7 +9,7 @@ THE WHOLE MONTH AT A GLANCE
 • Quick add for everyday expenses, in one tap
 
 YOUR RECURRING ITEMS
-Salary around the 26th, rent by the 5th, bills by the 3rd: Treso lists them every month under "Upcoming" with their date, and you confirm with one tap once it's paid or received.
+Salary around the 26th, rent by the 5th, bills by the 3rd: Treso lists them every month under "Upcoming" with their date, and you confirm with one tap once it's paid or received. A notification reminds you the day before a payment.
 
 SEVERAL CURRENCIES
 CFA franc, Guinean franc and US dollar. Each amount keeps the currency it was entered in; switching currency converts at the day's rate, or at your own.

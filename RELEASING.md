@@ -47,7 +47,17 @@ Keep the listings, `README.md`, `PRIVACY.md` and the declarations below true to 
 | News, government, health | No |
 | Advertising ID | No |
 
-**Data safety.** Google counts data as collected when it leaves the device. Treso stores everything on the phone and has no account, server, analytics, crash reporting or ads. Its only network request downloads public exchange rates and sends no user data. Backups and CSV exports leave the phone only when the user shares them, and Google doesn't count a transfer the user starts as sharing.
+**Data safety.** Google counts data as collected when it leaves the device. Treso stores everything on the phone, including its scheduled reminders, and has no account, server, analytics, crash reporting or ads. `expo-notifications` brings Firebase Messaging's code on Android, but it isn't configured and doesn't start, and `app.json` blocks the permission to receive push. Its only network request downloads public exchange rates and sends no user data. Backups and CSV exports leave the phone only when the user shares them, and Google doesn't count a transfer the user starts as sharing.
+
+## Android permissions
+
+The published app must ask for `INTERNET`, `VIBRATE`, `POST_NOTIFICATIONS` and `RECEIVE_BOOT_COMPLETED`, plus AndroidX's internal `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`. Libraries can add more, so check after adding one or upgrading the SDK, and block what Treso doesn't use in `android.blockedPermissions`:
+
+```bash
+bunx expo prebuild --platform android --clean
+(cd android && ./gradlew :app:processReleaseMainManifest)
+grep uses-permission android/app/build/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml
+```
 
 ## First Google Play release
 

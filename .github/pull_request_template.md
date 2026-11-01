@@ -4,7 +4,7 @@
 
 ## Checklist
 
-- [ ] `bun run check` and `bun run typecheck` pass
+- [ ] `bun run check`, `bun run typecheck` and `bun test` pass
 - [ ] New texts are in `src/i18n/messages/fr.ts` and every other language
 - [ ] Tested on Android or iOS, with screenshots for a UI change
 - [ ] `PRIVACY.md` and the declarations in `RELEASING.md` are updated if the change touches data, permissions or network requests

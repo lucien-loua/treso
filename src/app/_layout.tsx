@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import { useColorScheme } from "react-native";
 
+import { RemindersSync } from "@/components/reminders-sync";
 import { DATABASE_NAME, migrate } from "@/data/db";
 import { useRefreshExchangeRates } from "@/data/exchange-rates";
 import { TransactionsProvider } from "@/data/transactions-provider";
@@ -29,6 +30,7 @@ const RootLayout = () => {
       <I18nProvider>
         <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrate}>
           <TransactionsProvider>
+            <RemindersSync />
             <Stack
               screenOptions={{
                 contentStyle: { backgroundColor: colors.background },

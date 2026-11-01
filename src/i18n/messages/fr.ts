@@ -311,6 +311,10 @@ export const fr = {
       transaction: "Notez-le quand l’argent arrive.",
     },
   },
+  reminders: {
+    channel: "Rappels",
+    dueTomorrow: "À payer demain",
+  },
   schedules: {
     dueBy: (date: string, inDays: string) => `Avant le ${date} · ${inDays}`,
     dueToday: "À payer aujourd’hui",
@@ -360,6 +364,12 @@ export const fr = {
         `Taux du ${date}, mis à jour chaque jour quand le téléphone est en ligne.`,
       title: "Taux de change",
       useSuggested: "Utiliser les taux proposés",
+    },
+    reminders: {
+      footer:
+        "Vers 9 h : la veille d’un paiement, le jour même d’un revenu attendu. Sans montant, car la notification s’affiche sur l’écran verrouillé.",
+      title: "Rappels",
+      toggle: "Notifications",
     },
     version: "Version",
   },

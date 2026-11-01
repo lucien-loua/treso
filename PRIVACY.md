@@ -22,6 +22,12 @@ Everything you enter (transactions, recurring items, budget, currency, exchange 
 
 Once a day, when your phone is online, Treso downloads public exchange rates (US dollar, CFA franc, Guinean franc) from a free public source served by the jsDelivr and Cloudflare Pages networks. The request carries no personal data; like any web request, those networks can see your IP address. You can turn this off by entering your own rates in Settings › Exchange rates.
 
+### Reminders
+
+If you allow notifications, Treso schedules its reminders on your phone: around 9 AM the day before a payment, and on the day for expected income. Nothing is sent to the developer or anyone else, and reminders show no amounts. You can turn them off in Settings › Reminders.
+
+On Android, the notification library Treso uses includes Google's Firebase Messaging code, which serves notifications sent from a server. Treso doesn't send any: Firebase isn't configured, doesn't start, and the app isn't allowed to receive such messages.
+
 ### Backups and exports
 
 A backup (.json) or spreadsheet (.csv) is created only when you ask for it, and goes only where you choose through your phone's share sheet (for example your own Drive, email or messages). These files are not encrypted: anyone who opens one can read it, so keep them somewhere safe. Importing a backup reads only the file you pick. On Android, automatic cloud backup is turned off, so the app's data is not copied to Google Drive without you. On iPhone, if you back up your device to iCloud or a computer, that backup includes the app's data, as for any app.
@@ -57,6 +63,12 @@ Tout ce que vous saisissez (opérations, échéances, budget, devise, taux de ch
 ### Utilisation du réseau
 
 Une fois par jour, quand le téléphone est en ligne, Treso télécharge des taux de change publics (dollar US, franc CFA, franc guinéen) depuis une source publique gratuite, servie par les réseaux jsDelivr et Cloudflare Pages. La requête ne contient aucune donnée personnelle ; comme pour toute requête web, ces réseaux peuvent voir votre adresse IP. Vous pouvez l'éviter en saisissant vos propres taux dans Réglages › Taux de change.
+
+### Rappels
+
+Si vous autorisez les notifications, Treso programme ses rappels sur votre téléphone : vers 9 h la veille d'un paiement, le jour même pour un revenu attendu. Rien n'est envoyé au développeur ni à personne d'autre, et les rappels n'affichent aucun montant. Vous pouvez les couper dans Réglages › Rappels.
+
+Sur Android, la bibliothèque de notifications utilisée par Treso contient le code de Firebase Messaging de Google, qui sert aux notifications envoyées par un serveur. Treso n'en envoie pas : Firebase n'est pas configuré, ne démarre pas, et l'app n'a pas le droit de recevoir de tels messages.
 
 ### Sauvegardes et exports
 

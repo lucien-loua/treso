@@ -18,11 +18,12 @@ bun start                    # start the dev server
 bun run check                # lint + format check (Ultracite: Oxlint + Oxfmt)
 bun run fix                  # auto-fix lint and formatting
 bunx tsc --noEmit            # typecheck
+bun test                     # unit tests
 bunx expo-doctor             # diagnose dependency and config issues
 bunx expo install --fix      # fix incompatible package versions
 ```
 
-Run `bun run check` and the typecheck before declaring any task done.
+Run `bun run check`, the typecheck and `bun test` before declaring any task done.
 
 ## Project structure
 
@@ -38,15 +39,16 @@ src/
   data/             state and storage (storage.ts: local key-value store; exchange-rates.ts)
     db/             SQLite: migrate.ts, migrations/ (one file per version), rows.ts, transactions.ts, schedules.ts
     catalog/        fixed lists: categories, icons, icon suggestions
-    transactions-provider.tsx · settings.ts · profile.ts (+ profile-store.ts) · entries.ts · types.ts
+    transactions-provider.tsx · settings.ts · profile.ts (+ profile-store.ts) · reminders.ts · entries.ts · types.ts
   i18n/             the app's languages: messages/fr.ts (reference) and en.ts, i18n.ts, provider
   lib/              app-independent libraries, each with its own index.ts
     datetime/       calendar arithmetic on local YYYY-MM-DD days, date texts per locale (Intl)
     currency/       currency definitions and amounts per locale (Intl), parsing typed amounts
   hooks/            shared hooks (use-money, use-today, use-ink, use-keep-while-deleting…)
-  utils/            pure helpers: stats, schedules, shortcuts, alerts, text, haptics
+  utils/            pure helpers: stats, schedules, reminders, shortcuts, alerts, text, haptics
   constants/        navigation options, symbols (icons used across screens)
   theme/            the only source of colors, spacing, radius and type styles
+  test/             test helpers: an in-memory database, what Hermes lacks
 ```
 
 - Before writing UI, reuse `components/ui` (`ListRow`, `SeparatedList`, `GroupedSection`, `PillButton`, `TextButton`) and theme tokens; no raw hex, font sizes or spacing numbers outside `theme/`.
@@ -57,6 +59,7 @@ src/
 - The app follows the phone's language (`expo-localization`), English when it isn't one of Treso's. A new language is a `messages/<code>.ts` added to `i18n.ts` and to `supportedLocales` in `app.json`.
 - The app is built around the user's profile (`data/profile.ts`: income sources, monthly and everyday expenses), asked at first launch: until it exists, the root layout protects every route but `onboarding/`. Get-started steps and quick-add shortcuts derive from it, through the presets in `data/catalog/profile-presets.ts`.
 - `lib/` stays app-independent and Hermes-safe (no `formatToParts`, `Intl.RelativeTimeFormat` or `toSorted` without a fallback).
+- Logic that runs without a phone (amounts, dates, stats, backups, SQL) has its `*.test.ts` next to it, with `bun:test`. `bun test` runs them with what Hermes has (`bunfig.toml`); CI also runs them with the full `Intl` (`FULL_INTL=1`).
 - Schema changes: add `data/db/migrations/00N-what-changes.ts` (version N) and append it to `migrations/index.ts`; never edit a migration that shipped.
 
 ## Navigation & Routing
@@ -68,7 +71,7 @@ src/
 ## Release setup
 
 - App identifier `com.lucienloua.treso` (Android package and iOS bundle ID): never change it once published. Versions: bump `version` in `app.json`; build numbers are managed by EAS (`appVersionSource: remote` in `eas.json`).
-- Android permissions are explicit: only `INTERNET` (exchange rates) and `VIBRATE` (haptics); storage and overlay permissions are blocked in `app.json`. A new permission needs a reason, and an update to `PRIVACY.md`.
+- Android permissions are explicit: `INTERNET` (exchange rates), `VIBRATE` (haptics), `POST_NOTIFICATIONS` and `RECEIVE_BOOT_COMPLETED` (reminders, restored after a restart). Everything else libraries bring (push, launcher badges, install referrer, storage, overlay) is blocked in `app.json`: after adding a library or upgrading the SDK, check the release manifest as `RELEASING.md` shows. A new permission needs a reason, and an update to `PRIVACY.md`.
 - Store listings: `fastlane/metadata/android/<locale>/` (Google Play) and `store.config.json` (App Store, EAS Metadata). Keep them, `README.md` and `PRIVACY.md` true to what the app does.
 - Release process, Google Play declarations (data safety, content rating, financial features…) and first-release steps: `RELEASING.md`. Update the declarations with `PRIVACY.md` whenever the app's data use changes.
 

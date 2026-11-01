@@ -24,6 +24,7 @@ import { confirm } from "@/utils/alerts";
 import { haptics } from "@/utils/haptics";
 
 import { BudgetRow } from "./budget-row";
+import { RemindersRow } from "./reminders-row";
 
 const isIOS = process.env.EXPO_OS === "ios";
 /** iOS draws a disclosure chevron on rows that open a screen; Android settings don't. */
@@ -107,6 +108,13 @@ export const Settings = () => {
           <BudgetRow />
           <FieldGroup.SectionFooter>
             <Text textStyle={ink.footnote}>{t.settings.budgetFooter}</Text>
+          </FieldGroup.SectionFooter>
+        </FieldGroup.Section>
+
+        <FieldGroup.Section title={t.settings.reminders.title}>
+          <RemindersRow />
+          <FieldGroup.SectionFooter>
+            <Text textStyle={ink.footnote}>{t.settings.reminders.footer}</Text>
           </FieldGroup.SectionFooter>
         </FieldGroup.Section>
 

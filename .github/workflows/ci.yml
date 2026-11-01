@@ -24,5 +24,11 @@ jobs:
         run: bun run check
       - name: Type-check
         run: bun run typecheck
+      - name: Tests, with what Hermes has
+        run: bun test
+      - name: Tests, with the full Intl
+        run: bun test
+        env:
+          FULL_INTL: "1"
       - name: Expo Doctor
         run: bun run doctor

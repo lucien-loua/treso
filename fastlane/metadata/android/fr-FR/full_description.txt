@@ -9,7 +9,7 @@ TOUT LE MOIS EN UN COUP D'ŒIL
 • Ajout rapide des dépenses du quotidien, en un geste
 
 VOS ÉCHÉANCES
-Salaire vers le 26, loyer avant le 5, factures avant le 3 : Treso les affiche chaque mois dans « À venir » avec leur date, et vous confirmez d'un geste quand c'est payé ou reçu.
+Salaire vers le 26, loyer avant le 5, factures avant le 3 : Treso les affiche chaque mois dans « À venir » avec leur date, et vous confirmez d'un geste quand c'est payé ou reçu. Une notification vous prévient la veille d'un paiement.
 
 PLUSIEURS DEVISES
 Franc CFA, franc guinéen et dollar US. Chaque montant garde la devise dans laquelle il a été saisi ; changer de devise convertit au taux du jour, ou au vôtre.

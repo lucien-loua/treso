@@ -313,6 +313,10 @@ export const en: Messages = {
       transaction: "Note it when the money arrives.",
     },
   },
+  reminders: {
+    channel: "Reminders",
+    dueTomorrow: "Due tomorrow",
+  },
   schedules: {
     dueBy: (date, inDays) => `Due by ${date} · ${inDays}`,
     dueToday: "Due today",
@@ -358,6 +362,12 @@ export const en: Messages = {
         `Rates of ${date}, updated daily when the phone is online.`,
       title: "Exchange rates",
       useSuggested: "Use suggested rates",
+    },
+    reminders: {
+      footer:
+        "Around 9 AM: the day before a payment, on the day for expected income. No amounts, because notifications show on the lock screen.",
+      title: "Reminders",
+      toggle: "Notifications",
     },
     version: "Version",
   },
