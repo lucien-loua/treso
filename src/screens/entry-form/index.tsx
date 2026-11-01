@@ -5,13 +5,13 @@ import type { ComponentRef, ReactNode } from "react";
 import { Alert, Pressable, ScrollView, View } from "react-native";
 import type { TextInput } from "react-native";
 
-import { GroupedSection, RowSeparator } from "@/components/grouped-section";
-import { ThemedText } from "@/components/themed-text";
+import { GroupedSection, RowSeparator } from "@/components/ui/grouped-section";
+import { ThemedText } from "@/components/ui/themed-text";
 import {
   categoriesFor,
   defaultCategoryId,
   getCategory,
-} from "@/data/categories";
+} from "@/data/catalog/categories";
 import { useCurrency } from "@/data/settings";
 import type { TransactionType } from "@/data/types";
 import { colors, spacing } from "@/theme";

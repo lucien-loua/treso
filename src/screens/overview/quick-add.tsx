@@ -4,8 +4,9 @@ import type { ReactNode } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
 import { CategoryIcon } from "@/components/category-icon";
-import { ThemedText } from "@/components/themed-text";
-import { getCategory } from "@/data/categories";
+import { ThemedText } from "@/components/ui/themed-text";
+import { symbols } from "@/constants/symbols";
+import { getCategory } from "@/data/catalog/categories";
 import { colors, radius, spacing } from "@/theme";
 import { haptics } from "@/utils/haptics";
 import { formatMoney } from "@/utils/money";
@@ -130,7 +131,7 @@ export const QuickAdd = ({
           }}
         >
           <SymbolView
-            name={{ android: "add", ios: "plus", web: "add" }}
+            name={symbols.add}
             tintColor={colors.label}
             weight="semibold"
             resizeMode="scaleAspectFit"

@@ -3,7 +3,8 @@ import type { SymbolViewProps } from "expo-symbols";
 import { View } from "react-native";
 import type { ColorValue } from "react-native";
 
-import { ThemedText } from "@/components/themed-text";
+import { ThemedText } from "@/components/ui/themed-text";
+import { symbols } from "@/constants/symbols";
 import { colors, radius, spacing } from "@/theme";
 import { formatMonth, shiftMonth } from "@/utils/dates";
 import type { MonthKey } from "@/utils/dates";
@@ -84,7 +85,7 @@ export const BalanceCard = ({
         borderCurve: "continuous",
         borderRadius: radius.xl,
         gap: spacing.md,
-        padding: spacing.lg - 4,
+        padding: spacing.lg,
       }}
     >
       <View style={{ gap: spacing.xs }}>
@@ -121,7 +122,7 @@ export const BalanceCard = ({
             flexDirection: "row",
             gap: spacing.sm,
             justifyContent: "space-between",
-            paddingHorizontal: spacing.sm + 4,
+            paddingHorizontal: spacing.smd,
             paddingVertical: spacing.sm,
           }}
         >
@@ -148,21 +149,13 @@ export const BalanceCard = ({
       <View style={{ backgroundColor: colors.separator, height: 0.5 }} />
       <View style={{ flexDirection: "row", gap: spacing.md }}>
         <Flow
-          icon={{
-            android: "arrow_downward",
-            ios: "arrow.down",
-            web: "arrow_downward",
-          }}
+          icon={symbols.arrowDown}
           color={colors.income}
           label="Revenus"
           value={formatMoney(summary.incomeCents, currency)}
         />
         <Flow
-          icon={{
-            android: "arrow_upward",
-            ios: "arrow.up",
-            web: "arrow_upward",
-          }}
+          icon={symbols.arrowUp}
           color={colors.danger}
           label="Dépenses"
           value={formatMoney(summary.expenseCents, currency)}

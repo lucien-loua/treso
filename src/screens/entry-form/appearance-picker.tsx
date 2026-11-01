@@ -3,9 +3,10 @@ import type { ReactNode } from "react";
 import { Pressable, View } from "react-native";
 
 import { CategoryIcon } from "@/components/category-icon";
-import { ThemedText } from "@/components/themed-text";
-import type { Category } from "@/data/categories";
-import { getIcon, icons } from "@/data/icons";
+import { ThemedText } from "@/components/ui/themed-text";
+import { symbols } from "@/constants/symbols";
+import type { Category } from "@/data/catalog/categories";
+import { getIcon, icons } from "@/data/catalog/icons";
 import type { CategoryColor } from "@/theme";
 import { categoryColors, colors, radius, spacing } from "@/theme";
 import { haptics } from "@/utils/haptics";
@@ -88,7 +89,7 @@ const IconCell = ({
         borderCurve: "continuous",
         borderRadius: radius.md,
         borderWidth: 2,
-        padding: 2,
+        padding: spacing.xxs,
       }}
     >
       {children}
@@ -165,7 +166,7 @@ export const AppearancePicker = ({
               style={{
                 alignItems: "center",
                 borderColor: selected ? colors.tint : "transparent",
-                borderRadius: 18,
+                borderRadius: radius.full,
                 borderWidth: 2,
                 height: 36,
                 justifyContent: "center",
@@ -176,7 +177,7 @@ export const AppearancePicker = ({
                 style={{
                   alignItems: "center",
                   backgroundColor: categoryColors[key],
-                  borderRadius: 14,
+                  borderRadius: radius.full,
                   height: 28,
                   justifyContent: "center",
                   width: 28,
@@ -184,8 +185,8 @@ export const AppearancePicker = ({
               >
                 {selected ? (
                   <SymbolView
-                    name={{ android: "check", ios: "checkmark", web: "check" }}
-                    tintColor="#ffffff"
+                    name={symbols.check}
+                    tintColor={colors.onTint}
                     weight="bold"
                     resizeMode="scaleAspectFit"
                     style={{ height: 12, width: 12 }}

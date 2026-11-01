@@ -65,3 +65,38 @@ export const RowSeparator = ({ inset = spacing.md }: { inset?: number }) => (
     }}
   />
 );
+
+/**
+ * One item of a virtualized list (SectionList) drawn as part of a grouped section:
+ * rounded on the section's first and last item, hairline above the others.
+ */
+export const GroupedListItem = ({
+  index,
+  count,
+  separatorInset,
+  children,
+}: {
+  index: number;
+  count: number;
+  separatorInset: number;
+  children: ReactNode;
+}) => {
+  const first = index === 0;
+  const last = index === count - 1;
+  return (
+    <View
+      style={{
+        backgroundColor: colors.surface,
+        borderBottomLeftRadius: last ? radius.lg : 0,
+        borderBottomRightRadius: last ? radius.lg : 0,
+        borderCurve: "continuous",
+        borderTopLeftRadius: first ? radius.lg : 0,
+        borderTopRightRadius: first ? radius.lg : 0,
+        overflow: "hidden",
+      }}
+    >
+      {first ? null : <RowSeparator inset={separatorInset} />}
+      {children}
+    </View>
+  );
+};

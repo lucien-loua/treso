@@ -1,8 +1,7 @@
 import type { SymbolViewProps } from "expo-symbols";
 
+import type { TransactionType } from "@/data/types";
 import type { CategoryColor } from "@/theme";
-
-import type { TransactionType } from "./types";
 
 export interface Category {
   id: string;

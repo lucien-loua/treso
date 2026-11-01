@@ -1,34 +1,26 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { useLocalSearchParams } from "expo-router";
 
-import { EmptyState } from "@/components/empty-state";
+import { SheetFallback } from "@/components/sheet-fallback";
 import { useTransactions } from "@/data/transactions-provider";
-import type { Transaction } from "@/data/types";
+import { useKeepWhileDeleting } from "@/hooks/use-keep-while-deleting";
 import { EntryForm, toTransactionInput } from "@/screens/entry-form";
-import { spacing } from "@/theme";
 
 const EditTransactionRoute = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { status, transactions, update, remove } = useTransactions();
-  // Keeps the form on screen while the sheet dismisses after a delete.
-  const [deleted, setDeleted] = useState<Transaction | null>(null);
-  const transaction = transactions.find((t) => t.id === Number(id)) ?? deleted;
+  const [transaction, onDelete] = useKeepWhileDeleting(
+    transactions.find((t) => t.id === Number(id)),
+    (deleted) => remove(deleted.id)
+  );
 
   if (!transaction) {
-    return status === "loading" ? (
-      <ActivityIndicator style={{ marginTop: spacing.xxl }} />
-    ) : (
-      <>
-        <Stack.Screen.Title>Opération</Stack.Screen.Title>
-        <EmptyState
-          icon={{ android: "help", ios: "questionmark.circle", web: "help" }}
-          title="Opération introuvable"
-          message="Elle a peut-être été supprimée."
-          actionLabel="Fermer"
-          onAction={() => router.back()}
-        />
-      </>
+    return (
+      <SheetFallback
+        loading={status === "loading"}
+        title="Opération"
+        missingLabel="Opération introuvable"
+        message="Elle a peut-être été supprimée."
+      />
     );
   }
 
@@ -46,10 +38,7 @@ const EditTransactionRoute = () => {
       }
       onSubmit={(draft) => update(transaction.id, toTransactionInput(draft))}
       deleteLabel="Supprimer l’opération"
-      onDelete={async () => {
-        setDeleted(transaction);
-        await remove(transaction.id);
-      }}
+      onDelete={onDelete}
     />
   );
 };

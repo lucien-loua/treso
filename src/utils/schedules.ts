@@ -1,3 +1,4 @@
+import { signedCents } from "@/data/entries";
 import type { Schedule, Transaction } from "@/data/types";
 
 import {
@@ -78,7 +79,4 @@ export const dueStatus = (
 export const pendingNetCents = (schedules: Schedule[], until: string) =>
   schedules
     .filter((s) => s.nextDue <= until)
-    .reduce(
-      (sum, s) => sum + (s.type === "income" ? s.amountCents : -s.amountCents),
-      0
-    );
+    .reduce((sum, s) => sum + signedCents(s), 0);

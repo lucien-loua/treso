@@ -3,9 +3,10 @@ import { useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
 
 import { CategoryIcon } from "@/components/category-icon";
-import type { Category } from "@/data/categories";
-import { suggestIcon } from "@/data/icon-suggestions";
-import { colors, spacing, type } from "@/theme";
+import { symbols } from "@/constants/symbols";
+import type { Category } from "@/data/catalog/categories";
+import { suggestIcon } from "@/data/catalog/icon-suggestions";
+import { colors, radius, spacing, type } from "@/theme";
 
 import { AppearancePicker } from "./appearance-picker";
 
@@ -39,7 +40,7 @@ export const NameRow = ({
         style={{
           alignItems: "center",
           flexDirection: "row",
-          gap: spacing.sm + 4,
+          gap: spacing.smd,
           minHeight: 56,
           paddingHorizontal: spacing.md,
           paddingVertical: spacing.sm,
@@ -62,7 +63,7 @@ export const NameRow = ({
             style={{
               alignItems: "center",
               backgroundColor: colors.surface,
-              borderRadius: 9,
+              borderRadius: radius.full,
               bottom: -5,
               height: 18,
               justifyContent: "center",
@@ -72,7 +73,7 @@ export const NameRow = ({
             }}
           >
             <SymbolView
-              name={{ android: "edit", ios: "pencil.circle.fill", web: "edit" }}
+              name={symbols.edit}
               tintColor={colors.secondaryLabel}
               resizeMode="scaleAspectFit"
               style={{ height: 16, width: 16 }}

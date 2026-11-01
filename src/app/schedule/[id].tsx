@@ -1,38 +1,30 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { useLocalSearchParams } from "expo-router";
 
-import { EmptyState } from "@/components/empty-state";
+import { SheetFallback } from "@/components/sheet-fallback";
 import { useTransactions } from "@/data/transactions-provider";
-import type { Schedule } from "@/data/types";
+import { useKeepWhileDeleting } from "@/hooks/use-keep-while-deleting";
 import {
   EntryForm,
   SCHEDULE_FOOTER,
   toScheduleInput,
 } from "@/screens/entry-form";
-import { spacing } from "@/theme";
 
 const EditScheduleRoute = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { status, schedules, updateSchedule, removeSchedule } =
     useTransactions();
-  // Keeps the form on screen while the sheet dismisses after a delete.
-  const [deleted, setDeleted] = useState<Schedule | null>(null);
-  const schedule = schedules.find((s) => s.id === Number(id)) ?? deleted;
+  const [schedule, onDelete] = useKeepWhileDeleting(
+    schedules.find((s) => s.id === Number(id)),
+    (deleted) => removeSchedule(deleted.id)
+  );
 
   if (!schedule) {
-    return status === "loading" ? (
-      <ActivityIndicator style={{ marginTop: spacing.xxl }} />
-    ) : (
-      <>
-        <Stack.Screen.Title>Échéance</Stack.Screen.Title>
-        <EmptyState
-          icon={{ android: "help", ios: "questionmark.circle", web: "help" }}
-          title="Échéance introuvable"
-          actionLabel="Fermer"
-          onAction={() => router.back()}
-        />
-      </>
+    return (
+      <SheetFallback
+        loading={status === "loading"}
+        title="Échéance"
+        missingLabel="Échéance introuvable"
+      />
     );
   }
 
@@ -47,10 +39,7 @@ const EditScheduleRoute = () => {
       onSubmit={(draft) => updateSchedule(schedule, toScheduleInput(draft))}
       deleteLabel="Supprimer l’échéance"
       deleteMessage="Elle ne sera plus rappelée. Les paiements déjà enregistrés sont conservés."
-      onDelete={async () => {
-        setDeleted(schedule);
-        await removeSchedule(schedule.id);
-      }}
+      onDelete={onDelete}
     />
   );
 };

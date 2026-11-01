@@ -2,7 +2,7 @@ import { SegmentedControl } from "@expo/ui/community/segmented-control";
 import type { ComponentRef, RefObject } from "react";
 import { TextInput, View } from "react-native";
 
-import { ThemedText } from "@/components/themed-text";
+import { ThemedText } from "@/components/ui/themed-text";
 import type { TransactionType } from "@/data/types";
 import { colors, spacing, type } from "@/theme";
 import { currencySymbol } from "@/utils/money";

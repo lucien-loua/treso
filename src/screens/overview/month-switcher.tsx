@@ -2,7 +2,8 @@ import { SymbolView } from "expo-symbols";
 import type { SymbolViewProps } from "expo-symbols";
 import { Pressable, View } from "react-native";
 
-import { ThemedText } from "@/components/themed-text";
+import { ThemedText } from "@/components/ui/themed-text";
+import { symbols } from "@/constants/symbols";
 import { colors, radius, spacing } from "@/theme";
 import { formatMonth, shiftMonth } from "@/utils/dates";
 import type { MonthKey } from "@/utils/dates";
@@ -76,11 +77,7 @@ export const MonthSwitcher = ({
       }}
     >
       <ArrowButton
-        icon={{
-          android: "chevron_left",
-          ios: "chevron.left",
-          web: "chevron_left",
-        }}
+        icon={symbols.chevronLeft}
         label="Mois précédent"
         onPress={() => onChange(shiftMonth(month, -1))}
       />
@@ -95,11 +92,7 @@ export const MonthSwitcher = ({
         </ThemedText>
       </Pressable>
       <ArrowButton
-        icon={{
-          android: "chevron_right",
-          ios: "chevron.right",
-          web: "chevron_right",
-        }}
+        icon={symbols.chevronRight}
         label="Mois suivant"
         disabled={isCurrent}
         onPress={() => onChange(shiftMonth(month, 1))}

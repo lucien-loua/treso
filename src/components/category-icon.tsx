@@ -1,9 +1,9 @@
 import { SymbolView } from "expo-symbols";
 import { View } from "react-native";
 
-import type { Category } from "@/data/categories";
-import { getIcon } from "@/data/icons";
-import { categoryColors, radius } from "@/theme";
+import type { Category } from "@/data/catalog/categories";
+import { getIcon } from "@/data/catalog/icons";
+import { categoryColors, colors, radius } from "@/theme";
 import type { CategoryColor } from "@/theme";
 
 /**
@@ -39,7 +39,7 @@ export const CategoryIcon = ({
     >
       <SymbolView
         name={getIcon(iconId)?.symbol ?? category.icon}
-        tintColor="#ffffff"
+        tintColor={colors.onTint}
         resizeMode="scaleAspectFit"
         weight="semibold"
         style={{ height: size * 0.55, width: size * 0.55 }}

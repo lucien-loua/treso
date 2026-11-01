@@ -1,5 +1,5 @@
-import { defaultCategoryId } from "@/data/categories";
-import { suggestIcon } from "@/data/icon-suggestions";
+import { defaultCategoryId } from "@/data/catalog/categories";
+import { suggestIcon } from "@/data/catalog/icon-suggestions";
 import type { TransactionType } from "@/data/types";
 import { nextDueFrom, parseISODate, toISODate } from "@/utils/dates";
 import { centsToInput } from "@/utils/money";

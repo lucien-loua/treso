@@ -1,11 +1,13 @@
-import { SymbolView } from "expo-symbols";
 import type { SymbolViewProps } from "expo-symbols";
-import { Pressable, View } from "react-native";
+import { SymbolView } from "expo-symbols";
+import { View } from "react-native";
 
-import { colors, radius, spacing } from "@/theme";
+import { colors, spacing } from "@/theme";
 
+import { PillButton } from "./pill-button";
 import { ThemedText } from "./themed-text";
 
+/** Centered icon, title, message and an optional main action: empty, error and not-found states. */
 export const EmptyState = ({
   icon,
   title,
@@ -29,7 +31,7 @@ export const EmptyState = ({
   >
     <SymbolView
       name={icon}
-      tintColor={colors.tertiaryLabel as string}
+      tintColor={colors.tertiaryLabel}
       resizeMode="scaleAspectFit"
       style={{ height: 48, marginBottom: spacing.sm, width: 48 }}
     />
@@ -42,22 +44,9 @@ export const EmptyState = ({
       </ThemedText>
     ) : null}
     {actionLabel && onAction ? (
-      <Pressable
-        accessibilityRole="button"
-        onPress={onAction}
-        style={({ pressed }) => ({
-          backgroundColor: colors.tint,
-          borderRadius: radius.full,
-          marginTop: spacing.md,
-          opacity: pressed ? 0.7 : 1,
-          paddingHorizontal: spacing.lg,
-          paddingVertical: spacing.sm + 4,
-        })}
-      >
-        <ThemedText variant="headline" style={{ color: colors.onTint }}>
-          {actionLabel}
-        </ThemedText>
-      </Pressable>
+      <View style={{ marginTop: spacing.md }}>
+        <PillButton label={actionLabel} onPress={onAction} />
+      </View>
     ) : null}
   </View>
 );

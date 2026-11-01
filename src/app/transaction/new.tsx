@@ -1,16 +1,14 @@
-import { router, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator } from "react-native";
+import { useLocalSearchParams } from "expo-router";
 
-import { EmptyState } from "@/components/empty-state";
-import { getCategory } from "@/data/categories";
+import { SheetFallback } from "@/components/sheet-fallback";
+import { entryTitle } from "@/data/entries";
 import { useTransactions } from "@/data/transactions-provider";
 import { EntryForm, toTransactionInput } from "@/screens/entry-form";
-import { spacing } from "@/theme";
 import { formatShortDate } from "@/utils/dates";
 
 /**
  * New transaction. Optional params prefill it:
- * - `categoryId`, `note`, `icon`: a quick-add shortcut (e.g. Transport);
+ * - `categoryId`, `note`, `icon`, `color`: a quick-add shortcut (e.g. Taxi);
  * - `scheduleId`: paying a bill / receiving an expected income from « À venir ».
  */
 const NewTransactionRoute = () => {
@@ -26,20 +24,15 @@ const NewTransactionRoute = () => {
   if (params.scheduleId) {
     const schedule = schedules.find((s) => s.id === Number(params.scheduleId));
     if (!schedule) {
-      return status === "loading" ? (
-        <ActivityIndicator style={{ marginTop: spacing.xxl }} />
-      ) : (
-        <EmptyState
-          icon={{ android: "help", ios: "questionmark.circle", web: "help" }}
-          title="Échéance introuvable"
-          actionLabel="Fermer"
-          onAction={() => router.back()}
+      return (
+        <SheetFallback
+          loading={status === "loading"}
+          title="Paiement"
+          missingLabel="Échéance introuvable"
         />
       );
     }
     const isIncome = schedule.type === "income";
-    const name =
-      schedule.note || getCategory(schedule.categoryId, schedule.type).label;
     return (
       <EntryForm
         kind="transaction"
@@ -47,7 +40,7 @@ const NewTransactionRoute = () => {
         title={isIncome ? "Revenu reçu" : "Paiement"}
         submitLabel="Confirmer"
         essentialsOnly
-        intro={`${name} · ${isIncome ? "attendu vers le" : "échéance le"} ${formatShortDate(schedule.nextDue)}`}
+        intro={`${entryTitle(schedule)} · ${isIncome ? "attendu vers le" : "échéance le"} ${formatShortDate(schedule.nextDue)}`}
         footer="Ajustez le montant ou la date s’ils diffèrent de d’habitude. L’échéance passera ensuite au mois suivant."
         onSubmit={(draft) => settle(schedule, toTransactionInput(draft))}
       />

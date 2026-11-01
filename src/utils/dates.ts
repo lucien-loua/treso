@@ -108,3 +108,7 @@ export const formatShortDate = (iso: string) =>
     day: "numeric",
     month: "short",
   });
+
+/** French day-of-month label: « 1er », « 2 », … « 31 ». */
+export const formatDayOfMonth = (day: number) =>
+  day === 1 ? "1er" : String(day);

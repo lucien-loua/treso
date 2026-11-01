@@ -24,6 +24,30 @@ bunx expo install --fix      # fix incompatible package versions
 
 Run `bun run check` and the typecheck before declaring any task done.
 
+## Project structure
+
+```
+src/
+  app/              routes only (Expo Router); each route renders a screen
+  screens/          one folder per screen; its private parts live next to it
+    overview/  transactions/  settings/  entry-form/ (shared by the 4 add/edit sheets)
+  components/       reusable, app-aware: transaction-row, category-icon, amount-text, load-error…
+    ui/             generic building blocks, no business logic: list-row, grouped-section,
+                    pill-button, text-button, empty-state, progress-bar, themed-text
+  data/             state and storage
+    db/             SQLite: migrate.ts, migrations/ (one file per version), rows.ts, transactions.ts, schedules.ts
+    catalog/        fixed lists: categories, icons, icon suggestions
+    transactions-provider.tsx · settings.ts · entries.ts · types.ts · sample-data.ts
+  hooks/            shared hooks (use-today, use-ink, use-keep-while-deleting…)
+  utils/            pure helpers: dates, money, stats, schedules, shortcuts, alerts, text, haptics
+  constants/        navigation options, symbols (icons used across screens)
+  theme/            the only source of colors, spacing, radius and type styles
+```
+
+- Before writing UI, reuse `components/ui` (`ListRow`, `SeparatedList`, `GroupedSection`, `PillButton`, `TextButton`) and theme tokens; no raw hex, font sizes or spacing numbers outside `theme/`.
+- Name and sign entries with `entryTitle` / `signedCents` (`data/entries.ts`); ask before destructive actions with `confirm` (`utils/alerts.ts`).
+- Schema changes: add `data/db/migrations/00N-what-changes.ts` (version N) and append it to `migrations/index.ts`; never edit a migration that shipped.
+
 ## Navigation & Routing
 
 - Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.

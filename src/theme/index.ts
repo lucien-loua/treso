@@ -4,22 +4,27 @@ import { colors } from "./colors";
 
 export { categoryColors, colors, type CategoryColor } from "./colors";
 
-export const spacing = {
+// Keys are sorted (lint); by size: xxs 2 · xs 4 · sm 8 · smd 12 · md 16 · lg 24 · xl 32 · xxl 48.
+export const spacing = Object.freeze({
   lg: 24,
   md: 16,
   sm: 8,
+  /** Between sm and md: gaps inside list rows. */
+  smd: 12,
   xl: 32,
   xs: 4,
   xxl: 48,
-} as const;
+  /** Title-to-subtitle gap in rows. */
+  xxs: 2,
+});
 
-export const radius = {
+export const radius = Object.freeze({
   full: 9999,
   lg: 16,
   md: 12,
   sm: 8,
   xl: 24,
-} as const;
+});
 
 export const type = {
   body: { color: colors.label, fontSize: 17, fontWeight: "400" },

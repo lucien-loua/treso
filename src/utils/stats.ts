@@ -1,3 +1,4 @@
+import { signedCents } from "@/data/entries";
 import type { Transaction } from "@/data/types";
 
 import type { MonthKey } from "./dates";
@@ -21,11 +22,6 @@ export interface MonthSummary {
   expensesByCategory: CategoryTotal[];
   transactions: Transaction[];
 }
-
-export const signedCents = (transaction: Transaction) =>
-  transaction.type === "income"
-    ? transaction.amountCents
-    : -transaction.amountCents;
 
 export const summarizeMonth = (
   transactions: Transaction[],

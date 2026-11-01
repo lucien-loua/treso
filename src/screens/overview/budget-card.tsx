@@ -1,10 +1,10 @@
 import { router } from "expo-router";
-import { SymbolView } from "expo-symbols";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 
-import { GroupedSection } from "@/components/grouped-section";
-import { ProgressBar } from "@/components/progress-bar";
-import { ThemedText } from "@/components/themed-text";
+import { GroupedSection } from "@/components/ui/grouped-section";
+import { ListRow, ListRowChevron, ListRowText } from "@/components/ui/list-row";
+import { ProgressBar } from "@/components/ui/progress-bar";
+import { ThemedText } from "@/components/ui/themed-text";
 import { colors, spacing } from "@/theme";
 import { daysLeftInMonth } from "@/utils/dates";
 import type { MonthKey } from "@/utils/dates";
@@ -27,35 +27,13 @@ export const BudgetCard = ({
   if (budgetCents === null) {
     return (
       <GroupedSection title="Budget">
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.navigate("/settings")}
-          style={({ pressed }) => ({
-            alignItems: "center",
-            backgroundColor: pressed ? colors.fill : "transparent",
-            flexDirection: "row",
-            gap: spacing.sm,
-            padding: spacing.md,
-          })}
-        >
-          <View style={{ flex: 1, gap: 2 }}>
-            <ThemedText variant="body">Définir un budget mensuel</ThemedText>
-            <ThemedText variant="footnote">
-              Suivez ce qu’il vous reste à dépenser chaque mois.
-            </ThemedText>
-          </View>
-          <SymbolView
-            name={{
-              android: "chevron_right",
-              ios: "chevron.right",
-              web: "chevron_right",
-            }}
-            tintColor={colors.tertiaryLabel}
-            weight="semibold"
-            resizeMode="scaleAspectFit"
-            style={{ height: 12, width: 12 }}
+        <ListRow onPress={() => router.navigate("/settings")}>
+          <ListRowText
+            title="Définir un budget mensuel"
+            subtitle="Suivez ce qu’il vous reste à dépenser chaque mois."
           />
-        </Pressable>
+          <ListRowChevron />
+        </ListRow>
       </GroupedSection>
     );
   }
@@ -84,7 +62,7 @@ export const BudgetCard = ({
         </ThemedText>
       }
     >
-      <View style={{ gap: spacing.sm + 4, padding: spacing.md }}>
+      <View style={{ gap: spacing.smd, padding: spacing.md }}>
         <ThemedText
           variant="title"
           selectable

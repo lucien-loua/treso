@@ -2,7 +2,7 @@ import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import { useState } from "react";
 import { Pressable } from "react-native";
 
-import { ThemedText } from "@/components/themed-text";
+import { ThemedText } from "@/components/ui/themed-text";
 import { useInk } from "@/hooks/use-ink";
 import { colors } from "@/theme";
 

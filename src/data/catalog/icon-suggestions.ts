@@ -1,3 +1,5 @@
+import { foldText } from "@/utils/text";
+
 /** Keyword → icon id from `./icons`. First match wins, so put specific words before generic ones. */
 const rules: [RegExp, string][] = [
   [/\b(?:essence|carburant|plein|gasoil|station)\b/u, "fuel"],
@@ -40,12 +42,9 @@ const rules: [RegExp, string][] = [
   [/\b(?:freelance|mission|client|facture client)\b/u, "work"],
 ];
 
-const normalize = (value: string) =>
-  value.normalize("NFD").replaceAll(/\p{M}/gu, "").toLowerCase();
-
 /** Icon id that fits a transaction name (« Taxi » → car, « Wifi » → wifi), or `null` to keep the category icon. */
 export const suggestIcon = (name: string): string | null => {
-  const text = normalize(name);
+  const text = foldText(name);
   if (!text.trim()) {
     return null;
   }

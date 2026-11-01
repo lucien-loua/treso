@@ -1,8 +1,8 @@
 import { Pressable, View } from "react-native";
 
 import { CategoryIcon } from "@/components/category-icon";
-import { ThemedText } from "@/components/themed-text";
-import { categoriesFor } from "@/data/categories";
+import { ThemedText } from "@/components/ui/themed-text";
+import { categoriesFor } from "@/data/catalog/categories";
 import type { TransactionType } from "@/data/types";
 import { colors, radius, spacing } from "@/theme";
 import { haptics } from "@/utils/haptics";
@@ -37,7 +37,7 @@ export const CategoryGrid = ({
             backgroundColor: selected ? colors.fill : "transparent",
             borderCurve: "continuous",
             borderRadius: radius.md,
-            gap: 6,
+            gap: spacing.xs,
             opacity: pressed ? 0.6 : 1,
             paddingVertical: spacing.sm,
             width: "25%",
@@ -49,7 +49,7 @@ export const CategoryGrid = ({
               borderCurve: "continuous",
               borderRadius: radius.md + 2,
               borderWidth: 2,
-              padding: 2,
+              padding: spacing.xxs,
             }}
           >
             <CategoryIcon category={category} size={40} />
