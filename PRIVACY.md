@@ -24,7 +24,7 @@ Once a day, when your phone is online, Treso downloads public exchange rates (US
 
 ### Backups and exports
 
-A backup (.json) or spreadsheet (.csv) is created only when you ask for it, and goes only where you choose through your phone's share sheet (for example your own Drive, email or messages). Importing a backup reads only the file you pick. On Android, automatic cloud backup is turned off, so the app's data is not copied to Google Drive without you. On iPhone, if you back up your device to iCloud or a computer, that backup includes the app's data, as for any app.
+A backup (.json) or spreadsheet (.csv) is created only when you ask for it, and goes only where you choose through your phone's share sheet (for example your own Drive, email or messages). These files are not encrypted: anyone who opens one can read it, so keep them somewhere safe. Importing a backup reads only the file you pick. On Android, automatic cloud backup is turned off, so the app's data is not copied to Google Drive without you. On iPhone, if you back up your device to iCloud or a computer, that backup includes the app's data, as for any app.
 
 ### Deleting your data
 
@@ -60,7 +60,7 @@ Une fois par jour, quand le téléphone est en ligne, Treso télécharge des tau
 
 ### Sauvegardes et exports
 
-Une sauvegarde (.json) ou un tableur (.csv) n'est créé que lorsque vous le demandez, et ne va que là où vous le choisissez avec le menu de partage du téléphone (par exemple votre Drive, un e-mail ou une messagerie). Importer une sauvegarde ne lit que le fichier que vous choisissez. Sur Android, la sauvegarde automatique dans le cloud est désactivée : les données de l'app ne sont pas copiées sur Google Drive à votre insu. Sur iPhone, si vous sauvegardez l'appareil sur iCloud ou un ordinateur, cette sauvegarde contient les données de l'app, comme pour toute app.
+Une sauvegarde (.json) ou un tableur (.csv) n'est créé que lorsque vous le demandez, et ne va que là où vous le choisissez avec le menu de partage du téléphone (par exemple votre Drive, un e-mail ou une messagerie). Ces fichiers ne sont pas chiffrés : toute personne qui en ouvre un peut le lire, gardez-les donc en lieu sûr. Importer une sauvegarde ne lit que le fichier que vous choisissez. Sur Android, la sauvegarde automatique dans le cloud est désactivée : les données de l'app ne sont pas copiées sur Google Drive à votre insu. Sur iPhone, si vous sauvegardez l'appareil sur iCloud ou un ordinateur, cette sauvegarde contient les données de l'app, comme pour toute app.
 
 ### Supprimer vos données
 

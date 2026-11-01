@@ -423,7 +423,8 @@ export const fr = {
       backup: (date: string) => `treso-sauvegarde-${date}`,
       csv: (date: string) => `treso-operations-${date}`,
     },
-    footer: "Une sauvegarde se réimporte sur ce téléphone ou un autre.",
+    footer:
+      "Une sauvegarde se réimporte sur ce téléphone ou un autre. Toute personne qui ouvre le fichier peut le lire : gardez-le en lieu sûr.",
     importBackup: "Importer une sauvegarde",
     imported: "Sauvegarde importée",
     importedMessage: (transactions: number, schedules: number) =>

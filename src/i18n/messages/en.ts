@@ -419,7 +419,8 @@ export const en: Messages = {
       backup: (date) => `treso-backup-${date}`,
       csv: (date) => `treso-transactions-${date}`,
     },
-    footer: "A backup can be imported on this phone or another.",
+    footer:
+      "A backup can be imported on this phone or another. Anyone who opens the file can read it, so keep it somewhere safe.",
     importBackup: "Import a backup",
     imported: "Backup imported",
     importedMessage: (transactions, schedules) =>
