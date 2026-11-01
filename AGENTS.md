@@ -37,7 +37,7 @@ src/
   data/             state and storage (storage.ts: local key-value store; exchange-rates.ts)
     db/             SQLite: migrate.ts, migrations/ (one file per version), rows.ts, transactions.ts, schedules.ts
     catalog/        fixed lists: categories, icons, icon suggestions
-    transactions-provider.tsx · settings.ts · entries.ts · types.ts · sample-data.ts
+    transactions-provider.tsx · settings.ts · entries.ts · types.ts
   i18n/             the app's languages: messages/fr.ts (reference) and en.ts, i18n.ts, provider
   lib/              app-independent libraries, each with its own index.ts
     datetime/       calendar arithmetic on local YYYY-MM-DD days, date texts per locale (Intl)

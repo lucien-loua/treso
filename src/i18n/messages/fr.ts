@@ -7,6 +7,10 @@ import type { CategoryColor } from "@/theme";
 const plural = (count: number, one: string, many: string) =>
   `${count} ${count < 2 ? one : many}`;
 
+/** « 32 opérations et 3 échéances » */
+const dataCounts = (transactions: number, schedules: number) =>
+  `${plural(transactions, "opération", "opérations")} et ${plural(schedules, "échéance", "échéances")}`;
+
 const VOWEL = /^[aeiouyàâéèêîôû]/iu;
 
 /** « de novembre », « d’octobre » */
@@ -161,12 +165,14 @@ export const fr = {
   categories,
   colors,
   currencies,
+  dataCounts,
   /** « 1er », « 2 », … « 31 » */
   dayOfMonth: (day: number) => (day === 1 ? "1er" : String(day)),
   errors: {
     actionFailed: "Action impossible",
     deleteFailed: "Suppression impossible",
     duplicateFailed: "Impossible de dupliquer",
+    exportFailed: "Export impossible",
     importFailed: "Import impossible",
     loadFailed: "Impossible de charger vos données",
     saveFailed: "Enregistrement impossible",
@@ -282,29 +288,7 @@ export const fr = {
       subtitle:
         "Suivez votre argent mois par mois : ce qui rentre, ce qui sort, et ce qu’il vous reste.",
       title: "Bienvenue sur Treso",
-      trySamples: "Essayer avec des exemples",
     },
-  },
-  samples: {
-    message:
-      "Trois mois d’opérations fictives seront ajoutés à vos données. Vous pourrez tout effacer dans Réglages.",
-    names: {
-      cinema: "Cinéma",
-      dinner: "Dîner entre amis",
-      electricity: "Électricité",
-      freelance: "Mission design",
-      internet: "Internet",
-      lunch: "Déjeuner",
-      market: "Marché",
-      music: "Musique",
-      pharmacy: "Pharmacie",
-      rent: "Loyer",
-      salary: "Salaire",
-      shoes: "Chaussures",
-      supermarket: "Supermarché",
-      transportPass: "Pass transport",
-    },
-    title: "Ajouter des exemples ?",
   },
   schedules: {
     dueBy: (date: string, inDays: string) => `Avant le ${date} · ${inDays}`,
@@ -325,7 +309,6 @@ export const fr = {
   },
   settings: {
     about: "À propos",
-    addSamples: "Ajouter des données d’exemple",
     addSchedule: "Ajouter une échéance",
     amount: "Montant",
     budget: "Budget mensuel",
@@ -339,7 +322,7 @@ export const fr = {
     eraseAll: "Effacer toutes les données",
     eraseConfirm: "Tout effacer",
     eraseMessage: (transactions: number, schedules: number) =>
-      `${plural(transactions, "opération", "opérations")} et ${plural(schedules, "échéance", "échéances")} seront supprimées définitivement de cet appareil.`,
+      `${dataCounts(transactions, schedules)} seront supprimées définitivement de cet appareil.`,
     eraseTitle: "Effacer toutes les données ?",
     invalidAmount: "Montant invalide",
     invalidAmountHint: "Saisissez un nombre positif, par exemple 150000.",
@@ -411,6 +394,38 @@ export const fr = {
     openHint: "Ouvre l’opération pour la modifier",
     scheduled: "Échéance",
     search: "Rechercher une opération",
+  },
+  transfer: {
+    columns: {
+      amount: "Montant",
+      category: "Catégorie",
+      currency: "Devise",
+      date: "Date",
+      name: "Nom",
+      type: "Type",
+    },
+    exportBackup: "Exporter une sauvegarde",
+    exportCsv: "Exporter en tableur (CSV)",
+    fileNames: {
+      backup: (date: string) => `treso-sauvegarde-${date}`,
+      csv: (date: string) => `treso-operations-${date}`,
+    },
+    footer:
+      "La sauvegarde contient tout (opérations, échéances, budget, devise et taux) et se réimporte sur ce téléphone ou un autre. Le tableur s’ouvre dans Excel ou Google Sheets.",
+    importBackup: "Importer une sauvegarde",
+    imported: "Sauvegarde importée",
+    importedMessage: (transactions: number, schedules: number) =>
+      `${dataCounts(transactions, schedules)} restaurées.`,
+    invalidFile: "Fichier non reconnu",
+    invalidFileHint:
+      "Choisissez une sauvegarde exportée depuis Treso (fichier .json).",
+    newerFile:
+      "Cette sauvegarde vient d’une version plus récente de Treso. Mettez l’app à jour pour l’importer.",
+    replace: "Remplacer",
+    replaceMessage: (date: string, backup: string, current: string) =>
+      `La sauvegarde du ${date} contient ${backup}. Elle remplacera les données de ce téléphone (${current}), ainsi que la devise, le budget et les taux.`,
+    replaceTitle: "Remplacer vos données ?",
+    title: "Exporter et importer",
   },
 };
 

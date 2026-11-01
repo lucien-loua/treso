@@ -10,6 +10,7 @@ import {
   deleteTransaction,
   insertSchedule,
   insertTransactions,
+  replaceAllData,
   selectSchedules,
   selectTransactions,
   settleSchedule,
@@ -37,7 +38,6 @@ type TransactionsState =
 interface TransactionsActions {
   reload: () => Promise<void>;
   add: (input: TransactionInput) => Promise<void>;
-  addMany: (inputs: TransactionInput[]) => Promise<void>;
   update: (id: number, input: TransactionInput) => Promise<void>;
   remove: (id: number) => Promise<void>;
   addSchedule: (input: ScheduleInput) => Promise<void>;
@@ -48,6 +48,10 @@ interface TransactionsActions {
   /** Moves the schedule a month ahead without recording anything. */
   skip: (schedule: Schedule) => Promise<void>;
   removeAll: () => Promise<void>;
+  /** Everything as stored right now, read fresh from the database (for a backup). */
+  readAll: () => Promise<Data>;
+  /** Replaces every transaction and schedule (importing a backup). */
+  replaceAll: (data: Data) => Promise<void>;
 }
 
 type TransactionsContextValue = TransactionsState & TransactionsActions;
@@ -94,12 +98,13 @@ export const TransactionsProvider = ({ children }: { children: ReactNode }) => {
     };
     return {
       add: (input) => thenReload(insertTransactions(db, [input])),
-      addMany: (inputs) => thenReload(insertTransactions(db, inputs)),
       addSchedule: (input) => thenReload(insertSchedule(db, input)),
+      readAll: () => loadData(db),
       reload,
       remove: (id) => thenReload(deleteTransaction(db, id)),
       removeAll: () => thenReload(deleteAllData(db)),
       removeSchedule: (id) => thenReload(deleteSchedule(db, id)),
+      replaceAll: (data) => thenReload(replaceAllData(db, data)),
       settle: (schedule, input) =>
         thenReload(settleSchedule(db, schedule, input)),
       skip: (schedule) => thenReload(skipSchedule(db, schedule)),

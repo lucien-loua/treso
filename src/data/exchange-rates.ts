@@ -149,10 +149,8 @@ export const useRefreshExchangeRates = () => {
 };
 
 /** The user's own rates, per one dollar, merged over `suggested` for any currency they lack. */
-const readManualRates = (
-  raw: string | null,
-  suggested: ExchangeRates
-): ExchangeRates | null => {
+/** The user's own rates as stored: some currencies may be missing. */
+const readOwnRates = (raw: string | null): ExchangeRates | null => {
   if (raw === null) {
     return null;
   }
@@ -164,14 +162,43 @@ const readManualRates = (
     return {
       base: "USD",
       date: stored.date,
-      rates: {
-        ...suggested.rates,
-        ...pickRates(stored.rates, (code) => code),
-      },
+      rates: pickRates(stored.rates, (code) => code),
     };
   } catch {
     return null;
   }
+};
+
+const readManualRates = (
+  raw: string | null,
+  suggested: ExchangeRates
+): ExchangeRates | null => {
+  const own = readOwnRates(raw);
+  return own ? { ...own, rates: { ...suggested.rates, ...own.rates } } : null;
+};
+
+/** The user's own rates, for a backup: whether they are used, and their values. */
+export interface OwnRatesBackup {
+  manual: boolean;
+  own: ExchangeRates | null;
+}
+
+export const ownRatesBackup = (): OwnRatesBackup => {
+  const own = readOwnRates(readStored(MANUAL_KEY));
+  return { manual: own !== null && readStored(MODE_KEY) === "manual", own };
+};
+
+export const restoreOwnRates = ({ manual, own }: OwnRatesBackup) => {
+  writeStored(
+    MANUAL_KEY,
+    own
+      ? JSON.stringify({
+          date: own.date,
+          rates: pickRates(own.rates, (code) => code),
+        })
+      : null
+  );
+  writeStored(MODE_KEY, manual && own ? "manual" : null);
 };
 
 /** The rates Settings shows and edits. */

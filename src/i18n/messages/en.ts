@@ -4,6 +4,10 @@ import type { Messages } from "./fr";
 const plural = (count: number, one: string, many: string) =>
   `${count} ${count === 1 ? one : many}`;
 
+/** "32 transactions and 3 recurring items" */
+const dataCounts = (transactions: number, schedules: number) =>
+  `${plural(transactions, "transaction", "transactions")} and ${plural(schedules, "recurring item", "recurring items")}`;
+
 /** 11, 12 and 13 take "th"; otherwise the last digit decides. */
 const TEEN_MIN = 11;
 const TEEN_MAX = 13;
@@ -73,12 +77,14 @@ export const en: Messages = {
     USD: "US dollar",
     XOF: "CFA franc",
   },
+  dataCounts,
   dayOfMonth: ordinal,
   errors: {
     actionFailed: "Couldn’t complete the action",
     deleteFailed: "Couldn’t delete",
     duplicateFailed: "Couldn’t duplicate",
-    importFailed: "Couldn’t add the samples",
+    exportFailed: "Couldn’t export",
+    importFailed: "Couldn’t import",
     loadFailed: "Couldn’t load your data",
     saveFailed: "Couldn’t save",
   },
@@ -279,29 +285,7 @@ export const en: Messages = {
       subtitle:
         "Follow your money month by month: what comes in, what goes out, and what’s left.",
       title: "Welcome to Treso",
-      trySamples: "Try with sample data",
     },
-  },
-  samples: {
-    message:
-      "Three months of made-up transactions will be added to your data. You can erase everything in Settings.",
-    names: {
-      cinema: "Movies",
-      dinner: "Dinner with friends",
-      electricity: "Electricity",
-      freelance: "Design project",
-      internet: "Internet",
-      lunch: "Lunch",
-      market: "Market",
-      music: "Music",
-      pharmacy: "Pharmacy",
-      rent: "Rent",
-      salary: "Salary",
-      shoes: "Shoes",
-      supermarket: "Supermarket",
-      transportPass: "Transit pass",
-    },
-    title: "Add sample data?",
   },
   schedules: {
     dueBy: (date, inDays) => `Due by ${date} · ${inDays}`,
@@ -320,7 +304,6 @@ export const en: Messages = {
   },
   settings: {
     about: "About",
-    addSamples: "Add sample data",
     addSchedule: "Add a recurring item",
     amount: "Amount",
     budget: "Monthly budget",
@@ -334,7 +317,7 @@ export const en: Messages = {
     eraseAll: "Erase all data",
     eraseConfirm: "Erase All",
     eraseMessage: (transactions, schedules) =>
-      `${plural(transactions, "transaction", "transactions")} and ${plural(schedules, "recurring item", "recurring items")} will be permanently deleted from this device.`,
+      `${dataCounts(transactions, schedules)} will be permanently deleted from this device.`,
     eraseTitle: "Erase all data?",
     invalidAmount: "Invalid amount",
     invalidAmountHint: "Enter a positive number, for example 150000.",
@@ -403,5 +386,36 @@ export const en: Messages = {
     openHint: "Opens the transaction to edit it",
     scheduled: "Recurring",
     search: "Search transactions",
+  },
+  transfer: {
+    columns: {
+      amount: "Amount",
+      category: "Category",
+      currency: "Currency",
+      date: "Date",
+      name: "Name",
+      type: "Type",
+    },
+    exportBackup: "Export a backup",
+    exportCsv: "Export as spreadsheet (CSV)",
+    fileNames: {
+      backup: (date) => `treso-backup-${date}`,
+      csv: (date) => `treso-transactions-${date}`,
+    },
+    footer:
+      "The backup holds everything (transactions, recurring items, budget, currency and rates) and can be imported on this phone or another. The spreadsheet opens in Excel or Google Sheets.",
+    importBackup: "Import a backup",
+    imported: "Backup imported",
+    importedMessage: (transactions, schedules) =>
+      `${dataCounts(transactions, schedules)} restored.`,
+    invalidFile: "File not recognized",
+    invalidFileHint: "Choose a backup exported from Treso (a .json file).",
+    newerFile:
+      "This backup comes from a newer version of Treso. Update the app to import it.",
+    replace: "Replace",
+    replaceMessage: (date, backup, current) =>
+      `The backup from ${date} has ${backup}. It will replace the data on this phone (${current}), along with the currency, budget and rates.`,
+    replaceTitle: "Replace your data?",
+    title: "Export & import",
   },
 };

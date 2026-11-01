@@ -47,23 +47,55 @@ export interface Budget {
   currency: string;
 }
 
+/** A budget saved before budgets carried a currency is in the chosen one. */
+const budgetFrom = (
+  rawAmount: string | null,
+  rawCurrency: string | null,
+  chosen: string
+): Budget | null => {
+  const amountCents = rawAmount === null ? Number.NaN : Number(rawAmount);
+  return Number.isSafeInteger(amountCents) && amountCents > 0
+    ? { amountCents, currency: rawCurrency ?? chosen }
+    : null;
+};
+
+const writeBudget = (budget: Budget | null) => {
+  writeStored(BUDGET_CURRENCY_KEY, budget?.currency ?? null);
+  writeStored(BUDGET_KEY, budget === null ? null : String(budget.amountCents));
+};
+
 export const useMonthlyBudget = (): [
   Budget | null,
   (budget: Budget | null) => void,
 ] => {
-  const rawAmount = useStored(BUDGET_KEY);
   const [chosen] = useCurrencyCode();
-  const currency = useStored(BUDGET_CURRENCY_KEY) ?? chosen;
-  const amountCents = rawAmount === null ? Number.NaN : Number(rawAmount);
-  const budget =
-    Number.isFinite(amountCents) && amountCents > 0
-      ? { amountCents, currency }
-      : null;
-  return [
-    budget,
-    (next) => {
-      writeStored(BUDGET_CURRENCY_KEY, next?.currency ?? null);
-      writeStored(BUDGET_KEY, next === null ? null : String(next.amountCents));
-    },
-  ];
+  const budget = budgetFrom(
+    useStored(BUDGET_KEY),
+    useStored(BUDGET_CURRENCY_KEY),
+    chosen
+  );
+  return [budget, writeBudget];
+};
+
+/** The settings a backup carries. */
+export interface SettingsBackup {
+  currency: string;
+  budget: Budget | null;
+}
+
+export const settingsBackup = (): SettingsBackup => {
+  const currency = chosenCurrencyCode();
+  return {
+    budget: budgetFrom(
+      readStored(BUDGET_KEY),
+      readStored(BUDGET_CURRENCY_KEY),
+      currency
+    ),
+    currency,
+  };
+};
+
+export const restoreSettings = ({ currency, budget }: SettingsBackup) => {
+  writeStored(CURRENCY_KEY, offeredOrDefault(currency));
+  writeBudget(budget);
 };

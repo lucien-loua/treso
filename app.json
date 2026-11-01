@@ -44,7 +44,8 @@
         {
           "supportedLocales": ["en", "fr"]
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,

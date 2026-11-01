@@ -16,8 +16,8 @@ import { useExchangeRates } from "@/data/exchange-rates";
 import { useCurrencyCode } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
 import type { Schedule } from "@/data/types";
+import { useDataTransfer } from "@/hooks/use-data-transfer";
 import { useInk } from "@/hooks/use-ink";
-import { useLoadSampleData } from "@/hooks/use-load-sample-data";
 import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
 import type { Messages } from "@/i18n/messages/fr";
@@ -47,7 +47,7 @@ export const Settings = () => {
   );
   const ratesDate = dates.longDate(parseISODate(rates.active.date));
   const { transactions, schedules, removeAll } = useTransactions();
-  const loadSamples = useLoadSampleData();
+  const { exportBackup, exportCsv, importBackup } = useDataTransfer();
 
   const confirmReset = () => {
     haptics.warning();
@@ -164,12 +164,28 @@ export const Settings = () => {
               {String(transactions.length)}
             </Text>
           </Row>
-          <ListItem onPress={loadSamples}>
-            <Text textStyle={{ color: ink.tint }}>{t.settings.addSamples}</Text>
-          </ListItem>
           <ListItem onPress={confirmReset}>
             <Text textStyle={{ color: ink.danger }}>{t.settings.eraseAll}</Text>
           </ListItem>
+        </FieldGroup.Section>
+
+        <FieldGroup.Section title={t.transfer.title}>
+          <ListItem onPress={exportBackup}>
+            <Text textStyle={{ color: ink.tint }}>
+              {t.transfer.exportBackup}
+            </Text>
+          </ListItem>
+          <ListItem onPress={importBackup}>
+            <Text textStyle={{ color: ink.tint }}>
+              {t.transfer.importBackup}
+            </Text>
+          </ListItem>
+          <ListItem onPress={exportCsv}>
+            <Text textStyle={{ color: ink.tint }}>{t.transfer.exportCsv}</Text>
+          </ListItem>
+          <FieldGroup.SectionFooter>
+            <Text textStyle={ink.footnote}>{t.transfer.footer}</Text>
+          </FieldGroup.SectionFooter>
         </FieldGroup.Section>
 
         <FieldGroup.Section title={t.settings.about}>

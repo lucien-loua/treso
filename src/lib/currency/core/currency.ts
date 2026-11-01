@@ -39,6 +39,11 @@ export interface Currency {
    * the text is not a positive amount of this currency (letters, more decimals than it has).
    */
   parse: (text: string) => number | null;
+  /**
+   * The figure for a file or a spreadsheet: every decimal, no grouping, "-" when negative.
+   * @example usd.figure(-125_050) → "-1250,50" (fr) · "-1250.50" (en)
+   */
+  figure: (amount: number) => string;
   /** The figure to prefill a field with, rounded to the currency's decimals: 125_050 → "1250,5" in French. */
   toInput: (amount: number) => string;
 }
@@ -100,6 +105,11 @@ export const createCurrency = (
     style: "currency",
   });
   const figureOnly = new Intl.NumberFormat(locale, digits);
+  // A spreadsheet reads a figure only without grouping ("1250,50")
+  const plainFigure = new Intl.NumberFormat(locale, {
+    ...digits,
+    useGrouping: false,
+  });
   // What a person would type: no grouping, decimals only when there are some ("1250,5")
   const inputFigure = new Intl.NumberFormat(locale, {
     maximumFractionDigits: decimals,
@@ -119,6 +129,8 @@ export const createCurrency = (
     code,
     decimalSeparator,
     decimals,
+    figure: (amount: number) =>
+      `${amount < 0 ? "-" : ""}${plainFigure.format(toMajor(amount))}`,
     format(amount: number, options: FormatOptions = {}) {
       const { display = "symbol", sign = "auto" } = options;
       const value = toMajor(amount);

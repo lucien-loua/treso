@@ -9,6 +9,7 @@ export {
   updateSchedule,
 } from "./schedules";
 export { DATABASE_NAME, migrate } from "./migrate";
+export { replaceAllData } from "./restore";
 export {
   deleteTransaction,
   insertTransactions,
