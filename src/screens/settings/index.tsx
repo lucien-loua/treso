@@ -48,6 +48,9 @@ export const Settings = () => {
       );
   const { transactions, schedules, removeAll } = useTransactions();
   const { exportBackup, exportCsv, importBackup } = useDataTransfer();
+  const chevron = isIOS ? (
+    <Icon name="chevron.right" size={CHEVRON_SIZE} color={ink.tertiaryLabel} />
+  ) : undefined;
 
   const confirmReset = () => {
     haptics.warning();
@@ -70,6 +73,15 @@ export const Settings = () => {
         }
       >
         <FieldGroup.Section title={t.settings.preferences}>
+          <ListItem
+            onPress={() => router.push("/personalize")}
+            supportingText={t.settings.personalizeHint}
+            trailing={chevron}
+          >
+            <Text textStyle={{ color: ink.label }}>
+              {t.settings.personalize}
+            </Text>
+          </ListItem>
           <Row alignment="center">
             <Text textStyle={{ color: ink.label }}>{t.settings.currency}</Text>
             <Spacer flexible />
@@ -86,15 +98,7 @@ export const Settings = () => {
           <ListItem
             onPress={() => router.push("/settings/rates")}
             supportingText={ratesSummary}
-            trailing={
-              isIOS ? (
-                <Icon
-                  name="chevron.right"
-                  size={CHEVRON_SIZE}
-                  color={ink.tertiaryLabel}
-                />
-              ) : undefined
-            }
+            trailing={chevron}
           >
             <Text textStyle={{ color: ink.label }}>
               {t.settings.rates.title}

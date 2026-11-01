@@ -17,6 +17,7 @@ export const symbols = {
   checkCircle: symbol("checkmark.circle.fill", "check_circle"),
   chevronLeft: symbol("chevron.left", "chevron_left"),
   chevronRight: symbol("chevron.right", "chevron_right"),
+  circle: symbol("circle", "radio_button_unchecked"),
   edit: symbol("pencil.circle.fill", "edit"),
   empty: symbol("tray", "inbox"),
   help: symbol("questionmark.circle", "help"),

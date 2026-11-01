@@ -12,6 +12,7 @@ import {
 import { TextButton } from "@/components/ui/text-button";
 import { symbols } from "@/constants/symbols";
 import { getCategory } from "@/data/catalog/categories";
+import type { Profile } from "@/data/profile";
 import type { Schedule, Transaction } from "@/data/types";
 import { useI18n } from "@/i18n/context";
 import { colors } from "@/theme";
@@ -19,26 +20,26 @@ import { haptics } from "@/utils/haptics";
 
 import { getStartedSteps } from "./get-started-steps";
 
-/** First-run checklist: each step opens a prefilled form, and ticks itself once done. */
+/** What to set up first, from the user's profile: each step opens a prefilled form and ticks itself once done. */
 export const GetStarted = ({
+  profile,
   schedules,
   transactions,
   onHide,
 }: {
+  profile: Profile;
   schedules: Schedule[];
   transactions: Transaction[];
-  onHide?: () => void;
+  onHide: () => void;
 }) => {
   const { t } = useI18n();
   return (
     <GroupedSection
       title={t.overview.getStarted.title}
-      accessory={
-        onHide ? <TextButton label={t.actions.hide} onPress={onHide} /> : null
-      }
+      accessory={<TextButton label={t.actions.hide} onPress={onHide} />}
     >
       <SeparatedList
-        data={getStartedSteps(schedules, transactions, t)}
+        data={getStartedSteps(profile, { schedules, transactions }, t)}
         keyExtractor={(step) => step.key}
         renderItem={(step) => (
           <ListRow
@@ -48,7 +49,10 @@ export const GetStarted = ({
               router.push(step.href);
             }}
           >
-            <CategoryIcon category={getCategory(step.categoryId)} />
+            <CategoryIcon
+              category={getCategory(step.categoryId)}
+              iconId={step.icon}
+            />
             <ListRowText
               title={step.title}
               titleColor={step.done ? colors.secondaryLabel : undefined}

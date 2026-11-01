@@ -17,19 +17,7 @@ export const chosenCurrencyCode = () =>
 /** The ISO code chosen in Settings, and a way to change it. Screens use `useMoney()`. */
 export const useCurrencyCode = (): [string, (code: string) => void] => {
   const code = offeredOrDefault(useStored(CURRENCY_KEY));
-  return [
-    code,
-    (next) => {
-      // A budget saved before budgets carried a currency was in this one: say so before it changes
-      if (
-        readStored(BUDGET_KEY) !== null &&
-        readStored(BUDGET_CURRENCY_KEY) === null
-      ) {
-        writeStored(BUDGET_CURRENCY_KEY, code);
-      }
-      writeStored(CURRENCY_KEY, next);
-    },
-  ];
+  return [code, (next) => writeStored(CURRENCY_KEY, next)];
 };
 
 /** Whether the user dismissed the get-started checklist. */
@@ -47,15 +35,15 @@ export interface Budget {
   currency: string;
 }
 
-/** A budget saved before budgets carried a currency is in the chosen one. */
 const budgetFrom = (
   rawAmount: string | null,
-  rawCurrency: string | null,
-  chosen: string
+  currency: string | null
 ): Budget | null => {
   const amountCents = rawAmount === null ? Number.NaN : Number(rawAmount);
-  return Number.isSafeInteger(amountCents) && amountCents > 0
-    ? { amountCents, currency: rawCurrency ?? chosen }
+  return currency !== null &&
+    Number.isSafeInteger(amountCents) &&
+    amountCents > 0
+    ? { amountCents, currency }
     : null;
 };
 
@@ -68,11 +56,9 @@ export const useMonthlyBudget = (): [
   Budget | null,
   (budget: Budget | null) => void,
 ] => {
-  const [chosen] = useCurrencyCode();
   const budget = budgetFrom(
     useStored(BUDGET_KEY),
-    useStored(BUDGET_CURRENCY_KEY),
-    chosen
+    useStored(BUDGET_CURRENCY_KEY)
   );
   return [budget, writeBudget];
 };
@@ -83,17 +69,10 @@ export interface SettingsBackup {
   budget: Budget | null;
 }
 
-export const settingsBackup = (): SettingsBackup => {
-  const currency = chosenCurrencyCode();
-  return {
-    budget: budgetFrom(
-      readStored(BUDGET_KEY),
-      readStored(BUDGET_CURRENCY_KEY),
-      currency
-    ),
-    currency,
-  };
-};
+export const settingsBackup = (): SettingsBackup => ({
+  budget: budgetFrom(readStored(BUDGET_KEY), readStored(BUDGET_CURRENCY_KEY)),
+  currency: chosenCurrencyCode(),
+});
 
 export const restoreSettings = ({ currency, budget }: SettingsBackup) => {
   writeStored(CURRENCY_KEY, offeredOrDefault(currency));

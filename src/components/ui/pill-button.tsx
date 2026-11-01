@@ -25,12 +25,15 @@ export const PillButton = ({
   size = "md",
   color = colors.tint,
   accessibilityLabel,
+  fill = false,
 }: {
   label: string;
   onPress: () => void;
   size?: keyof typeof sizes;
   color?: ColorValue;
   accessibilityLabel?: string;
+  /** Takes the full width, label centered: a screen's main action. */
+  fill?: boolean;
 }) => {
   const { variant, ...padding } = sizes[size];
   return (
@@ -40,6 +43,7 @@ export const PillButton = ({
       hitSlop={6}
       onPress={onPress}
       style={({ pressed }) => ({
+        ...(fill ? { alignItems: "center", alignSelf: "stretch" } : null),
         backgroundColor: color,
         borderRadius: radius.full,
         opacity: pressed ? 0.7 : 1,

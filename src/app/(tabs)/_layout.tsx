@@ -1,10 +1,17 @@
+import { Redirect } from "expo-router";
 import { NativeTabs } from "expo-router/native-tabs";
 
+import { useProfile } from "@/data/profile-store";
 import { useI18n } from "@/i18n/context";
 import { colors } from "@/theme";
 
 const TabsLayout = () => {
   const { t } = useI18n();
+  const [profile] = useProfile();
+  // First launch: the app opens on the questions about the user's life
+  if (profile === null) {
+    return <Redirect href="/onboarding" />;
+  }
   return (
     <NativeTabs tintColor={colors.tint} minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="(home)">

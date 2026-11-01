@@ -18,6 +18,7 @@ import { useMoney } from "@/hooks/use-money";
 import { useI18n } from "@/i18n/context";
 import { dateInMonth, monthKeyOf, parseISODate } from "@/lib/datetime";
 import { colors, spacing } from "@/theme";
+import { sanitizeAmount } from "@/utils/amount-input";
 import { haptics } from "@/utils/haptics";
 
 import { AmountHeader } from "./amount-header";
@@ -25,7 +26,7 @@ import { CategoryGrid } from "./category-grid";
 import { CategoryRow } from "./category-row";
 import { DateField } from "./date-field";
 import { DayField } from "./day-field";
-import { initialValues, sanitizeAmount, toDraft } from "./draft";
+import { initialValues, toDraft } from "./draft";
 import type { EntryDraft, FormValues } from "./draft";
 import { FormHeader } from "./form-header";
 import { NameRow } from "./name-row";

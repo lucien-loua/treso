@@ -1,4 +1,6 @@
 import type { OwnRatesBackup } from "@/data/exchange-rates";
+import { readProfile } from "@/data/profile";
+import type { Profile } from "@/data/profile";
 import type { SettingsBackup } from "@/data/settings";
 import type { Schedule, Transaction, TransactionType } from "@/data/types";
 import { CURRENCY_CODES, DEFAULT_CURRENCY_CODE } from "@/lib/currency";
@@ -15,7 +17,7 @@ export interface Backup {
   version: number;
   /** When it was made, ISO 8601 */
   exportedAt: string;
-  settings: SettingsBackup & { rates: OwnRatesBackup };
+  settings: SettingsBackup & { rates: OwnRatesBackup; profile: Profile | null };
   schedules: Schedule[];
   transactions: Transaction[];
 }
@@ -164,6 +166,7 @@ const readSettings = (value: unknown): Backup["settings"] => {
     currency: isCurrency(settings.currency)
       ? settings.currency
       : DEFAULT_CURRENCY_CODE,
+    profile: readProfile(settings.profile),
     rates: { manual: rates.manual === true && own !== null, own },
   };
 };

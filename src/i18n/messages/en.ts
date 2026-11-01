@@ -203,6 +203,35 @@ export const en: Messages = {
     wifi: "Internet",
     work: "Work",
   },
+  onboarding: {
+    budget: {
+      subtitle:
+        "Treso tells you how much you have left to spend. Leave it empty if you don’t want one.",
+      title: "A monthly budget?",
+    },
+    continue: "Continue",
+    currency: "Your currency",
+    daily: {
+      subtitle: "They show up as shortcuts, noted in one tap.",
+      title: "Your everyday spending",
+    },
+    finish: "Let’s Go",
+    fixed: {
+      subtitle: "Treso reminds you of them every month.",
+      title: "What you pay every month",
+    },
+    income: {
+      none: "No regular income",
+      subtitle: "Choose all that apply.",
+      title: "Where does your money come from?",
+    },
+    skip: "Skip",
+    welcome: {
+      subtitle:
+        "A few questions to fit Treso to your life. Less than a minute.",
+      title: "Welcome to Treso",
+    },
+  },
   overview: {
     balanceAtEnd: (month) => `Balance at the end of ${month}`,
     budget: {
@@ -222,25 +251,6 @@ export const en: Messages = {
     expenses: "Expenses",
     forecast: (month) => `${month} forecast`,
     getStarted: {
-      bills: {
-        defaultName: "Electricity",
-        hint: "Water, electricity, internet… one item per bill.",
-        title: "Your bills",
-      },
-      daily: {
-        hint: "Transport, meals… logged in seconds.",
-        title: "An everyday expense",
-      },
-      rent: {
-        defaultName: "Rent",
-        hint: "Due by the 5th, paid early or on the day.",
-        title: "Your rent",
-      },
-      salary: {
-        defaultName: "Salary",
-        hint: "Around the 26th, for example. Treso reminds you.",
-        title: "Your salary",
-      },
       title: "Get started",
     },
     income: "Income",
@@ -268,10 +278,38 @@ export const en: Messages = {
       skipTitle: (name) => `Skip “${name}” this month?`,
       title: "Upcoming",
     },
-    welcome: {
-      subtitle:
-        "Follow your money month by month: what comes in, what goes out, and what’s left.",
-      title: "Welcome to Treso",
+  },
+  profile: {
+    daily: {
+      airtime: { label: "Phone credit", name: "Phone credit" },
+      food: { label: "Eating out", name: "Meal" },
+      fuel: { label: "Fuel", name: "Fuel" },
+      groceries: { label: "Groceries & market", name: "" },
+      transport: { label: "Transport", name: "" },
+    },
+    dailyStep: {
+      hint: "Logged in seconds with quick add.",
+      title: "An everyday expense",
+    },
+    fixed: {
+      electricity: { label: "Electricity", name: "Electricity" },
+      family: { label: "Supporting family", name: "Family support" },
+      internet: { label: "Internet", name: "Internet" },
+      phone: { label: "Phone plan", name: "Phone plan" },
+      rent: { label: "Rent", name: "Rent" },
+      school: { label: "School fees", name: "School fees" },
+      tontine: { label: "Savings group (tontine)", name: "Tontine" },
+      water: { label: "Water", name: "Water" },
+    },
+    fixedHint: (day) => `By the ${day}, for example. Treso reminds you.`,
+    income: {
+      business: { label: "Business or freelance", name: "" },
+      family: { label: "Help from family", name: "Help from family" },
+      salary: { label: "Salary", name: "Salary" },
+    },
+    incomeHint: {
+      schedule: (day) => `Around the ${day}, for example. Treso reminds you.`,
+      transaction: "Note it when the money arrives.",
     },
   },
   schedules: {
@@ -308,6 +346,8 @@ export const en: Messages = {
     invalidAmount: "Invalid amount",
     invalidAmountHint: "Enter a positive number, for example 150000.",
     none: "None",
+    personalize: "Personalize Treso",
+    personalizeHint: "Income, monthly and everyday expenses",
     preferences: "Preferences",
     privacy: "Treso keeps your data on this device: no account, no server.",
     rates: {

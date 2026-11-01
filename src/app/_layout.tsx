@@ -39,6 +39,14 @@ const RootLayout = () => {
               <Stack.Screen name="transaction/[id]" options={sheetOptions} />
               <Stack.Screen name="schedule/new" options={sheetOptions} />
               <Stack.Screen name="schedule/[id]" options={sheetOptions} />
+              <Stack.Screen
+                name="personalize"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="onboarding"
+                options={{ gestureEnabled: false, headerShown: false }}
+              />
             </Stack>
           </TransactionsProvider>
         </SQLiteProvider>

@@ -1,96 +1,144 @@
 import type { Href } from "expo-router";
 
 import type { CategoryId } from "@/data/catalog/categories";
+import { suggestIcon } from "@/data/catalog/icon-suggestions";
+import type { IconId } from "@/data/catalog/icons";
+import {
+  DAILY_PRESETS,
+  FIXED_PRESETS,
+  INCOME_PRESETS,
+} from "@/data/catalog/profile-presets";
+import type { Preset } from "@/data/catalog/profile-presets";
+import type { Profile } from "@/data/profile";
 import type { Schedule, Transaction } from "@/data/types";
 import type { Messages } from "@/i18n/messages/fr";
 
 interface Step {
   key: string;
   categoryId: CategoryId;
+  icon: IconId | null;
   title: string;
   hint: string;
   done: boolean;
   href: Href;
 }
 
-/** The first things to set up, named in the app's language; the forms open prefilled. */
+const ALL_PRESETS: Preset[] = [
+  ...Object.values(INCOME_PRESETS),
+  ...Object.values(FIXED_PRESETS),
+];
+
+/** Electricity, water and internet are all bills: only the icon tells them apart. */
+const sharesCategory = (preset: Preset) =>
+  ALL_PRESETS.filter(
+    (other) =>
+      other.categoryId === preset.categoryId && other.type === preset.type
+  ).length > 1;
+
+/** Whether an entry looks like `preset`: same icon (chosen or read from its name), else same category when that's enough. */
+const matches = (
+  entry: Pick<Schedule, "type" | "categoryId" | "icon" | "note">,
+  preset: Preset,
+  t: Messages
+) =>
+  entry.type === preset.type &&
+  ((entry.icon ?? suggestIcon(entry.note, t.iconKeywords)) === preset.icon ||
+    (!sharesCategory(preset) && entry.categoryId === preset.categoryId));
+
+const presetStep = (
+  key: string,
+  preset: Preset,
+  { label, name }: { label: string; name: string },
+  data: { schedules: Schedule[]; transactions: Transaction[] },
+  t: Messages
+): Step => {
+  const base = {
+    categoryId: preset.categoryId,
+    icon: preset.icon,
+    key,
+    title: label,
+  };
+  if (preset.kind === "schedule") {
+    const day = t.dayOfMonth(preset.day);
+    return {
+      ...base,
+      done: data.schedules.some((s) => matches(s, preset, t)),
+      hint:
+        preset.type === "income"
+          ? t.profile.incomeHint.schedule(day)
+          : t.profile.fixedHint(day),
+      href: {
+        params: {
+          categoryId: preset.categoryId,
+          day: String(preset.day),
+          note: name,
+          type: preset.type,
+        },
+        pathname: "/schedule/new",
+      },
+    };
+  }
+  return {
+    ...base,
+    done: data.transactions.some(
+      (transaction) =>
+        transaction.scheduleId === null && matches(transaction, preset, t)
+    ),
+    hint: t.profile.incomeHint.transaction,
+    href: {
+      params: { categoryId: preset.categoryId, note: name, type: preset.type },
+      pathname: "/transaction/new",
+    },
+  };
+};
+
+/**
+ * The first things to set up, from what the user said about their life: one step per income
+ * source and monthly expense they picked, then a first everyday expense. Each opens its form
+ * prefilled and ticks itself once done.
+ */
 export const getStartedSteps = (
-  schedules: Schedule[],
-  transactions: Transaction[],
+  profile: Profile,
+  data: { schedules: Schedule[]; transactions: Transaction[] },
   t: Messages
 ): Step[] => {
-  const texts = t.overview.getStarted;
-  const hasSchedule = (categoryId: CategoryId) =>
-    schedules.some((s) => s.categoryId === categoryId);
-  return [
-    {
-      categoryId: "salary",
-      done: hasSchedule("salary"),
-      hint: texts.salary.hint,
-      href: {
-        params: {
-          categoryId: "salary",
-          day: "26",
-          note: texts.salary.defaultName,
-          type: "income",
-        },
-        pathname: "/schedule/new",
-      },
-      key: "salary",
-      title: texts.salary.title,
-    },
-    {
-      categoryId: "housing",
-      done: hasSchedule("housing"),
-      hint: texts.rent.hint,
-      href: {
-        params: {
-          categoryId: "housing",
-          day: "5",
-          note: texts.rent.defaultName,
-          type: "expense",
-        },
-        pathname: "/schedule/new",
-      },
-      key: "rent",
-      title: texts.rent.title,
-    },
-    {
-      categoryId: "bills",
-      done: hasSchedule("bills"),
-      hint: texts.bills.hint,
-      href: {
-        params: {
-          categoryId: "bills",
-          day: "3",
-          note: texts.bills.defaultName,
-          type: "expense",
-        },
-        pathname: "/schedule/new",
-      },
-      key: "bills",
-      title: texts.bills.title,
-    },
-    {
-      categoryId: "transport",
-      done: transactions.some(
+  const steps = [
+    ...profile.income.map((id) =>
+      presetStep(id, INCOME_PRESETS[id], t.profile.income[id], data, t)
+    ),
+    ...profile.fixed.map((id) =>
+      presetStep(id, FIXED_PRESETS[id], t.profile.fixed[id], data, t)
+    ),
+  ];
+  const [daily] = profile.daily;
+  if (daily) {
+    const { categoryId, icon } = DAILY_PRESETS[daily];
+    steps.push({
+      categoryId,
+      done: data.transactions.some(
         (transaction) =>
           transaction.type === "expense" && transaction.scheduleId === null
       ),
-      hint: texts.daily.hint,
+      hint: t.profile.dailyStep.hint,
       href: {
-        params: { categoryId: "transport" },
+        params: {
+          categoryId,
+          icon: icon ?? "",
+          note: t.profile.daily[daily].name,
+        },
         pathname: "/transaction/new",
       },
+      icon,
       key: "daily",
-      title: texts.daily.title,
-    },
-  ];
+      title: t.profile.dailyStep.title,
+    });
+  }
+  return steps;
 };
 
-/** Done once there's a salary, a rent, a bill and a day-to-day expense; texts don't matter here. */
+/** Nothing left to set up (or nothing to set up at all). */
 export const isGetStartedComplete = (
-  schedules: Schedule[],
-  transactions: Transaction[],
+  profile: Profile,
+  data: { schedules: Schedule[]; transactions: Transaction[] },
   t: Messages
-) => getStartedSteps(schedules, transactions, t).every((step) => step.done);
+) => getStartedSteps(profile, data, t).every((step) => step.done);

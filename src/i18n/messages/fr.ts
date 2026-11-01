@@ -198,6 +198,35 @@ export const fr = {
   },
   iconKeywords,
   icons,
+  onboarding: {
+    budget: {
+      subtitle:
+        "Treso vous dira ce qu’il vous reste à dépenser. Laissez vide si vous n’en voulez pas.",
+      title: "Un budget pour le mois ?",
+    },
+    continue: "Continuer",
+    currency: "Votre devise",
+    daily: {
+      subtitle: "Elles apparaîtront en raccourci, à noter d’un geste.",
+      title: "Vos dépenses du quotidien",
+    },
+    finish: "C’est parti",
+    fixed: {
+      subtitle: "Treso vous les rappellera chaque mois.",
+      title: "Vos dépenses de chaque mois",
+    },
+    income: {
+      none: "Pas de revenu régulier",
+      subtitle: "Choisissez tout ce qui s’applique.",
+      title: "D’où vient votre argent ?",
+    },
+    skip: "Passer",
+    welcome: {
+      subtitle:
+        "Quelques questions pour adapter Treso à votre vie. Moins d’une minute.",
+      title: "Bienvenue sur Treso",
+    },
+  },
   overview: {
     balanceAtEnd: (month: string) => `Solde fin ${month}`,
     budget: {
@@ -218,25 +247,6 @@ export const fr = {
     expenses: "Dépenses",
     forecast: (month: string) => `Prévu fin ${month}`,
     getStarted: {
-      bills: {
-        defaultName: "Électricité",
-        hint: "Eau, électricité, wifi… une échéance par facture.",
-        title: "Vos factures",
-      },
-      daily: {
-        hint: "Transport, repas… notée en quelques secondes.",
-        title: "Une dépense du jour",
-      },
-      rent: {
-        defaultName: "Loyer",
-        hint: "À payer avant le 5, en avance ou le jour même.",
-        title: "Votre loyer",
-      },
-      salary: {
-        defaultName: "Salaire",
-        hint: "Vers le 26 du mois, par exemple. Treso vous le rappelle.",
-        title: "Votre salaire",
-      },
       title: "Bien démarrer",
     },
     income: "Revenus",
@@ -264,10 +274,40 @@ export const fr = {
       skipTitle: (name: string) => `Ignorer « ${name} » ce mois-ci ?`,
       title: "À venir",
     },
-    welcome: {
-      subtitle:
-        "Suivez votre argent mois par mois : ce qui rentre, ce qui sort, et ce qu’il vous reste.",
-      title: "Bienvenue sur Treso",
+  },
+  profile: {
+    daily: {
+      airtime: { label: "Crédit téléphone", name: "Crédit téléphone" },
+      food: { label: "Repas dehors", name: "Repas" },
+      fuel: { label: "Carburant", name: "Carburant" },
+      groceries: { label: "Courses, marché", name: "" },
+      transport: { label: "Transport", name: "" },
+    },
+    dailyStep: {
+      hint: "Notée en quelques secondes avec l’ajout rapide.",
+      title: "Une dépense du jour",
+    },
+    fixed: {
+      electricity: { label: "Électricité", name: "Électricité" },
+      family: { label: "Aide à la famille", name: "Aide à la famille" },
+      internet: { label: "Internet", name: "Internet" },
+      phone: { label: "Forfait téléphone", name: "Forfait téléphone" },
+      rent: { label: "Loyer", name: "Loyer" },
+      school: { label: "Scolarité", name: "Scolarité" },
+      tontine: { label: "Tontine, épargne", name: "Tontine" },
+      water: { label: "Eau", name: "Eau" },
+    },
+    fixedHint: (day: string) =>
+      `Avant le ${day} du mois, par exemple. Treso vous la rappelle.`,
+    income: {
+      business: { label: "Commerce ou freelance", name: "" },
+      family: { label: "Aide de la famille", name: "Aide de la famille" },
+      salary: { label: "Salaire", name: "Salaire" },
+    },
+    incomeHint: {
+      schedule: (day: string) =>
+        `Vers le ${day} du mois, par exemple. Treso vous le rappelle.`,
+      transaction: "Notez-le quand l’argent arrive.",
     },
   },
   schedules: {
@@ -306,6 +346,8 @@ export const fr = {
     invalidAmount: "Montant invalide",
     invalidAmountHint: "Saisissez un nombre positif, par exemple 150000.",
     none: "Aucun",
+    personalize: "Personnaliser Treso",
+    personalizeHint: "Revenus, dépenses fixes et du quotidien",
     preferences: "Préférences",
     privacy:
       "Treso garde vos données sur cet appareil : pas de compte, pas de serveur.",

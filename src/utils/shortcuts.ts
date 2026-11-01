@@ -8,19 +8,14 @@ export interface Shortcut {
   color: string | null;
 }
 
-const FALLBACK: Shortcut[] = [
-  { categoryId: "transport", color: null, icon: null, note: "" },
-  { categoryId: "groceries", color: null, icon: null, note: "" },
-  { categoryId: "restaurants", color: null, icon: null, note: "" },
-];
-
 /**
  * The expenses the user enters most often over the last 60 days (same category, name and icon),
- * topped up with common categories for new users. Scheduled payments are left out: they have
- * their own "Payer" button.
+ * topped up with `everyday` (what they said they spend on day to day) while there are few.
+ * Scheduled payments are left out: they have their own "Pay" button.
  */
 export const frequentExpenses = (
   transactions: Transaction[],
+  everyday: Shortcut[],
   max = 4,
   today = new Date()
 ): Shortcut[] => {
@@ -59,12 +54,18 @@ export const frequentExpenses = (
     .map((entry) => entry.shortcut)
     .slice(0, max);
 
-  for (const fallback of FALLBACK) {
+  for (const shortcut of everyday) {
     if (result.length >= max) {
       break;
     }
-    if (!result.some((s) => s.categoryId === fallback.categoryId)) {
-      result.push(fallback);
+    // A frequent « Taxi » already covers « Transport », not « Fuel » with its own icon
+    const covered = result.some(
+      (s) =>
+        s.categoryId === shortcut.categoryId &&
+        (shortcut.icon === null || s.icon === shortcut.icon)
+    );
+    if (!covered) {
+      result.push(shortcut);
     }
   }
   return result;

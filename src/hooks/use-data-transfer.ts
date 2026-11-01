@@ -3,6 +3,7 @@ import { shareAsync } from "expo-sharing";
 import { Alert } from "react-native";
 
 import { ownRatesBackup, restoreOwnRates } from "@/data/exchange-rates";
+import { profileBackup, restoreProfile } from "@/data/profile-store";
 import { restoreSettings, settingsBackup } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
 import { createBackup, readBackup } from "@/data/transfer/backup";
@@ -56,6 +57,7 @@ export const useDataTransfer = () => {
     runOrAlert(async () => {
       const backup = createBackup(await readAll(), {
         ...settingsBackup(),
+        profile: profileBackup(),
         rates: ownRatesBackup(),
       });
       await shareFile(
@@ -81,6 +83,7 @@ export const useDataTransfer = () => {
     await replaceAll(backup);
     restoreSettings(backup.settings);
     restoreOwnRates(backup.settings.rates);
+    restoreProfile(backup.settings.profile);
     haptics.success();
     Alert.alert(
       t.transfer.imported,

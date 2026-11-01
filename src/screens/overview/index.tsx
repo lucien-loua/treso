@@ -6,6 +6,8 @@ import {
   AddTransactionButton,
 } from "@/components/add-transaction-button";
 import { LoadError } from "@/components/load-error";
+import { DEFAULT_PROFILE } from "@/data/profile";
+import { useProfile } from "@/data/profile-store";
 import { useGetStartedHidden, useMonthlyBudget } from "@/data/settings";
 import { useTransactions } from "@/data/transactions-provider";
 import { useMoney } from "@/hooks/use-money";
@@ -19,13 +21,13 @@ import { frequentExpenses } from "@/utils/shortcuts";
 import { BalanceCard } from "./balance-card";
 import { BudgetCard } from "./budget-card";
 import { CategoryBreakdown } from "./category-breakdown";
+import { everydayShortcuts } from "./everyday-shortcuts";
 import { GetStarted } from "./get-started";
 import { isGetStartedComplete } from "./get-started-steps";
 import { monthOverview } from "./month-overview";
 import { MonthSwitcher } from "./month-switcher";
 import { QuickAdd } from "./quick-add";
 import { Upcoming } from "./upcoming";
-import { Welcome } from "./welcome";
 
 /** The month at a glance. Past months show the figures only; the current one adds what's next. */
 const MonthDashboard = () => {
@@ -33,6 +35,8 @@ const MonthDashboard = () => {
   const { t } = useI18n();
   const money = useMoney();
   const [budget] = useMonthlyBudget();
+  const [savedProfile] = useProfile();
+  const profile = savedProfile ?? DEFAULT_PROFILE;
   const [getStartedHidden, setGetStartedHidden] = useGetStartedHidden();
   const today = useToday();
   const currentMonth = monthKeyOf(today);
@@ -63,15 +67,25 @@ const MonthDashboard = () => {
       {isCurrentMonth ? (
         <>
           <QuickAdd
-            shortcuts={frequentExpenses(transactions, 4, today)}
+            shortcuts={frequentExpenses(
+              transactions,
+              everydayShortcuts(profile, t),
+              4,
+              today
+            )}
             todaySpentCents={todaySpentCents}
           />
           {schedules.length > 0 ? (
             <Upcoming schedules={schedules} transactions={transactions} />
           ) : null}
           {getStartedHidden ||
-          isGetStartedComplete(schedules, transactions, t) ? null : (
+          isGetStartedComplete(
+            profile,
+            { schedules, transactions },
+            t
+          ) ? null : (
             <GetStarted
+              profile={profile}
               schedules={schedules}
               transactions={transactions}
               onHide={() => setGetStartedHidden(true)}
@@ -100,8 +114,6 @@ export const Overview = () => {
     content = <ActivityIndicator style={{ marginTop: spacing.xxl }} />;
   } else if (state.status === "error") {
     content = <LoadError error={state.error} onRetry={handleRetry} />;
-  } else if (state.transactions.length === 0 && state.schedules.length === 0) {
-    content = <Welcome />;
   }
 
   return (
