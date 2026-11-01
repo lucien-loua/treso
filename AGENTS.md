@@ -70,6 +70,7 @@ src/
 - App identifier `com.lucienloua.treso` (Android package and iOS bundle ID): never change it once published. Versions: bump `version` in `app.json`; build numbers are managed by EAS (`appVersionSource: remote` in `eas.json`).
 - Android permissions are explicit: only `INTERNET` (exchange rates) and `VIBRATE` (haptics); storage and overlay permissions are blocked in `app.json`. A new permission needs a reason, and an update to `PRIVACY.md`.
 - Store listings: `fastlane/metadata/android/<locale>/` (Google Play) and `store.config.json` (App Store, EAS Metadata). Keep them, `README.md` and `PRIVACY.md` true to what the app does.
+- Play Console declarations (data safety, content rating, financial features…) and first-release steps: `docs/google-play.md`. Update it with `PRIVACY.md` whenever the app's data use changes.
 
 ## Building with EAS
 

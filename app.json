@@ -2,12 +2,9 @@
   "expo": {
     "name": "Treso",
     "slug": "treso",
-    "description": "Track your money month by month: income, expenses, monthly bills and a budget. Private by design: your data stays on your phone.",
+    "description": "Income, expenses, monthly bills and a budget: know what you have left, today and at the end of the month. Your data stays on your phone.",
     "version": "1.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "githubUrl": "https://github.com/lucien-loua/treso",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -23,10 +20,7 @@
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
-        "CFBundleLocalizations": [
-          "en",
-          "fr"
-        ]
+        "CFBundleLocalizations": ["en", "fr"]
       }
     },
     "android": {
@@ -65,10 +59,7 @@
       [
         "expo-localization",
         {
-          "supportedLocales": [
-            "en",
-            "fr"
-          ]
+          "supportedLocales": ["en", "fr"]
         }
       ],
       "expo-sharing"

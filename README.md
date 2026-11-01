@@ -1,6 +1,6 @@
 # Treso
 
-Treso is a personal finance app for Android and iOS: follow your money month by month, what comes in, what goes out, and what's left. It is built for everyday life in West Africa (CFA franc, Guinean franc, US dollar) and speaks French and English, following the phone's language.
+Treso is a personal finance app for Android and iOS: track your income, your expenses and what you have left, today and at the end of the month. It is built for everyday life in West Africa (CFA franc, Guinean franc, US dollar) and speaks French and English, following the phone's language.
 
 Private by design: no account, no server, no tracking. Your data stays on your phone.
 
@@ -54,7 +54,7 @@ bunx eas-cli submit -p android --latest                  # upload to the interna
 bunx eas-cli build -p ios --profile production --auto-submit
 ```
 
-Android submission needs a Google Play service account key at `./google-service-account.json` (ignored by git). Store listing texts live in [`fastlane/metadata/android`](fastlane/metadata/android) (Google Play) and [`store.config.json`](store.config.json) (App Store, pushed with `bunx eas-cli metadata:push`).
+Android submission needs a Google Play service account key at `./google-service-account.json` (ignored by git). Store listing texts and graphics live in [`fastlane/metadata/android`](fastlane/metadata/android) (Google Play) and [`store.config.json`](store.config.json) (App Store, pushed with `bunx eas-cli metadata:push`). Play Console declarations and the first-release steps are in [docs/google-play.md](docs/google-play.md).
 
 ## License
 
