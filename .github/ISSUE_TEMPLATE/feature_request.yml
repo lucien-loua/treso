@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest an idea for Treso.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you need?
+      description: Describe your situation and what's missing, rather than a solution.
+      placeholder: I pay my rent in two parts each month, and…
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: Optional. How you imagine it could work.
+  - type: markdown
+    attributes:
+      value: |
+        Treso stays private by design: no account, no server, no ads, no tracking. Ideas that need your data to leave the phone won't be added.

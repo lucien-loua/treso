@@ -1,0 +1,50 @@
+name: Bug report
+description: Something in Treso doesn't work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Don't attach a backup or a CSV export: they contain your financial data. Describe the amounts instead, or use made-up ones.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Overview
+        2. Tap "Pay" on Rent
+        3. The balance doesn't change
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Settings › About › Version
+      placeholder: 1.0.0
+  - type: input
+    id: device
+    attributes:
+      label: Phone and system version
+      placeholder: Samsung Galaxy A15, Android 15
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: App language
+      options:
+        - French
+        - English
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional. Hide any amounts you'd rather keep private.
