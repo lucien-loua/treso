@@ -51,7 +51,7 @@ const Flow = ({
     <View style={{ flex: 1 }}>
       <ThemedText variant="caption">{label}</ThemedText>
       <ThemedText
-        variant="headline"
+        variant="headlineFitted"
         selectable
         numberOfLines={1}
         adjustsFontSizeToFit
@@ -94,7 +94,7 @@ export const BalanceCard = ({
             : t.overview.balanceAtEnd(dates.monthInText(month))}
         </ThemedText>
         <ThemedText
-          variant="hero"
+          variant="heroFitted"
           selectable
           numberOfLines={1}
           adjustsFontSizeToFit
