@@ -38,19 +38,35 @@ export const radius = Object.freeze({
   xl: 24,
 });
 
+/** Android cuts off text shrunk by `adjustsFontSizeToFit` unless its line height is explicit. */
+const fittedLine = (lineHeight: number): TextStyle =>
+  isAndroid ? { lineHeight } : {};
+
+const headline = {
+  color: colors.label,
+  fontSize: 17,
+  fontWeight: "600",
+} as const;
+
+const hero = {
+  color: colors.label,
+  fontSize: 44,
+  fontVariant: ["tabular-nums"],
+  fontWeight: "700",
+  letterSpacing: -0.5,
+} as const;
+
 export const type = {
   body: { color: colors.label, fontSize: 17, fontWeight: "400" },
   callout: { color: colors.label, fontSize: 16, fontWeight: "400" },
   caption: { color: colors.secondaryLabel, fontSize: 12, fontWeight: "500" },
   footnote: { color: colors.secondaryLabel, fontSize: 13, fontWeight: "400" },
-  headline: { color: colors.label, fontSize: 17, fontWeight: "600" },
-  hero: {
-    color: colors.label,
-    fontSize: 44,
-    fontVariant: ["tabular-nums"],
-    fontWeight: "700",
-    letterSpacing: -0.5,
-  },
+  headline,
+  /** `headline` on a line that shrinks to fit. */
+  headlineFitted: { ...headline, ...fittedLine(24) },
+  hero,
+  /** `hero` on a line that shrinks to fit. */
+  heroFitted: { ...hero, ...fittedLine(60) },
   sectionHeader: {
     color: colors.secondaryLabel,
     fontSize: 13,
